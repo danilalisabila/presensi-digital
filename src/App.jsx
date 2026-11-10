@@ -1254,27 +1254,26 @@ function Admin({ tok, setTok, onLogout }) {
 
   if (!tok) {
     return (
-      <div className="admin-wrap" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '90vh' }}>
-        <div className="admin-glass-card" style={{ width: '100%', maxWidth: '380px', padding: '26px 20px' }}>
-          <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-            <div className="login-shield-badge">
-              <IconShield size={28} />
+      <div className="login-page-wrap">
+        <div className="admin-glass-card">
+          <div className="login-header">
+            <div className="login-logo-badge">
+              <img src="/logo.png" alt="Logo Al-Falah" />
             </div>
-            <h1 style={{ fontSize: '18px', fontWeight: '800', color: 'var(--slate-900)' }}>Login Administrator</h1>
-            <p style={{ fontSize: '12px', color: 'var(--slate-500)', marginTop: '3px' }}>
+            <h1 className="login-title">Login Administrator</h1>
+            <p className="login-subtitle">
               Ponpes Al - Falah Putak
             </p>
           </div>
 
           <form onSubmit={masuk}>
-            <div style={{ marginBottom: '12px' }}>
-              <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--slate-700)', display: 'block', marginBottom: '5px' }}>
+            <div className="login-field">
+              <label className="login-field-label">
                 Email Admin
               </label>
               <input
                 type="email"
-                className="inline-reason-input"
-                style={{ padding: '10px 12px' }}
+                className="inline-reason-input login-input"
                 placeholder="admin@email.com"
                 value={f.email}
                 onChange={e => setF({ ...f, email: e.target.value })}
@@ -1282,8 +1281,8 @@ function Admin({ tok, setTok, onLogout }) {
               />
             </div>
 
-            <div style={{ marginBottom: '16px' }}>
-              <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--slate-700)', display: 'block', marginBottom: '5px' }}>
+            <div className="login-field">
+              <label className="login-field-label">
                 PIN 4 Digit
               </label>
               <div className="input-eye-wrap">
@@ -1291,7 +1290,7 @@ function Admin({ tok, setTok, onLogout }) {
                   type={showPin ? 'text' : 'password'}
                   inputMode="numeric"
                   maxLength={6}
-                  className="inline-reason-input input-with-eye"
+                  className="inline-reason-input input-with-eye login-input"
                   placeholder="••••"
                   value={f.pin}
                   onChange={e => setF({ ...f, pin: e.target.value })}
@@ -1309,13 +1308,13 @@ function Admin({ tok, setTok, onLogout }) {
             </div>
 
             {err && (
-              <div className="notice-strip danger" style={{ padding: '8px 12px', marginBottom: '12px' }}>
+              <div className="notice-strip danger login-error-notice">
                 <div className="notice-icon-wrap"><IconAlertCircle size={15} /></div>
                 <div>{err}</div>
               </div>
             )}
 
-            <button type="submit" className="native-submit-btn" disabled={busy} style={{ width: '100%', padding: '12px' }}>
+            <button type="submit" className="native-submit-btn login-submit-btn" disabled={busy}>
               {busy ? (
                 <>
                   <IconSpinner size={16} className="spinner-spin" />
