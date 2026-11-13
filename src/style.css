@@ -115,30 +115,33 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 14px;
-  background: rgba(255, 255, 255, 0.94);
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid rgba(226, 232, 240, 0.9);
-  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.03);
+  gap: 8px;
 }
 
 .brand-identity {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
 }
 
 .brand-emblem-wrap {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
   background: #ffffff;
-  padding: 3px;
+  padding: 2px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
   border: 1px solid var(--slate-200);
   flex-shrink: 0;
 }
@@ -152,44 +155,50 @@ body {
 .brand-text-col {
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .brand-main-title {
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 800;
   color: var(--emerald-900);
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
   text-transform: uppercase;
-  line-height: 1.2;
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .brand-sub-title {
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 600;
   color: var(--gold-600);
   letter-spacing: 0.01em;
-  margin-top: 1px;
+  margin-top: 2px;
 }
 
 .header-right-group {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  flex-shrink: 0;
 }
 
 .clock-capsule {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  background: #ffffff;
+  gap: 5px;
+  background: #f8fafc;
   border: 1px solid var(--slate-200);
-  padding: 5px 10px;
+  padding: 4px 8px;
   border-radius: var(--radius-full);
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 700;
   color: var(--slate-700);
   font-variant-numeric: tabular-nums;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  white-space: nowrap;
 }
 
 .clock-live-dot {
@@ -764,19 +773,23 @@ body {
 
 .app-global-footer {
   margin-top: auto;
-  padding-top: 32px;
-  padding-bottom: 12px;
+  padding-top: 24px;
+  padding-bottom: 16px;
   width: 100%;
   text-align: center;
+  box-sizing: border-box;
 }
 
 .form-footer-credits {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 2px;
   font-size: 11px;
-  color: #94a3b8;
+  color: var(--slate-600);
+  line-height: 1.35;
+  padding: 0 10px;
   font-weight: 600;
   margin-top: 0;
   text-align: center;

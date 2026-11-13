@@ -183,7 +183,7 @@ function IconLogOut({ size = 14, className = '' }) {
 
 function IconLock({ size = 15, className = '' }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className={className}>
       <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
       <path d="M7 11V7a5 5 0 0 1 10 0v4" />
     </svg>
@@ -192,7 +192,7 @@ function IconLock({ size = 15, className = '' }) {
 
 function IconChevronDown({ size = 15, className = '' }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
       <polyline points="6 9 12 15 18 9" />
     </svg>
   )
@@ -201,8 +201,8 @@ function IconChevronDown({ size = 15, className = '' }) {
 function IconMenu({ size = 20, className = '' }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <line x1="3" y1="6" x2="21" y2="6" />
       <line x1="3" y1="12" x2="21" y2="12" />
+      <line x1="3" y1="6" x2="21" y2="6" />
       <line x1="3" y1="18" x2="21" y2="18" />
     </svg>
   )
@@ -219,15 +219,15 @@ function IconClose({ size = 18, className = '' }) {
 
 function IconWhatsApp({ size = 19, className = '' }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className}>
-      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.455 5.711 1.456h.005c6.554 0 11.89-5.336 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
     </svg>
   )
 }
 
 function IconChevronRight({ size = 16, className = '' }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className={className}>
       <polyline points="9 18 15 12 9 6" />
     </svg>
   )
@@ -271,7 +271,7 @@ function IconEyeOff({ size = 18, className = '' }) {
 function IconSpinner({ size = 16, className = '' }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className={className}>
-      <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+      <path d="M21 12a9 9 0 1 1-6.219-8.56" />
     </svg>
   )
 }
@@ -289,7 +289,7 @@ function useCountdown(info) {
     hours: '00',
     minutes: '00',
     seconds: '00',
-    title: 'Waktu Subuh',
+    title: 'Waktu Sholat',
     tagText: 'Jadwal',
     targetType: 'closed'
   })
@@ -299,9 +299,10 @@ function useCountdown(info) {
 
     function hitung() {
       const now = new Date()
-      const [bH, bM] = (info.buka || '03:30').split(':').map(Number)
-      const [lH, lM] = (info.batas || '04:30').split(':').map(Number)
-      const [tH, tM] = (info.tutup || '06:00').split(':').map(Number)
+      const sholatNama = info.sholat || 'Sholat'
+      const [bH, bM] = (info.buka || '04:15').split(':').map(Number)
+      const [lH, lM] = (info.batas || '04:45').split(':').map(Number)
+      const [tH, tM] = (info.tutup || '05:30').split(':').map(Number)
 
       const openToday = new Date(now)
       openToday.setHours(bH, bM, 0, 0)
@@ -319,25 +320,25 @@ function useCountdown(info) {
 
       if (now < openToday) {
         targetDate = openToday
-        title = 'Dibuka Dalam'
-        tagText = 'Buka ' + (info.buka || '03:30') + ' WIB'
+        title = `Dibuka Dalam (${sholatNama})`
+        tagText = 'Buka ' + (info.buka || '04:15') + ' WIB'
         targetType = 'pending'
       } else if (now >= openToday && now < limitToday) {
         targetDate = limitToday
-        title = 'Sisa Waktu Tepat'
-        tagText = 'Tepat s/d ' + (info.batas || '04:30')
+        title = `Sisa Waktu Tepat (${sholatNama})`
+        tagText = 'Tepat s/d ' + (info.batas || '04:45')
         targetType = 'ontime'
       } else if (now >= limitToday && now < closeToday) {
         targetDate = closeToday
-        title = 'Sisa Waktu Formulir'
-        tagText = 'Tutup ' + (info.tutup || '06:00') + ' WIB'
+        title = `Sisa Waktu Formulir (${sholatNama})`
+        tagText = 'Tutup ' + (info.tutup || '05:30') + ' WIB'
         targetType = 'late'
       } else {
         const openTomorrow = new Date(openToday)
         openTomorrow.setDate(openTomorrow.getDate() + 1)
         targetDate = openTomorrow
-        title = 'Buka Besok Subuh'
-        tagText = 'Pukul ' + (info.buka || '03:30') + ' WIB'
+        title = `Sesi ${sholatNama} Selesai`
+        tagText = 'Buka ' + (info.buka || '04:15') + ' WIB'
         targetType = 'closed'
       }
 
@@ -366,6 +367,7 @@ function useCountdown(info) {
 }
 
 const KET = ['Hadir', 'Sakit', 'Izin', 'Alfa']
+const DAFTAR_SHOLAT_DEFAULT = ['Shubuh', 'Dhuhur', 'Ashar', 'Magrib', 'Isya']
 
 /* ================= COMPONENT: MODERN POP-UP STATUS & KONFIRMASI ================= */
 function StatusModal({ modal, onClose, onConfirm }) {
@@ -378,22 +380,25 @@ function StatusModal({ modal, onClose, onConfirm }) {
   return (
     <div className="status-modal-backdrop" onClick={onClose}>
       <div className="status-modal-card" onClick={e => e.stopPropagation()}>
-        {/* Animated Glow Icon Ring */}
         <div className={`status-modal-icon-ring ${modal.type}`}>
           {isSuccess && <IconCheckCircle size={30} className="icon-pop" />}
           {isError && <IconAlertCircle size={30} className="icon-pop" />}
           {isConfirm && <IconShield size={28} className="icon-pop" />}
         </div>
 
-        {/* Title */}
         <h3 className={`status-modal-title ${modal.type}`}>{modal.title}</h3>
-
-        {/* Message */}
         <p className="status-modal-message">{modal.message}</p>
 
-        {/* Success Data Info Box */}
         {isSuccess && modal.data && (
           <div className="status-modal-detail-box">
+            {modal.data.sholat && (
+              <div className="detail-row">
+                <span className="detail-lbl">Waktu Sholat:</span>
+                <span className="detail-val" style={{ fontWeight: '800', color: 'var(--emerald-800)' }}>
+                  Sholat {modal.data.sholat}
+                </span>
+              </div>
+            )}
             <div className="detail-row">
               <span className="detail-lbl">Status Jam:</span>
               <span className={`detail-pill ${modal.data.status === 'Tepat Waktu' ? 'ontime' : 'late'}`}>
@@ -415,7 +420,6 @@ function StatusModal({ modal, onClose, onConfirm }) {
           </div>
         )}
 
-        {/* Confirm Summary Grid */}
         {isConfirm && modal.summary && (
           <div className="status-modal-summary-grid">
             <div className="summary-item hadir">
@@ -437,7 +441,6 @@ function StatusModal({ modal, onClose, onConfirm }) {
           </div>
         )}
 
-        {/* Actions Row */}
         <div className="status-modal-actions">
           {isConfirm ? (
             <>
@@ -450,23 +453,19 @@ function StatusModal({ modal, onClose, onConfirm }) {
               </button>
               <button
                 type="button"
-                className="modal-btn primary emerald"
-                onClick={() => {
-                  onClose()
-                  if (onConfirm) onConfirm()
-                }}
+                className="modal-btn primary"
+                onClick={onConfirm}
               >
-                <IconCheck size={15} />
-                <span>Kirim Sekarang</span>
+                Ya, Kirim Sekarang
               </button>
             </>
           ) : (
             <button
               type="button"
-              className={`modal-btn primary ${isSuccess ? 'emerald' : 'danger'}`}
+              className="modal-btn primary single"
               onClick={onClose}
             >
-              <span>{isSuccess ? 'Selesai' : 'Tutup'}</span>
+              Tutup
             </button>
           )}
         </div>
@@ -478,10 +477,12 @@ function StatusModal({ modal, onClose, onConfirm }) {
 function AppFooter({ subtitle }) {
   return (
     <footer className="app-global-footer">
-      <div className="form-footer-credits">
-        <span>Ponpes Al - Falah Putak</span>
-        <span className="dot-divider">•</span>
-        <span>{subtitle || 'Presensi Korlap Subuh'}</span>
+      <div className="form-footer-credits" style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+        <span style={{ fontWeight: '800', letterSpacing: '0.04em' }}>PONDOK PUTRA</span>
+        <span style={{ fontSize: '10px', opacity: 0.9 }}>YAYASAN PONDOK PESANTREN SALAFIYAH AL-FALAH PUTAK</span>
+        <span style={{ fontSize: '10.5px', marginTop: '2px', color: 'var(--emerald-800)', fontWeight: '700' }}>
+          {subtitle || "Presensi Korlap Sholat Jama'ah"}
+        </span>
       </div>
       <p className="app-copyright-footer">
         © JAKASTRA OFFICIAL 2026. All Rights Reserved.
@@ -524,7 +525,7 @@ export default function App() {
   const handleKirimWA = e => {
     e.preventDefault()
     if (!namaLapor.trim()) {
-      setLaporErr('Nama Ustadz / Pelapor wajib diisi.')
+      setLaporErr('Nama Petugas / Pelapor wajib diisi.')
       return
     }
     if (!deskripsiLapor.trim()) {
@@ -541,7 +542,7 @@ export default function App() {
       year: 'numeric'
     }) + ' (' + now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB)'
 
-    const pesan = `*PENGADUAN KORLAP SUBUH*\n*Ponpes Al - Falah Putak*\n----------------------------------------\n*Nama Ustadz:* ${namaLapor.trim()}\n*Waktu:* ${waktuStr}\n\n*Deskripsi Pengaduan:*\n${deskripsiLapor.trim()}\n----------------------------------------\n_Dikirim via Sistem Absensi Korlap Subuh_`
+    const pesan = `*PENGADUAN KORLAP SHOLAT JAMA'AH*\n*PONDOK PUTRA*\n*YAYASAN PONDOK PESANTREN SALAFIYAH AL-FALAH PUTAK*\n----------------------------------------\n*Nama Petugas:* ${namaLapor.trim()}\n*Waktu:* ${waktuStr}\n\n*Deskripsi Pengaduan:*\n${deskripsiLapor.trim()}\n----------------------------------------\n_Dikirim via Sistem Presensi Korlap Sholat Jama'ah_`
 
     const url = `https://wa.me/6282118702717?text=${encodeURIComponent(pesan)}`
     window.open(url, '_blank')
@@ -551,7 +552,7 @@ export default function App() {
 
   return (
     <div className="mobile-viewport">
-      {/* 1. Sticky Header Bar: Tetap di atas & tidak ikut ter-scroll */}
+      {/* 1. Sticky Header Bar */}
       <header className="sticky-top-appbar">
         <div className="brand-identity">
           <div className="brand-emblem-wrap">
@@ -559,9 +560,11 @@ export default function App() {
           </div>
           <div className="brand-text-col">
             <span className="brand-main-title">
-              {admin ? 'DASHBOARD ADMIN' : 'KORLAP SUBUH'}
+              {admin ? 'DASHBOARD ADMIN' : "KORLAP SHOLAT JAMA'AH"}
             </span>
-            <span className="brand-sub-title">Ponpes Al - Falah Putak</span>
+            <span className="brand-sub-title">
+              Pondok Putra • Al-Falah Putak
+            </span>
           </div>
         </div>
 
@@ -576,12 +579,12 @@ export default function App() {
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label={menuOpen ? 'Tutup Menu' : 'Buka Menu'}
           >
-            {menuOpen ? <IconClose size={20} /> : <IconMenu size={20} />}
+            {menuOpen ? <IconClose size={18} /> : <IconMenu size={18} />}
           </button>
         </div>
       </header>
 
-      {/* 2. Top-Down Dropdown Menu (Muncul dari Atas ke Bawah) */}
+      {/* 2. Top-Down Dropdown Menu */}
       <div
         className={`menu-backdrop ${menuOpen ? 'open' : ''}`}
         onClick={() => setMenuOpen(false)}
@@ -592,7 +595,6 @@ export default function App() {
           <p className="menu-section-label">LAYANAN & NAVIGASI</p>
 
           <div className="menu-sheet-grid">
-            {/* Menu Item 1: Laporkan Masalah (Official Authentic WhatsApp) */}
             <button
               type="button"
               className="drawer-nav-item primary"
@@ -613,7 +615,6 @@ export default function App() {
 
             {admin ? (
               <>
-                {/* Menu Item 2 (Khusus Admin): Kembali ke Presensi */}
                 <button
                   type="button"
                   className="drawer-nav-item"
@@ -627,12 +628,11 @@ export default function App() {
                   </div>
                   <div className="drawer-item-text">
                     <span className="drawer-item-title">Kembali ke Presensi</span>
-                    <span className="drawer-item-desc">Buka formulir absensi subuh</span>
+                    <span className="drawer-item-desc">Buka formulir presensi sholat jama'ah</span>
                   </div>
                   <IconChevronRight size={16} className="drawer-chevron" />
                 </button>
 
-                {/* Menu Item 3 (Khusus Admin): Keluar Admin (Logout) */}
                 <button
                   type="button"
                   className="drawer-nav-item logout-danger"
@@ -649,7 +649,6 @@ export default function App() {
                 </button>
               </>
             ) : (
-              /* Menu Item 2 (Khusus Presensi): Login Administrator */
               <button
                 type="button"
                 className="drawer-nav-item"
@@ -676,10 +675,10 @@ export default function App() {
       {admin ? (
         <Admin tok={tok} setTok={setTok} onLogout={handleKeluarAdmin} />
       ) : (
-        <Form liveClock={liveClock} />
+        <Form />
       )}
 
-      {/* 3. Modal Form Pengaduan / Laporkan (Official WhatsApp) */}
+      {/* Modal WhatsApp Form */}
       {laporOpen && (
         <div className="modal-backdrop" onClick={() => setLaporOpen(false)}>
           <div className="modal-card" onClick={e => e.stopPropagation()}>
@@ -706,12 +705,12 @@ export default function App() {
             <form onSubmit={handleKirimWA} className="modal-form-body">
               <div className="modal-field-group">
                 <label className="modal-label">
-                  Nama Ustadz / Pelapor <span className="req-star">*</span>
+                  Nama Petugas / Pelapor <span className="req-star">*</span>
                 </label>
                 <input
                   type="text"
                   className="modal-input"
-                  placeholder="Contoh: Ust. Dani Lalisabila"
+                  placeholder="Contoh: Hairul Fadli / Petugas Jaga Malam"
                   value={namaLapor}
                   onChange={e => setNamaLapor(e.target.value)}
                   required
@@ -726,7 +725,7 @@ export default function App() {
                 <textarea
                   className="modal-textarea"
                   rows={4}
-                  placeholder="Jelaskan kendala yang dialami, izin tugas mendadak, atau kendala lapangan..."
+                  placeholder="Jelaskan kendala saat bertugas keliling mushola, izin mendadak, atau kendala lapangan..."
                   value={deskripsiLapor}
                   onChange={e => setDeskripsiLapor(e.target.value)}
                   required
@@ -764,34 +763,68 @@ export default function App() {
   )
 }
 
-/* ================= FORM USTADZ (NATIVE MOBILE EXPERIENCE) ================= */
+const CACHE_KEY_INFO = 'korlap_info_cache'
+
+function getLocalInfoCache() {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY_INFO)
+    if (!raw) return null
+    return JSON.parse(raw)
+  } catch (e) {
+    return null
+  }
+}
+
+function setLocalInfoCache(data) {
+  try {
+    localStorage.setItem(CACHE_KEY_INFO, JSON.stringify(data))
+  } catch (e) {}
+}
+
+/* ================= FORM KORLAP SHOLAT JAMA'AH ================= */
 function Form() {
-  const [info, setInfo] = useState(null)
-  const [item, setItem] = useState({})
-  const [pengisi, setPengisi] = useState('')
+  const [info, setInfo] = useState(() => getLocalInfoCache())
+  const [item, setItem] = useState(() => {
+    const cached = getLocalInfoCache()
+    if (cached?.tim) {
+      return Object.fromEntries(cached.tim.map(t => [t.nama, { ket: 'Hadir', alasan: '' }]))
+    }
+    return {}
+  })
+  const [pengisi, setPengisi] = useState(() => {
+    const cached = getLocalInfoCache()
+    if (cached?.tim) {
+      return (cached.tim.find(t => t.petugas) || cached.tim[0] || {}).nama || ''
+    }
+    return ''
+  })
   const [err, setErr] = useState('')
   const [busy, setBusy] = useState(false)
   const [done, setDone] = useState(null)
-  const [liveClock, setLiveClock] = useState('')
   const [statusModal, setStatusModal] = useState({ open: false, type: 'success', title: '', message: '', data: null })
   const [confirmModal, setConfirmModal] = useState({ open: false, summary: null })
 
-  // Live real-time clock
-  useEffect(() => {
-    const timer = setInterval(() => {
-      const now = new Date()
-      setLiveClock(now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + ' WIB')
-    }, 1000)
-    return () => clearInterval(timer)
-  }, [])
+  // Hanya memuat 1 waktu sholat yang sedang aktif saat ini (tanpa parameter, server otomatis tentukan)
+  const muatDataSholatAktif = () => {
+    setBusy(true)
+    setErr('')
+    setDone(null)
+    fetch(API)
+      .then(res => res.json())
+      .then(i => {
+        if (i.error) throw new Error(i.error)
+        setInfo(i)
+        setLocalInfoCache(i)
+        const list = i.tim || []
+        setItem(Object.fromEntries(list.map(t => [t.nama, { ket: 'Hadir', alasan: '' }])))
+        setPengisi((list.find(t => t.petugas) || list[0] || {}).nama || '')
+      })
+      .catch(e => setErr(e.message))
+      .finally(() => setBusy(false))
+  }
 
   useEffect(() => {
-    api().then(i => {
-      setInfo(i)
-      const list = i.tim || []
-      setItem(Object.fromEntries(list.map(t => [t.nama, { ket: 'Hadir', alasan: '' }])))
-      setPengisi((list.find(t => t.petugas) || list[0] || {}).nama || '')
-    }).catch(e => setErr(e.message))
+    muatDataSholatAktif()
   }, [])
 
   const countdown = useCountdown(info)
@@ -832,6 +865,7 @@ function Form() {
     try {
       const payload = {
         aksi: 'kirim',
+        sholat: info.sholat,
         pengisi,
         items: (info.tim || []).map(t => ({ nama: t.nama, ...(item[t.nama] || { ket: 'Hadir', alasan: '' }) }))
       }
@@ -841,8 +875,9 @@ function Form() {
         open: true,
         type: 'success',
         title: 'Presensi Berhasil Terkirim',
-        message: 'Jazakumullahu khairan. Laporan kehadiran telah berhasil tercatat.',
+        message: `Jazakumullahu khairan. Laporan kehadiran Korlap Sholat ${info.sholat} telah berhasil tercatat.`,
         data: {
+          sholat: info.sholat,
           status: res.status || 'Tepat Waktu',
           jam: res.jam || info.jam,
           pengisi: pengisi,
@@ -872,11 +907,12 @@ function Form() {
           style={{ width: '64px', height: '64px', objectFit: 'contain', marginBottom: '16px', filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.12))' }}
         />
         <h2 style={{ fontSize: '17px', fontWeight: '800', color: 'var(--slate-900)' }}>
-          Presensi Korlap Subuh
+          Presensi Korlap Sholat Jama'ah
         </h2>
-        <p style={{ fontSize: '12px', color: 'var(--slate-500)', marginTop: '2px', marginBottom: '24px' }}>
-          Ponpes Al - Falah Putak
-        </p>
+        <div style={{ marginTop: '3px', marginBottom: '24px', lineHeight: '1.4' }}>
+          <div style={{ fontSize: '12.5px', fontWeight: '800', color: 'var(--slate-800)' }}>PONDOK PUTRA</div>
+          <div style={{ fontSize: '10.5px', color: 'var(--slate-500)' }}>YAYASAN PONDOK PESANTREN SALAFIYAH AL-FALAH PUTAK</div>
+        </div>
         {err ? (
           <div className="notice-strip danger" style={{ textAlign: 'left', width: '100%' }}>
             <div className="notice-icon-wrap"><IconAlertCircle size={18} /></div>
@@ -885,7 +921,7 @@ function Form() {
         ) : (
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--emerald-700)', fontSize: '13px', fontWeight: '600' }}>
             <IconSpinner size={18} className="spinner-spin" />
-            <span>Memuat jadwal kehadiran...</span>
+            <span>Memuat jadwal sholat jama'ah...</span>
           </div>
         )}
       </div>
@@ -899,12 +935,12 @@ function Form() {
   return (
     <>
       <div className="scroll-body">
-        {/* Hero Card dengan Jam Hitungan Mundur Terintegrasi */}
+        {/* Hero Card Waktu Sholat yang Sedang Berjalan */}
         <div className="unified-hero">
           <div className="hero-meta-bar">
             <span className="session-chip">
               <IconShield size={11} />
-              Tugas Subuh
+              Tugas {info.sholat}
             </span>
             <div className="status-glow-pill">
               <span className={`status-dot-sm ${info.status === 'buka' ? 'open' : info.status === 'belum' ? 'pending' : 'closed'}`} />
@@ -914,7 +950,7 @@ function Form() {
             </div>
           </div>
 
-          {/* Jam Hitungan Mundur (Countdown Widget) */}
+          {/* Jam Hitungan Mundur */}
           <div className="hero-timer-panel">
             <div className="timer-label-row">
               <span className="timer-target-title">
@@ -960,59 +996,59 @@ function Form() {
         {done ? (
           <div className="notice-strip success">
             <div className="notice-icon-wrap"><IconCheckCircle size={18} /></div>
-            <div>Laporan terkirim ({done.status}, {done.jam} WIB). Jazakumullahu khairan.</div>
+            <div>Laporan {info.sholat} terkirim ({done.status}, {done.jam} WIB). Jazakumullahu khairan.</div>
           </div>
         ) : info.sudah ? (
           <div className="notice-strip success">
             <div className="notice-icon-wrap"><IconCheckCircle size={18} /></div>
-            <div>Laporan kehadiran tugas subuh hari ini sudah selesai dikirim.</div>
+            <div>Laporan kehadiran Korlap {info.sholat} hari ini sudah selesai dikirim.</div>
           </div>
         ) : tutup ? (
           <div className="notice-strip warning">
             <div className="notice-icon-wrap"><IconAlertCircle size={18} /></div>
             <div>
               {info.status === 'belum'
-                ? `Formulir akan mulai dibuka pukul ${info.buka} WIB.`
-                : `Formulir terkunci setelah jam ${info.tutup} WIB. Jadwal hari ini dapat dilihat di bawah.`}
+                ? `Formulir Sholat ${info.sholat} akan mulai dibuka pukul ${info.buka} WIB.`
+                : `Formulir Sholat ${info.sholat} ditutup setelah jam ${info.tutup} WIB.`}
             </div>
           </div>
         ) : null}
 
-        {/* 3. Section Header */}
+        {/* Section Header */}
         <div className="list-section-header">
           <div className="list-section-title">
-            <span>Daftar Petugas Hari Ini</span>
+            <span>Petugas Korlap {info.sholat}</span>
             <span className="badge-count">{tim.length}</span>
           </div>
           <span style={{ fontSize: '11px', color: 'var(--slate-500)', fontWeight: '600' }}>
-            Jadwal {info.hari}
+            Setiap Hari
           </span>
         </div>
 
-        {/* 4. Grouped Officers List (Fluid & Mobile First) */}
+        {/* Grouped Officers List */}
         <div className="grouped-list-card">
           {tim.map(t => {
             const currentItem = item[t.nama] || { ket: 'Hadir', alasan: '' }
-            const isKetua = t.peran === 'Ketua'
+            const isKoor = t.peran === 'Koordinator' || t.peran === 'Ketua'
             const isOfficial = t.petugas
 
             return (
               <div className="officer-row-item" key={t.nama}>
                 <div className="officer-top-info">
                   <div className="officer-avatar-name">
-                    <div className={`avatar-initial ${isKetua ? 'ketua' : isOfficial ? 'petugas' : ''}`}>
+                    <div className={`avatar-initial ${isKoor ? 'ketua' : isOfficial ? 'petugas' : ''}`}>
                       {getInitials(t.nama)}
                     </div>
                     <div className="name-role-col">
                       <span className="officer-fullname">{t.nama}</span>
                       <div className="role-pill-tags">
-                        {isKetua && (
+                        {isKoor && (
                           <span className="mini-role-pill ketua">
                             <IconShield size={9} />
-                            Ketua Tim
+                            Koordinator
                           </span>
                         )}
-                        {isOfficial && (
+                        {isOfficial && !isKoor && (
                           <span className="mini-role-pill petugas">
                             <IconBadgeCheck size={9} />
                             Petugas Absen
@@ -1058,7 +1094,7 @@ function Form() {
           })}
         </div>
 
-        {/* 5. Submitter Selection Card */}
+        {/* Submitter Selection Card */}
         <div className="submitter-box">
           <label className="submitter-label">Nama Pengisi Laporan</label>
           <div className="select-native-wrap">
@@ -1069,7 +1105,7 @@ function Form() {
             >
               {tim.map(t => (
                 <option key={t.nama} value={t.nama}>
-                  {t.nama} {t.petugas ? '— (Petugas Resmi)' : t.peran === 'Ketua' ? '— (Ketua)' : ''}
+                  {t.nama} {t.petugas ? '— (Petugas Resmi)' : (t.peran === 'Koordinator' || t.peran === 'Ketua') ? '— (Koordinator)' : ''}
                 </option>
               ))}
             </select>
@@ -1092,7 +1128,7 @@ function Form() {
           </div>
         )}
 
-        {/* 6. Action Button: Natural page flow, clean mobile card (No fixed sticky overlay) */}
+        {/* Action Button */}
         <div className="submit-action-area">
           <button
             type="button"
@@ -1108,12 +1144,12 @@ function Form() {
             ) : done ? (
               <>
                 <IconCheckCircle size={18} />
-                <span>Absen Telah Terkirim</span>
+                <span>Absen {info.sholat} Telah Terkirim</span>
               </>
             ) : info.sudah ? (
               <>
                 <IconCheckCircle size={18} />
-                <span>Sudah Diabsen Hari Ini</span>
+                <span>{info.sholat} Sudah Diabsen Hari Ini</span>
               </>
             ) : tutup ? (
               <>
@@ -1123,34 +1159,32 @@ function Form() {
             ) : (
               <>
                 <IconCheck size={18} />
-                <span>Kirim Presensi Subuh</span>
+                <span>Kirim Presensi Korlap {info.sholat}</span>
               </>
             )}
           </button>
           
           {tutup && !info.sudah && (
             <p className="submit-lock-notice">
-              Presensi otomatis terbuka pada pukul {info.buka} s/d {info.tutup} WIB.
+              Presensi {info.sholat} otomatis terbuka pada pukul {info.buka} s/d {info.tutup} WIB.
             </p>
           )}
 
-          <AppFooter subtitle="Presensi Korlap Subuh" />
+          <AppFooter subtitle={`Presensi Korlap Sholat Jama'ah`} />
         </div>
       </div>
 
-      {/* Pop Up Modern Status (Berhasil / Gagal) */}
       <StatusModal
         modal={statusModal}
         onClose={() => setStatusModal({ ...statusModal, open: false })}
       />
 
-      {/* Pop Up Modern Konfirmasi */}
       <StatusModal
         modal={{
           open: confirmModal.open,
           type: 'confirm',
-          title: 'Kirim Presensi Subuh?',
-          message: 'Pastikan data kehadiran petugas subuh hari ini sudah sesuai.',
+          title: `Kirim Presensi ${info.sholat}?`,
+          message: `Pastikan data kehadiran personil Korlap Sholat ${info.sholat} hari ini sudah sesuai.`,
           summary: confirmModal.summary
         }}
         onClose={() => setConfirmModal({ open: false, summary: null })}
@@ -1167,6 +1201,7 @@ function Admin({ tok, setTok, onLogout }) {
   const [err, setErr] = useState('')
   const [d, setD] = useState(null)
   const [tab, setTab] = useState('hari')
+  const [filterSholat, setFilterSholat] = useState('Semua')
   const [bulan, setBulan] = useState('')
   const [cariRekap, setCariRekap] = useState('')
   const [filterRekap, setFilterRekap] = useState('semua')
@@ -1235,7 +1270,7 @@ function Admin({ tok, setTok, onLogout }) {
         open: true,
         type: 'success',
         title: 'Pengaturan Disimpan',
-        message: res.pesan || 'Jam operasional presensi subuh berhasil diperbarui.'
+        message: res.pesan || 'Jam operasional presensi sholat berhasil diperbarui.'
       })
       muat(tok)
     } catch (e) {
@@ -1261,9 +1296,10 @@ function Admin({ tok, setTok, onLogout }) {
               <img src="/logo.png" alt="Logo Al-Falah" />
             </div>
             <h1 className="login-title">Login Administrator</h1>
-            <p className="login-subtitle">
-              Ponpes Al - Falah Putak
-            </p>
+            <div className="login-subtitle" style={{ marginTop: '5px', lineHeight: '1.4' }}>
+              <div style={{ fontWeight: '800', color: 'var(--slate-800)', fontSize: '12px' }}>PONDOK PUTRA</div>
+              <div style={{ fontSize: '10px', color: 'var(--slate-500)' }}>YAYASAN PONDOK PESANTREN SALAFIYAH AL-FALAH PUTAK</div>
+            </div>
           </div>
 
           <form onSubmit={masuk}>
@@ -1346,7 +1382,11 @@ function Admin({ tok, setTok, onLogout }) {
 
   const rows = d.rows || []
   const b = bulan || d.tgl.slice(0, 7)
-  const hariIni = rows.filter(r => r.tanggal === d.tgl)
+  const hariIniSemua = rows.filter(r => r.tanggal === d.tgl)
+  const hariIni = filterSholat === 'Semua' 
+    ? hariIniSemua 
+    : hariIniSemua.filter(r => r.sholat === filterSholat)
+
   const bl = rows.filter(r => r.tanggal.startsWith(b))
 
   const rek = {}
@@ -1373,12 +1413,12 @@ function Admin({ tok, setTok, onLogout }) {
   )
 
   const unduh = () => {
-    const h = 'Tanggal,Hari,Nama,Keterangan,Alasan,Status Waktu,Diisi Oleh,Pengganti\n'
-    const c = bl.map(r => [r.tanggal, r.hari, r.nama, r.ket, r.alasan, r.waktu, r.pengisi, r.pengganti]
+    const h = 'Tanggal,Hari,Sholat,Nama,Keterangan,Alasan,Status Waktu,Diisi Oleh,Pengganti\n'
+    const c = bl.map(r => [r.tanggal, r.hari, r.sholat, r.nama, r.ket, r.alasan, r.waktu, r.pengisi, r.pengganti]
       .map(x => '"' + String(x || '').replace(/"/g, '""') + '"').join(',')).join('\n')
     const a = document.createElement('a')
     a.href = URL.createObjectURL(new Blob(['\ufeff' + h + c], { type: 'text/csv' }))
-    a.download = 'absensi-' + b + '.csv'
+    a.download = 'absensi-korlap-sholat-' + b + '.csv'
     a.click()
   }
 
@@ -1410,20 +1450,22 @@ function Admin({ tok, setTok, onLogout }) {
     return true
   })
 
+  const daftarSholatAdmin = ['Semua', 'Shubuh', 'Dhuhur', 'Ashar', 'Magrib', 'Isya']
+
   return (
     <div className="scroll-body">
-      {/* 1. Executive Admin Hero Card (Mewah, Modern, Ala Mobile App) */}
+      {/* 1. Executive Admin Hero Card */}
       <div className="unified-hero admin-hero-card">
         <div className="hero-meta-bar">
           <span className="session-chip">
             <IconShield size={11} />
-            Panel Admin
+            Panel Admin Korlap
           </span>
         </div>
 
         <div className="admin-hero-main-row">
           <div>
-            <span className="admin-hero-eyebrow">Pemantauan Presensi</span>
+            <span className="admin-hero-eyebrow">Pemantauan Presensi Sholat</span>
             <h2 className="admin-hero-heading">{formatTanggalIndo(d.tgl, d.hari)}</h2>
           </div>
           {hariIni.length > 0 && (
@@ -1434,25 +1476,22 @@ function Admin({ tok, setTok, onLogout }) {
           )}
         </div>
 
-        {hariIni.length > 0 ? (
+        {hariIniSemua.length > 0 ? (
           <div className="admin-hero-meta-box">
             <div className="meta-box-row">
               <span className="meta-box-label">
                 <IconClock size={12} />
-                <span>Masuk {hariIni[0].jam} WIB</span>
-              </span>
-              <span className="meta-box-val">
-                Oleh: <strong>{hariIni[0].pengisi}</strong> {hariIni[0].pengganti === 'Ya' ? '(Pengganti)' : ''}
+                <span>Terdata {hariIniSemua.length} laporan personil hari ini</span>
               </span>
             </div>
           </div>
         ) : (
           <div className="admin-hero-meta-box pending">
-            <span>Presensi subuh hari ini belum dikirimkan oleh petugas.</span>
+            <span>Presensi sholat jama'ah hari ini belum dikirimkan oleh petugas.</span>
           </div>
         )}
 
-        {/* 4 Hero Counters for Instant Glance */}
+        {/* 4 Hero Counters */}
         {hariIni.length > 0 && (
           <div className="admin-hero-stats-row">
             <div className="hero-stat-pill hadir">
@@ -1480,7 +1519,7 @@ function Admin({ tok, setTok, onLogout }) {
         {[
           ['hari', 'Hari Ini', <IconCalendar size={14} key="t1" />],
           ['rekap', 'Rekap Bulanan', <IconFileText size={14} key="t2" />],
-          ['atur', 'Setelan Jam', <IconSettings size={14} key="t3" />]
+          ['atur', 'Setelan Waktu', <IconSettings size={14} key="t3" />]
         ].map(([k, n, icon]) => (
           <button
             key={k}
@@ -1501,9 +1540,33 @@ function Admin({ tok, setTok, onLogout }) {
         </div>
       )}
 
-      {/* Tab 1: Hari Ini (100% Native Mobile Cards) */}
+      {/* Tab 1: Hari Ini */}
       {tab === 'hari' && (
         <div className="admin-tab-content">
+          {/* Filter Waktu Sholat di Admin */}
+          <div style={{ display: 'flex', gap: '4px', overflowX: 'auto', marginBottom: '12px', paddingBottom: '2px' }}>
+            {daftarSholatAdmin.map(sh => (
+              <button
+                key={sh}
+                type="button"
+                onClick={() => setFilterSholat(sh)}
+                style={{
+                  padding: '6px 12px',
+                  borderRadius: 'var(--radius-full)',
+                  border: '1px solid ' + (filterSholat === sh ? 'var(--emerald-600)' : 'var(--slate-200)'),
+                  background: filterSholat === sh ? 'var(--emerald-50)' : '#ffffff',
+                  color: filterSholat === sh ? 'var(--emerald-800)' : 'var(--slate-600)',
+                  fontSize: '12px',
+                  fontWeight: filterSholat === sh ? '800' : '600',
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap'
+                }}
+              >
+                {sh}
+              </button>
+            ))}
+          </div>
+
           {!hariIni.length ? (
             <div className="mobile-empty-card">
               <div className="empty-icon-ring">
@@ -1511,21 +1574,23 @@ function Admin({ tok, setTok, onLogout }) {
               </div>
               <h4 className="empty-title">Belum Ada Presensi Masuk</h4>
               <p className="empty-subtitle">
-                Petugas terjadwal: {(d.tim || []).map(t => t.nama).join(', ') || '-'}
+                {filterSholat === 'Semua' 
+                  ? "Belum ada laporan presensi sholat jama'ah untuk hari ini."
+                  : `Belum ada laporan presensi untuk Sholat ${filterSholat} hari ini.`}
               </p>
             </div>
           ) : (
             <div className="mobile-officers-card">
               <div className="officers-card-header">
                 <div>
-                  <h3 className="officers-header-title">Petugas Subuh Hari Ini</h3>
-                  <span className="officers-header-sub">Status kehadiran {hariIni.length} personil</span>
+                  <h3 className="officers-header-title">Petugas Korlap Hari Ini</h3>
+                  <span className="officers-header-sub">{hariIni.length} data kehadiran ({filterSholat})</span>
                 </div>
-                <span className="officers-chip">{hariIni.length} Petugas</span>
+                <span className="officers-chip">{hariIni.length} Data</span>
               </div>
 
               <div className="mobile-officers-feed">
-                {hariIni.map(r => {
+                {hariIni.map((r, idx) => {
                   const isHadir = r.ket === 'Hadir'
                   const isSakit = r.ket === 'Sakit'
                   const isIzin = r.ket === 'Izin'
@@ -1533,28 +1598,33 @@ function Admin({ tok, setTok, onLogout }) {
                   const ketClass = r.ket.toLowerCase()
 
                   return (
-                    <div className={`mobile-officer-item ${ketClass}`} key={r.nama}>
+                    <div className={`mobile-officer-item ${ketClass}`} key={r.nama + idx}>
                       <div className="officer-item-left">
                         <div className={`officer-avatar ${ketClass}`}>
                           {getInitials(r.nama)}
                         </div>
                         <div className="officer-item-details">
                           <span className="officer-fullname">{r.nama}</span>
-                          {isHadir && (
-                            <span className="officer-activity-tag hadir">
-                              Oprak-oprak subuh
+                          <div style={{ display: 'flex', gap: '6px', alignItems: 'center', marginTop: '2px', flexWrap: 'wrap' }}>
+                            <span style={{ fontSize: '10.5px', fontWeight: '800', background: 'var(--slate-100)', color: 'var(--slate-700)', padding: '2px 6px', borderRadius: '4px' }}>
+                              {r.sholat || 'Sholat'}
                             </span>
-                          )}
+                            {isHadir && (
+                              <span className="officer-activity-tag hadir">
+                                Keliling santri
+                              </span>
+                            )}
+                            {isAlfa && (
+                              <span className="officer-activity-tag alfa">
+                                Tidak hadir
+                              </span>
+                            )}
+                          </div>
                           {(isSakit || isIzin) && (
                             <div className={`officer-reason-badge ${ketClass}`}>
                               <span className="reason-label">Alasan:</span>
                               <span className="reason-text">{r.alasan ? r.alasan : (isSakit ? 'Sakit' : 'Izin')}</span>
                             </div>
-                          )}
-                          {isAlfa && (
-                            <span className="officer-activity-tag alfa">
-                              Tidak oprak-oprak
-                            </span>
                           )}
                         </div>
                       </div>
@@ -1577,10 +1647,9 @@ function Admin({ tok, setTok, onLogout }) {
         </div>
       )}
 
-      {/* Tab 2: Rekap Bulanan (100% Native Mobile UX) */}
+      {/* Tab 2: Rekap Bulanan */}
       {tab === 'rekap' && (
         <div className="admin-tab-content">
-          {/* 1. Touch-Friendly Month Navigator */}
           <div className="month-navigator-card">
             <div className="month-nav-controls">
               <button
@@ -1624,11 +1693,10 @@ function Admin({ tok, setTok, onLogout }) {
             </button>
           </div>
 
-          {/* 2. Monthly Executive Summary Card */}
           <div className="monthly-performance-card">
             <div className="performance-top-row">
               <div>
-                <span className="performance-eyebrow">Performa Subuh Bulan Ini</span>
+                <span className="performance-eyebrow">Performa Korlap Bulan Ini</span>
                 <h3 className="performance-title">
                   {rateKehadiranBulanIni}% Tingkat Kehadiran
                 </h3>
@@ -1638,7 +1706,6 @@ function Admin({ tok, setTok, onLogout }) {
               </span>
             </div>
 
-            {/* Visual Multi-Segment Progress Bar */}
             {totalTugasBulanIni > 0 ? (
               <div className="attendance-multi-bar">
                 <div
@@ -1652,9 +1719,9 @@ function Admin({ tok, setTok, onLogout }) {
                   title="Terlambat"
                 />
                 <div
-                  className="multi-segment sick"
+                  className="multi-segment excuse"
                   style={{ width: `${((totalStats.Sakit + totalStats.Izin) / totalTugasBulanIni) * 100}%` }}
-                  title="Sakit & Izin"
+                  title="Sakit / Izin"
                 />
                 <div
                   className="multi-segment alfa"
@@ -1664,109 +1731,90 @@ function Admin({ tok, setTok, onLogout }) {
               </div>
             ) : null}
 
-            {/* 4 Overview Mini Stat Counters */}
-            <div className="performance-stat-grid">
-              <div className="perf-item hadir">
-                <span className="perf-val">{totalStats.Hadir}</span>
-                <span className="perf-lbl">Hadir</span>
-                {totalStats.Terlambat > 0 && (
-                  <span className="perf-sub">({totalStats.Terlambat} Telat)</span>
-                )}
-              </div>
-              <div className="perf-item sakit">
-                <span className="perf-val">{totalStats.Sakit}</span>
-                <span className="perf-lbl">Sakit</span>
-              </div>
-              <div className="perf-item izin">
-                <span className="perf-val">{totalStats.Izin}</span>
-                <span className="perf-lbl">Izin</span>
-              </div>
-              <div className="perf-item alfa">
-                <span className="perf-val">{totalStats.Alfa}</span>
-                <span className="perf-lbl">Alfa</span>
-              </div>
+            <div className="legend-pills-row">
+              <span className="l-pill ontime">Tepat ({totalStats.Hadir - totalStats.Terlambat})</span>
+              <span className="l-pill late">Telat ({totalStats.Terlambat})</span>
+              <span className="l-pill sakit">Sakit ({totalStats.Sakit})</span>
+              <span className="l-pill izin">Izin ({totalStats.Izin})</span>
+              <span className="l-pill alfa">Alfa ({totalStats.Alfa})</span>
             </div>
           </div>
 
-          {/* 3. Search & Quick Filter Controls */}
+          {/* Search & Filter */}
           <div className="rekap-filter-section">
-            <div className="rekap-search-box">
+            <div className="rekap-search-input-wrap">
               <IconSearch size={15} className="rekap-search-icon" />
               <input
                 type="text"
                 className="rekap-search-input"
-                placeholder="Cari nama ustadz..."
+                placeholder="Cari nama personil / ustadz..."
                 value={cariRekap}
                 onChange={e => setCariRekap(e.target.value)}
               />
               {cariRekap && (
                 <button
                   type="button"
-                  className="rekap-clear-btn"
+                  className="rekap-clear-search-btn"
                   onClick={() => setCariRekap('')}
-                  aria-label="Hapus Pencarian"
                 >
-                  <IconClose size={14} />
+                  <IconClose size={13} />
                 </button>
               )}
             </div>
 
-            {/* Quick Filter Chips */}
-            <div className="rekap-filter-chips-bar">
+            <div className="rekap-filter-chips-row">
               {[
-                ['semua', `Semua (${allRekapNames.length})`],
-                ['alfa', `Ada Alfa (${allRekapNames.filter(n => (rek[n]?.Alfa || 0) > 0).length})`],
-                ['absen', `Izin/Sakit (${allRekapNames.filter(n => (rek[n]?.Sakit || 0) > 0 || (rek[n]?.Izin || 0) > 0).length})`],
-                ['rajin', `100% Hadir (${allRekapNames.filter(n => {
-                  const tot = (rek[n]?.Hadir || 0) + (rek[n]?.Sakit || 0) + (rek[n]?.Izin || 0) + (rek[n]?.Alfa || 0)
-                  return tot > 0 && rek[n]?.Hadir === tot
-                }).length})`]
-              ].map(([k, lbl]) => (
+                ['semua', 'Semua (' + allRekapNames.length + ')'],
+                ['alfa', 'Ada Alfa (' + allRekapNames.filter(n => (rek[n]?.Alfa || 0) > 0).length + ')'],
+                ['absen', 'Sakit/Izin (' + allRekapNames.filter(n => (rek[n]?.Sakit || 0) > 0 || (rek[n]?.Izin || 0) > 0).length + ')'],
+                ['rajin', '100% Hadir (' + allRekapNames.filter(n => {
+                  const u = rek[n]
+                  const t = (u.Hadir || 0) + (u.Sakit || 0) + (u.Izin || 0) + (u.Alfa || 0)
+                  return t > 0 && u.Hadir === t
+                }).length + ')']
+              ].map(([k, label]) => (
                 <button
                   key={k}
                   type="button"
-                  className={`rekap-chip-btn ${filterRekap === k ? 'active' : ''}`}
+                  className={`rekap-filter-chip ${filterRekap === k ? 'active' : ''}`}
                   onClick={() => setFilterRekap(k)}
                 >
-                  {lbl}
+                  {label}
                 </button>
               ))}
             </div>
           </div>
 
-          {/* 4. Individual Ustadz Cards Feed (Zero Tables!) */}
-          <div className="rekap-ustadz-feed">
+          {/* List Personil Rekap */}
+          <div className="rekap-ustadz-list">
             {filteredUstadz.map(n => {
               const u = rek[n]
               const tot = (u.Hadir || 0) + (u.Sakit || 0) + (u.Izin || 0) + (u.Alfa || 0)
               const rate = tot > 0 ? Math.round((u.Hadir / tot) * 100) : 0
-              const rateTone = rate >= 90 ? 'good' : rate >= 70 ? 'warn' : 'bad'
 
               return (
                 <div className="rekap-ustadz-card" key={n}>
-                  <div className="rekap-card-top-row">
-                    <div className="rekap-ustadz-info">
-                      <div className={`rekap-ustadz-avatar ${rateTone}`}>
+                  <div className="rekap-ustadz-header">
+                    <div className="rekap-ustadz-left">
+                      <div className="rekap-ustadz-avatar">
                         {getInitials(n)}
                       </div>
                       <div>
                         <span className="rekap-ustadz-name">{n}</span>
-                        <span className="rekap-ustadz-sub">{tot} kali tugas subuh</span>
+                        <span className="rekap-ustadz-sub">{tot} kali tugas korlap</span>
                       </div>
                     </div>
-
-                    <div className={`rekap-rate-pill ${rateTone}`}>
+                    <div className="rekap-ustadz-rate-badge">
                       <span className="rate-num">{rate}%</span>
-                      <span className="rate-txt">Hadir</span>
+                      <span className="rate-lbl">Hadir</span>
                     </div>
                   </div>
 
-                  {/* Individual Mini Progress Track */}
                   {tot > 0 && (
-                    <div className="ustadz-progress-track">
+                    <div className="rekap-mini-progress">
                       <div
                         className="u-seg ontime"
-                        style={{ width: `${Math.max(0, (u.Hadir - u.Terlambat) / tot * 100)}%` }}
+                        style={{ width: `${((u.Hadir - u.Terlambat) / tot) * 100}%` }}
                         title="Tepat Waktu"
                       />
                       <div
@@ -1775,7 +1823,7 @@ function Admin({ tok, setTok, onLogout }) {
                         title="Terlambat"
                       />
                       <div
-                        className="u-seg sick"
+                        className="u-seg excuse"
                         style={{ width: `${((u.Sakit + u.Izin) / tot) * 100}%` }}
                         title="Sakit & Izin"
                       />
@@ -1787,7 +1835,6 @@ function Admin({ tok, setTok, onLogout }) {
                     </div>
                   )}
 
-                  {/* Clean Stat Chips */}
                   <div className="rekap-stat-chips-row">
                     <span className="r-chip hadir">
                       <span className="lbl">Hadir</span>
@@ -1824,10 +1871,10 @@ function Admin({ tok, setTok, onLogout }) {
                 <h4 className="empty-state-h">Tidak Ada Data Ditemukan</h4>
                 <p className="empty-state-p">
                   {cariRekap
-                    ? `Tidak ada ustadz dengan nama "${cariRekap}" pada filter ini.`
+                    ? `Tidak ada personil dengan nama "${cariRekap}" pada filter ini.`
                     : !bl.length
                     ? `Belum ada presensi yang tercatat untuk bulan ${formatBulanIndo(b)}.`
-                    : 'Tidak ada ustadz yang memenuhi kriteria filter terpilih.'}
+                    : 'Tidak ada personil yang memenuhi kriteria filter terpilih.'}
                 </p>
                 {(cariRekap || filterRekap !== 'semua') && (
                   <button
@@ -1847,43 +1894,56 @@ function Admin({ tok, setTok, onLogout }) {
         </div>
       )}
 
-      {/* Tab 3: Setelan Jam Operasional */}
+      {/* Tab 3: Setelan Waktu Sholat */}
       {tab === 'atur' && (
         <div className="admin-tab-content">
-          <div className="ios-settings-card">
-            <div className="ios-settings-header">
-              <h3 className="ios-settings-title">Jam Operasional Presensi</h3>
-              <p className="ios-settings-subtitle">Atur batas waktu otomatis formulir subuh</p>
-            </div>
-
-            <div className="ios-settings-group">
-              {[
-                ['jam_buka', 'Jam Buka Form', 'Mulai bisa dibuka untuk presensi', <IconClock size={16} key="i1" />],
-                ['jam_batas_tepat', 'Batas Waktu Tepat', 'Lewat dari jam ini tercatat Terlambat', <IconShield size={16} key="i2" />],
-                ['jam_tutup', 'Jam Penutupan Form', 'Formulir otomatis terkunci dan ditutup', <IconLock size={16} key="i3" />]
-              ].map(([k, n, desc, icon]) => (
-                <div key={k} className="ios-settings-row">
-                  <div className="ios-row-left">
-                    <div className="ios-icon-box">
-                      {icon}
-                    </div>
-                    <div className="ios-row-text">
-                      <span className="ios-row-label">{n}</span>
-                      <span className="ios-row-desc">{desc}</span>
-                    </div>
-                  </div>
-                  <div className="ios-row-right">
-                    <input
-                      type="time"
-                      className="ios-time-picker"
-                      value={atur[k] || ''}
-                      onChange={e => setAtur({ ...atur, [k]: e.target.value })}
-                    />
-                  </div>
+          {[
+            { id: 'shubuh', label: 'Shubuh', defaultBuka: '04:15', defaultBatas: '04:45', defaultTutup: '05:30' },
+            { id: 'dhuhur', label: 'Dhuhur', defaultBuka: '11:45', defaultBatas: '12:15', defaultTutup: '12:45' },
+            { id: 'ashar', label: 'Ashar', defaultBuka: '15:00', defaultBatas: '15:30', defaultTutup: '16:00' },
+            { id: 'magrib', label: 'Magrib', defaultBuka: '17:45', defaultBatas: '18:15', defaultTutup: '18:45' },
+            { id: 'isya', label: 'Isya', defaultBuka: '19:00', defaultBatas: '19:30', defaultTutup: '20:15' }
+          ].map(sh => (
+            <div key={sh.id} className="ios-settings-card" style={{ marginBottom: '14px' }}>
+              <div className="ios-settings-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <h3 className="ios-settings-title">Jam Operasional Sholat {sh.label}</h3>
+                  <p className="ios-settings-subtitle">Batas buka, tepat waktu, dan tutup form</p>
                 </div>
-              ))}
+                <span style={{ fontSize: '11px', fontWeight: '800', background: 'var(--emerald-100)', color: 'var(--emerald-800)', padding: '3px 8px', borderRadius: '6px' }}>
+                  {sh.label}
+                </span>
+              </div>
+
+              <div className="ios-settings-group">
+                {[
+                  [`${sh.id}_buka`, 'Jam Buka Form', 'Mulai bisa dibuka untuk presensi', <IconClock size={16} key="i1" />],
+                  [`${sh.id}_batas`, 'Batas Waktu Tepat', 'Lewat dari jam ini tercatat Terlambat', <IconShield size={16} key="i2" />],
+                  [`${sh.id}_tutup`, 'Jam Penutupan Form', 'Formulir otomatis terkunci dan ditutup', <IconLock size={16} key="i3" />]
+                ].map(([k, n, desc, icon]) => (
+                  <div key={k} className="ios-settings-row">
+                    <div className="ios-row-left">
+                      <div className="ios-icon-box">
+                        {icon}
+                      </div>
+                      <div className="ios-row-text">
+                        <span className="ios-row-label">{n}</span>
+                        <span className="ios-row-desc">{desc}</span>
+                      </div>
+                    </div>
+                    <div className="ios-row-right">
+                      <input
+                        type="time"
+                        className="ios-time-picker"
+                        value={atur[k] || ''}
+                        onChange={e => setAtur({ ...atur, [k]: e.target.value })}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          ))}
 
           <button
             type="button"
@@ -1900,16 +1960,14 @@ function Admin({ tok, setTok, onLogout }) {
             ) : (
               <>
                 <IconCheck size={16} />
-                <span>Simpan Pengaturan</span>
+                <span>Simpan Semua Pengaturan Jam</span>
               </>
             )}
           </button>
         </div>
       )}
 
-      {/* Pop Up Modern Status Admin */}
       <StatusModal modal={statusModal} onClose={() => setStatusModal({ ...statusModal, open: false })} />
-
       <AppFooter subtitle="Dashboard Admin" />
     </div>
   )

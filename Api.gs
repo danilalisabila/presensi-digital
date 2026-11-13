@@ -1,12 +1,40 @@
 /** 
- * API Absensi Korlap Subuh
- * Tempelkan file ini di Google Apps Script (Extensions > Apps Script) pada Google Spreadsheet Anda.
+ * ============================================================
+ * API Absensi Korlap Sholat Jama'ah - Pondok Putra
+ * Ponpes Salafiyah Al-Falah Putak
+ * 
+ * Tempelkan file ini di Google Apps Script (Extensions > Apps Script)
+ * pada Google Spreadsheet Anda.
+ * ============================================================
  */
 
 const TZ = 'Asia/Jakarta';
 const HARI = [null, 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Ahad'];
+const DAFTAR_SHOLAT = ['Shubuh', 'Dhuhur', 'Ashar', 'Magrib', 'Isya'];
+
 const ss_ = () => SpreadsheetApp.getActiveSpreadsheet();
 const out_ = o => ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);
+
+// Cache memori agar doGet super cepat (<1 detik) tanpa hit ulang setiap tab sheet
+function getCachedData_(nama, expiredSeconds) {
+  const cache = CacheService.getScriptCache();
+  const k = 'sheet_' + nama;
+  const c = cache.get(k);
+  if (c) {
+    try { return JSON.parse(c); } catch (e) {}
+  }
+  const data = baca_(nama);
+  try {
+    cache.put(k, JSON.stringify(data), expiredSeconds || 180); // cache 3 menit
+  } catch (e) {}
+  return data;
+}
+
+function clearSheetCache_(nama) {
+  try {
+    CacheService.getScriptCache().remove('sheet_' + nama);
+  } catch (e) {}
+}
 
 function baca_(nama) {
   const sh = ss_().getSheetByName(nama);
@@ -17,11 +45,13 @@ function baca_(nama) {
   return v.filter(r => r[0] !== '').map(r => { const o = {}; h.forEach((k, i) => o[k] = r[i]); return o; });
 }
 
-function jam_(v) { return v instanceof Date ? Utilities.formatDate(v, TZ, 'HH:mm') : String(v).trim(); }
+function jam_(v) { 
+  return v instanceof Date ? Utilities.formatDate(v, TZ, 'HH:mm') : String(v).trim(); 
+}
 
 function atur_() { 
   const o = {}; 
-  baca_('Pengaturan').forEach(r => o[r.Kunci] = jam_(r.Nilai)); 
+  getCachedData_('Pengaturan', 300).forEach(r => o[r.Kunci] = jam_(r.Nilai)); 
   return o; 
 }
 
@@ -35,31 +65,74 @@ function sekarang_() {
   };
 }
 
-function tim_(hari) {
+function timSholat_(sholat) {
   const u = {}; 
-  baca_('Ustadz').forEach(r => u[r.ID] = r.Nama);
-  return baca_('Jadwal').filter(r => r.Hari === hari)
-    .map(r => ({ nama: u[r.IDUstadz] || r.IDUstadz, peran: r.Peran, petugas: r.PetugasAbsen === 'Ya' }));
+  getCachedData_('Ustadz', 600).forEach(r => u[r.ID] = r.Nama);
+  return getCachedData_('Jadwal', 600).filter(r => r.Sholat === sholat)
+    .map(r => ({ 
+      nama: u[r.IDUstadz] || r.IDUstadz, 
+      peran: r.Peran, 
+      petugas: r.PetugasAbsen === 'Ya' 
+    }));
 }
 
-function sudah_(tgl) {
-  return baca_('Absensi').some(r => r.Tanggal instanceof Date && Utilities.formatDate(r.Tanggal, TZ, 'yyyy-MM-dd') === tgl);
+function getJadwalSholatConfig_(a, sholat) {
+  const pfx = String(sholat).toLowerCase();
+  const buka = a[pfx + '_buka'] || (sholat === 'Shubuh' ? '04:15' : sholat === 'Dhuhur' ? '11:45' : sholat === 'Ashar' ? '15:00' : sholat === 'Magrib' ? '17:45' : '19:00');
+  const batas = a[pfx + '_batas'] || (sholat === 'Shubuh' ? '04:45' : sholat === 'Dhuhur' ? '12:15' : sholat === 'Ashar' ? '15:30' : sholat === 'Magrib' ? '18:15' : '19:30');
+  const tutup = a[pfx + '_tutup'] || (sholat === 'Shubuh' ? '05:30' : sholat === 'Dhuhur' ? '12:45' : sholat === 'Ashar' ? '16:00' : sholat === 'Magrib' ? '18:45' : '20:15');
+  return { buka, batas, tutup };
 }
 
-// Endpoint GET: Info hari ini untuk halaman form absensi
-function doGet() {
+function tentukanSholatAktif_(s, a) {
+  const jam = s.jam;
+  for (let i = 0; i < DAFTAR_SHOLAT.length; i++) {
+    const sh = DAFTAR_SHOLAT[i];
+    const cfg = getJadwalSholatConfig_(a, sh);
+    if (jam <= cfg.tutup) {
+      return sh;
+    }
+  }
+  return 'Shubuh';
+}
+
+function sudahAbsen_(tgl, sholat) {
+  const rows = getCachedData_('Absensi', 60); // cache 1 menit untuk absensi
+  return rows.some(r => {
+    const tMatch = r.Tanggal instanceof Date 
+      ? Utilities.formatDate(r.Tanggal, TZ, 'yyyy-MM-dd') === tgl 
+      : String(r.Tanggal) === tgl;
+    const sMatch = String(r.Sholat || '').trim().toLowerCase() === String(sholat).trim().toLowerCase();
+    return tMatch && sMatch;
+  });
+}
+
+// Endpoint GET: Info hari ini & waktu sholat (Kini Teroptimasi Cepat)
+function doGet(e) {
   try {
     const s = sekarang_(), a = atur_();
+    const reqSholat = (e && e.parameter && e.parameter.sholat) 
+      ? e.parameter.sholat 
+      : tentukanSholatAktif_(s, a);
+
+    const sholat = DAFTAR_SHOLAT.indexOf(reqSholat) !== -1 ? reqSholat : 'Shubuh';
+    const cfg = getJadwalSholatConfig_(a, sholat);
+    const sudah = sudahAbsen_(s.tgl, sholat);
+
+    const status = s.jam < cfg.buka ? 'belum' : s.jam > cfg.tutup ? 'tutup' : 'buka';
+
     return out_({
       hari: s.hari, 
       tanggal: s.tgl, 
       jam: s.jam, 
-      buka: a.jam_buka || '04:15', 
-      batas: a.jam_batas_tepat || '04:45', 
-      tutup: a.jam_tutup || '05:30',
-      status: s.jam < a.jam_buka ? 'belum' : s.jam > a.jam_tutup ? 'tutup' : 'buka',
-      sudah: sudah_(s.tgl), 
-      tim: tim_(s.hari)
+      sholat: sholat,
+      daftar_sholat: DAFTAR_SHOLAT,
+      buka: cfg.buka, 
+      batas: cfg.batas, 
+      tutup: cfg.tutup,
+      status: status,
+      sudah: sudah, 
+      tim: timSholat_(sholat)
     });
   } catch (x) {
     return out_({ error: x.message });
@@ -86,15 +159,18 @@ function kirim_(d) {
   lock.waitLock(20000);
   try {
     const s = sekarang_(), a = atur_();
-    if (s.jam < a.jam_buka) throw new Error('Absen belum dibuka (mulai ' + a.jam_buka + ')');
-    if (s.jam > a.jam_tutup) throw new Error('Absen sudah ditutup (' + a.jam_tutup + ')');
-    if (sudah_(s.tgl)) throw new Error('Absen hari ini sudah dikirim');
+    const sholat = d.sholat || tentukanSholatAktif_(s, a);
+    const cfg = getJadwalSholatConfig_(a, sholat);
+
+    if (s.jam < cfg.buka) throw new Error('Absen ' + sholat + ' belum dibuka (mulai ' + cfg.buka + ')');
+    if (s.jam > cfg.tutup) throw new Error('Absen ' + sholat + ' sudah ditutup (' + cfg.tutup + ')');
+    if (sudahAbsen_(s.tgl, sholat)) throw new Error('Absen ' + sholat + ' hari ini sudah pernah dikirim');
     
-    const tim = tim_(s.hari);
-    if (!tim.some(t => t.nama === d.pengisi)) throw new Error('Pengisi tidak termasuk tim hari ini');
+    const tim = timSholat_(sholat);
+    if (!tim.some(t => t.nama === d.pengisi)) throw new Error('Pengisi tidak termasuk tim sholat ' + sholat);
     
     const resmi = tim.find(t => t.petugas);
-    const status = s.jam <= a.jam_batas_tepat ? 'Tepat Waktu' : 'Terlambat';
+    const status = s.jam <= cfg.batas ? 'Tepat Waktu' : 'Terlambat';
     const tgl = new Date(s.tgl + 'T00:00:00+07:00');
     
     const rows = tim.map(t => {
@@ -102,12 +178,24 @@ function kirim_(d) {
       if (!i || ['Hadir', 'Sakit', 'Izin', 'Alfa'].indexOf(i.ket) < 0) throw new Error('Data ' + t.nama + ' tidak lengkap');
       const al = (i.ket === 'Hadir' || i.ket === 'Alfa') ? '' : String(i.alasan || '').trim();
       if ((i.ket === 'Sakit' || i.ket === 'Izin') && !al) throw new Error('Alasan ' + t.nama + ' wajib diisi');
-      return [s.n, tgl, s.hari, t.nama, i.ket, al, status, d.pengisi, resmi && resmi.nama === d.pengisi ? 'Tidak' : 'Ya'];
+      return [
+        s.n, 
+        tgl, 
+        s.hari, 
+        sholat,
+        t.nama, 
+        i.ket, 
+        al, 
+        status, 
+        d.pengisi, 
+        resmi && resmi.nama === d.pengisi ? 'Tidak' : 'Ya'
+      ];
     });
     
     const sh = ss_().getSheetByName('Absensi');
-    sh.getRange(sh.getLastRow() + 1, 1, rows.length, 9).setValues(rows);
-    return { ok: true, status, jam: s.jam };
+    sh.getRange(sh.getLastRow() + 1, 1, rows.length, 10).setValues(rows);
+    clearSheetCache_('Absensi');
+    return { ok: true, status, jam: s.jam, sholat };
   } finally { 
     lock.releaseLock(); 
   }
@@ -128,7 +216,7 @@ function login_(d) {
   
   c.remove(k);
   const t = Utilities.getUuid(); 
-  c.put('tok_' + t, em, 21600); // sesi 6 jam
+  c.put('tok_' + t, em, 21600);
   return { token: t, nama: ad.Nama };
 }
 
@@ -140,20 +228,31 @@ function cek_(t) {
 
 function data_(d) {
   cek_(d.token);
-  const s = sekarang_();
+  const s = sekarang_(), a = atur_();
   const rows = baca_('Absensi').map(r => ({
     tanggal: r.Tanggal instanceof Date ? Utilities.formatDate(r.Tanggal, TZ, 'yyyy-MM-dd') : String(r.Tanggal),
     jam: r.Timestamp instanceof Date ? Utilities.formatDate(r.Timestamp, TZ, 'HH:mm') : String(r.Timestamp),
     hari: r.Hari, 
+    sholat: r.Sholat || 'Shubuh',
     nama: r.Nama, 
     ket: r.Keterangan, 
     alasan: r.Alasan, 
     waktu: r.StatusWaktu, 
     pengisi: r.DiisiOleh, 
     pengganti: r.Pengganti
-  })).slice(-1500);
+  })).slice(-2500);
   
-  return { rows, atur: atur_(), hari: s.hari, tgl: s.tgl, tim: tim_(s.hari) };
+  const sholatAktif = tentukanSholatAktif_(s, a);
+
+  return { 
+    rows, 
+    atur: a, 
+    hari: s.hari, 
+    tgl: s.tgl, 
+    sholat: sholatAktif,
+    tim: timSholat_(sholatAktif),
+    daftar_sholat: DAFTAR_SHOLAT
+  };
 }
 
 function simpan_(d) {
@@ -162,87 +261,19 @@ function simpan_(d) {
   if (!sh) throw new Error('Sheet "Pengaturan" tidak ditemukan');
   
   const v = sh.getDataRange().getValues();
-  ['jam_buka', 'jam_batas_tepat', 'jam_tutup'].forEach(k => {
-    const x = String(d.atur[k]);
-    if (!/^\d\d:\d\d$/.test(x)) throw new Error('Format jam harus JJ:MM');
+  const keys = Object.keys(d.atur || {});
+  
+  keys.forEach(k => {
+    const x = String(d.atur[k]).trim();
+    if (!/^\d\d:\d\d$/.test(x)) return;
     const i = v.findIndex(r => r[0] === k);
-    if (i !== -1) sh.getRange(i + 1, 2).setValue(x);
+    if (i !== -1) {
+      sh.getRange(i + 1, 2).setValue(x);
+    } else {
+      sh.appendRow([k, x, 'Pengaturan waktu']);
+    }
   });
   
-  return { ok: true, pesan: 'Pengaturan jam berhasil diperbarui' };
-}
-
-/**
- * ========================================================
- * FUNGSI SETUP DATABASE OTOMATIS
- * Jalankan fungsi ini 1x di editor Apps Script (Pilih setupDatabaseAwal -> Klik Run)
- * ========================================================
- */
-function setupDatabaseAwal() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-
-  // 1. Sheet Pengaturan
-  let shAtur = ss.getSheetByName('Pengaturan');
-  if (!shAtur) shAtur = ss.insertSheet('Pengaturan');
-  if (shAtur.getLastRow() === 0) {
-    shAtur.appendRow(['Kunci', 'Nilai', 'Keterangan']);
-    shAtur.appendRow(['jam_buka', '04:15', 'Waktu buka form absensi']);
-    shAtur.appendRow(['jam_batas_tepat', '04:45', 'Batas maksimal tepat waktu']);
-    shAtur.appendRow(['jam_tutup', '05:30', 'Waktu tutup form absensi']);
-    formatHeader_(shAtur, 3);
-  }
-
-  // 2. Sheet Ustadz
-  let shUstadz = ss.getSheetByName('Ustadz');
-  if (!shUstadz) shUstadz = ss.insertSheet('Ustadz');
-  if (shUstadz.getLastRow() === 0) {
-    shUstadz.appendRow(['ID', 'Nama', 'Kontak']);
-    shUstadz.appendRow(['U01', 'Ustadz Ahmad', '081234567890']);
-    shUstadz.appendRow(['U02', 'Ustadz Abdullah', '081234567891']);
-    shUstadz.appendRow(['U03', 'Ustadz Hasan', '081234567892']);
-    formatHeader_(shUstadz, 3);
-  }
-
-  // 3. Sheet Jadwal
-  let shJadwal = ss.getSheetByName('Jadwal');
-  if (!shJadwal) shJadwal = ss.insertSheet('Jadwal');
-  if (shJadwal.getLastRow() === 0) {
-    shJadwal.appendRow(['Hari', 'IDUstadz', 'Peran', 'PetugasAbsen']);
-    const hariList = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Ahad'];
-    hariList.forEach(h => {
-      shJadwal.appendRow([h, 'U01', 'Ketua', 'Ya']);
-      shJadwal.appendRow([h, 'U02', 'Anggota', 'Tidak']);
-    });
-    formatHeader_(shJadwal, 4);
-  }
-
-  // 4. Sheet Absensi
-  let shAbsen = ss.getSheetByName('Absensi');
-  if (!shAbsen) shAbsen = ss.insertSheet('Absensi');
-  if (shAbsen.getLastRow() === 0) {
-    shAbsen.appendRow(['Timestamp', 'Tanggal', 'Hari', 'Nama', 'Keterangan', 'Alasan', 'StatusWaktu', 'DiisiOleh', 'Pengganti']);
-    formatHeader_(shAbsen, 9);
-  }
-
-  // 5. Sheet Admin
-  let shAdmin = ss.getSheetByName('Admin');
-  if (!shAdmin) shAdmin = ss.insertSheet('Admin');
-  if (shAdmin.getLastRow() === 0) {
-    shAdmin.appendRow(['Email', 'Nama', 'PIN', 'Aktif']);
-    shAdmin.appendRow(['admin@korlap.com', 'Admin Korlap', '1234', 'Ya']);
-    formatHeader_(shAdmin, 4);
-  }
-
-  const sheet1 = ss.getSheetByName('Sheet1');
-  if (sheet1 && ss.getSheets().length > 1 && sheet1.getLastRow() === 0) {
-    try { ss.deleteSheet(sheet1); } catch (e) {}
-  }
-
-  Logger.log('Setup database berhasil dibuat!');
-}
-
-function formatHeader_(sh, cols) {
-  const headerRange = sh.getRange(1, 1, 1, cols);
-  headerRange.setBackground('#0F5132').setFontColor('#FFFFFF').setFontWeight('bold');
-  sh.setFrozenRows(1);
+  clearSheetCache_('Pengaturan');
+  return { ok: true, pesan: 'Pengaturan jam sholat berhasil diperbarui' };
 }
