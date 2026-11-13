@@ -474,18 +474,11 @@ function StatusModal({ modal, onClose, onConfirm }) {
   )
 }
 
-function AppFooter({ subtitle }) {
+function AppFooter() {
   return (
     <footer className="app-global-footer">
-      <div className="form-footer-credits" style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-        <span style={{ fontWeight: '800', letterSpacing: '0.04em' }}>PONDOK PUTRA</span>
-        <span style={{ fontSize: '10px', opacity: 0.9 }}>YAYASAN PONDOK PESANTREN SALAFIYAH AL-FALAH PUTAK</span>
-        <span style={{ fontSize: '10.5px', marginTop: '2px', color: 'var(--emerald-800)', fontWeight: '700' }}>
-          {subtitle || "Presensi Korlap Sholat Jama'ah"}
-        </span>
-      </div>
       <p className="app-copyright-footer">
-        © JAKASTRA OFFICIAL 2026. All Rights Reserved.
+        © 2026 Ponpes Al-Falah Putak • Jakastra
       </p>
     </footer>
   )
