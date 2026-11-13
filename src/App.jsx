@@ -1392,6 +1392,7 @@ function Admin({ tok, setTok, onLogout }) {
 
   const rows = d.rows || []
   const b = bulan || d.tgl.slice(0, 7)
+  const bulanIniAsli = d.tgl.slice(0, 7)
   const hariIniSemua = rows.filter(r => r.tanggal === d.tgl)
   const hariIni = filterSholat === 'Semua' 
     ? hariIniSemua 
@@ -1464,72 +1465,12 @@ function Admin({ tok, setTok, onLogout }) {
 
   return (
     <div className="scroll-body">
-      {/* 1. Executive Admin Hero Card */}
-      <div className="unified-hero admin-hero-card">
-        <div className="hero-meta-bar">
-          <span className="session-chip">
-            <IconShield size={11} />
-            Panel Admin Korlap
-          </span>
-        </div>
-
-        <div className="admin-hero-main-row">
-          <div>
-            <span className="admin-hero-eyebrow">Pemantauan Presensi Sholat</span>
-            <h2 className="admin-hero-heading">{formatTanggalIndo(d.tgl, d.hari)}</h2>
-          </div>
-          {hariIni.length > 0 && (
-            <span className={`admin-hero-status-pill ${hariIni[0].waktu === 'Tepat Waktu' ? 'ontime' : 'late'}`}>
-              {hariIni[0].waktu === 'Tepat Waktu' ? <IconCheckCircle size={13} /> : <IconAlertCircle size={13} />}
-              <span>{hariIni[0].waktu}</span>
-            </span>
-          )}
-        </div>
-
-        {hariIniSemua.length > 0 ? (
-          <div className="admin-hero-meta-box">
-            <div className="meta-box-row">
-              <span className="meta-box-label">
-                <IconClock size={12} />
-                <span>Terdata {hariIniSemua.length} laporan personil hari ini</span>
-              </span>
-            </div>
-          </div>
-        ) : (
-          <div className="admin-hero-meta-box pending">
-            <span>Presensi sholat jama'ah hari ini belum dikirimkan oleh petugas.</span>
-          </div>
-        )}
-
-        {/* 4 Hero Counters */}
-        {hariIni.length > 0 && (
-          <div className="admin-hero-stats-row">
-            <div className="hero-stat-pill hadir">
-              <span className="val">{hariIniStats.Hadir}</span>
-              <span className="lbl">Hadir</span>
-            </div>
-            <div className="hero-stat-pill sakit">
-              <span className="val">{hariIniStats.Sakit}</span>
-              <span className="lbl">Sakit</span>
-            </div>
-            <div className="hero-stat-pill izin">
-              <span className="val">{hariIniStats.Izin}</span>
-              <span className="lbl">Izin</span>
-            </div>
-            <div className="hero-stat-pill alfa">
-              <span className="val">{hariIniStats.Alfa}</span>
-              <span className="lbl">Alfa</span>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* 2. Modern Segmented Tabs */}
+      {/* 1. Modern Segmented Tabs Navigation (Pinned at Top) */}
       <nav className="segmented-admin-tabs">
         {[
-          ['hari', 'Hari Ini', <IconCalendar size={14} key="t1" />],
-          ['rekap', 'Rekap Bulanan', <IconFileText size={14} key="t2" />],
-          ['atur', 'Setelan Waktu', <IconSettings size={14} key="t3" />]
+          ['hari', 'Hari Ini', <IconCalendar size={13} key="t1" />],
+          ['rekap', 'Rekap Bulanan', <IconFileText size={13} key="t2" />],
+          ['atur', 'Setelan Waktu', <IconSettings size={13} key="t3" />]
         ].map(([k, n, icon]) => (
           <button
             key={k}
@@ -1553,6 +1494,66 @@ function Admin({ tok, setTok, onLogout }) {
       {/* Tab 1: Hari Ini */}
       {tab === 'hari' && (
         <div className="admin-tab-content">
+          {/* Executive Admin Hero Card */}
+          <div className="unified-hero admin-hero-card">
+            <div className="hero-meta-bar">
+              <span className="session-chip">
+                <IconShield size={11} />
+                Panel Admin Korlap
+              </span>
+            </div>
+
+            <div className="admin-hero-main-row">
+              <div>
+                <span className="admin-hero-eyebrow">Pemantauan Presensi Sholat</span>
+                <h2 className="admin-hero-heading">{formatTanggalIndo(d.tgl, d.hari)}</h2>
+              </div>
+              {hariIni.length > 0 && (
+                <span className={`admin-hero-status-pill ${hariIni[0].waktu === 'Tepat Waktu' ? 'ontime' : 'late'}`}>
+                  {hariIni[0].waktu === 'Tepat Waktu' ? <IconCheckCircle size={13} /> : <IconAlertCircle size={13} />}
+                  <span>{hariIni[0].waktu}</span>
+                </span>
+              )}
+            </div>
+
+            {hariIniSemua.length > 0 ? (
+              <div className="admin-hero-meta-box">
+                <div className="meta-box-row">
+                  <span className="meta-box-label">
+                    <IconClock size={12} />
+                    <span>Terdata {hariIniSemua.length} laporan personil hari ini</span>
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <div className="admin-hero-meta-box pending">
+                <span>Presensi sholat jama'ah hari ini belum dikirimkan oleh petugas.</span>
+              </div>
+            )}
+
+            {/* 4 Hero Counters */}
+            {hariIni.length > 0 && (
+              <div className="admin-hero-stats-row">
+                <div className="hero-stat-pill hadir">
+                  <span className="val">{hariIniStats.Hadir}</span>
+                  <span className="lbl">Hadir</span>
+                </div>
+                <div className="hero-stat-pill sakit">
+                  <span className="val">{hariIniStats.Sakit}</span>
+                  <span className="lbl">Sakit</span>
+                </div>
+                <div className="hero-stat-pill izin">
+                  <span className="val">{hariIniStats.Izin}</span>
+                  <span className="lbl">Izin</span>
+                </div>
+                <div className="hero-stat-pill alfa">
+                  <span className="val">{hariIniStats.Alfa}</span>
+                  <span className="lbl">Alfa</span>
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Filter Waktu Sholat di Admin */}
           <div className="admin-filter-bar">
             {daftarSholatAdmin.map(sh => {
@@ -1654,123 +1655,124 @@ function Admin({ tok, setTok, onLogout }) {
       {/* Tab 2: Rekap Bulanan */}
       {tab === 'rekap' && (
         <div className="admin-tab-content">
-          <div className="month-navigator-card">
-            <div className="month-nav-controls">
-              <button
-                type="button"
-                className="month-nav-btn"
-                onClick={() => setBulan(geserBulan(b, -1))}
-                aria-label="Bulan Sebelumnya"
-              >
-                <IconChevronLeft size={16} />
-              </button>
+          {/* 1. Integrated Monthly Analytics Hero Card */}
+          <div className="rekap-hero-banner">
+            <div className="rekap-hero-top-row">
+              <div className="rekap-month-pill">
+                <button
+                  type="button"
+                  className="rekap-month-arrow"
+                  onClick={() => setBulan(geserBulan(b, -1))}
+                  aria-label="Bulan Sebelumnya"
+                >
+                  <IconChevronLeft size={14} />
+                </button>
 
-              <div className="month-nav-display">
-                <span className="month-nav-name">{formatBulanIndo(b)}</span>
-                <input
-                  type="month"
-                  className="month-nav-hidden-input"
-                  value={b}
-                  onChange={e => setBulan(e.target.value)}
-                  title="Pilih Bulan Spesifik"
-                />
+                <div className="rekap-month-label-wrap">
+                  <span className="rekap-month-label">{formatBulanIndo(b)}</span>
+                  <input
+                    type="month"
+                    className="rekap-month-hidden-picker"
+                    value={b}
+                    onChange={e => setBulan(e.target.value)}
+                    title="Pilih Bulan Spesifik"
+                  />
+                </div>
+
+                <button
+                  type="button"
+                  className="rekap-month-arrow"
+                  onClick={() => setBulan(geserBulan(b, 1))}
+                  aria-label="Bulan Berikutnya"
+                >
+                  <IconChevronRight size={14} />
+                </button>
               </div>
 
               <button
                 type="button"
-                className="month-nav-btn"
-                onClick={() => setBulan(geserBulan(b, 1))}
-                aria-label="Bulan Berikutnya"
+                className="rekap-export-glass-btn"
+                onClick={unduh}
+                disabled={!bl.length}
+                title={bl.length ? "Unduh laporan CSV bulan ini" : "Belum ada data untuk diekspor"}
               >
-                <IconChevronRight size={16} />
+                <IconDownload size={13} />
+                <span>Ekspor CSV</span>
               </button>
             </div>
 
-            <button
-              type="button"
-              className="rekap-export-pill-btn"
-              onClick={unduh}
-              disabled={!bl.length}
-            >
-              <IconDownload size={13} />
-              <span>Ekspor CSV</span>
-            </button>
-          </div>
-
-          <div className="monthly-performance-card">
-            <div className="performance-top-row">
-              <div>
-                <span className="performance-eyebrow">Performa Korlap Bulan Ini</span>
-                <h3 className="performance-title">
-                  {rateKehadiranBulanIni}% Tingkat Kehadiran
-                </h3>
+            <div className="rekap-score-row">
+              <div className="rekap-score-left">
+                <span className="rekap-score-rate">{rateKehadiranBulanIni}%</span>
+                <span className="rekap-score-label">Tingkat Kehadiran Korlap</span>
               </div>
-              <span className="performance-total-tag">
-                {totalTugasBulanIni} Total Tugas
-              </span>
+              <div className="rekap-score-right">
+                <span className="rekap-duties-chip">{totalTugasBulanIni} Total Tugas</span>
+                <span className="rekap-personil-chip">{allRekapNames.length} Personil Terdaftar</span>
+              </div>
             </div>
 
-            {totalTugasBulanIni > 0 ? (
-              <div className="attendance-multi-bar">
+            {totalTugasBulanIni > 0 && (
+              <div className="rekap-progress-track">
                 <div
-                  className="multi-segment ontime"
+                  className="u-seg ontime"
                   style={{ width: `${Math.max(0, (totalStats.Hadir - totalStats.Terlambat) / totalTugasBulanIni * 100)}%` }}
                   title="Tepat Waktu"
                 />
                 <div
-                  className="multi-segment late"
+                  className="u-seg late"
                   style={{ width: `${(totalStats.Terlambat / totalTugasBulanIni) * 100}%` }}
                   title="Terlambat"
                 />
                 <div
-                  className="multi-segment sick"
+                  className="u-seg sick"
                   style={{ width: `${(totalStats.Sakit / totalTugasBulanIni) * 100}%` }}
                   title="Sakit"
                 />
                 <div
-                  className="multi-segment excuse"
+                  className="u-seg excuse"
                   style={{ width: `${(totalStats.Izin / totalTugasBulanIni) * 100}%` }}
                   title="Izin"
                 />
                 <div
-                  className="multi-segment alfa"
+                  className="u-seg alfa"
                   style={{ width: `${(totalStats.Alfa / totalTugasBulanIni) * 100}%` }}
                   title="Alfa"
                 />
               </div>
-            ) : null}
+            )}
 
-            <div className="performance-stat-grid">
-              <div className="perf-item hadir">
-                <span className="perf-val">{totalStats.Hadir}</span>
-                <span className="perf-lbl">Hadir</span>
+            <div className="rekap-stat-tiles-grid">
+              <div className="rekap-tile hadir">
+                <span className="rekap-tile-num">{totalStats.Hadir}</span>
+                <span className="rekap-tile-lbl">Hadir</span>
                 {totalStats.Terlambat > 0 && (
-                  <span className="perf-sub">{totalStats.Terlambat} telat</span>
+                  <span className="rekap-tile-sub">{totalStats.Terlambat} telat</span>
                 )}
               </div>
-              <div className="perf-item sakit">
-                <span className="perf-val">{totalStats.Sakit}</span>
-                <span className="perf-lbl">Sakit</span>
+              <div className="rekap-tile sakit">
+                <span className="rekap-tile-num">{totalStats.Sakit}</span>
+                <span className="rekap-tile-lbl">Sakit</span>
               </div>
-              <div className="perf-item izin">
-                <span className="perf-val">{totalStats.Izin}</span>
-                <span className="perf-lbl">Izin</span>
+              <div className="rekap-tile izin">
+                <span className="rekap-tile-num">{totalStats.Izin}</span>
+                <span className="rekap-tile-lbl">Izin</span>
               </div>
-              <div className="perf-item alfa">
-                <span className="perf-val">{totalStats.Alfa}</span>
-                <span className="perf-lbl">Alfa</span>
+              <div className="rekap-tile alfa">
+                <span className="rekap-tile-num">{totalStats.Alfa}</span>
+                <span className="rekap-tile-lbl">Alfa</span>
               </div>
             </div>
           </div>
 
-          {/* Search & Filter */}
+          {/* 2. Floating Search & Filter Chips */}
           <div className="rekap-filter-section">
             <div className="rekap-search-box">
               <IconSearch size={15} className="rekap-search-icon" />
               <input
                 type="text"
                 className="rekap-search-input"
-                placeholder="Cari nama personil / ustadz..."
+                placeholder="Cari nama ustadz / personil..."
                 value={cariRekap}
                 onChange={e => setCariRekap(e.target.value)}
               />
@@ -1809,7 +1811,7 @@ function Admin({ tok, setTok, onLogout }) {
             </div>
           </div>
 
-          {/* List Personil Rekap */}
+          {/* 3. Feed List Personil Rekap */}
           <div className="rekap-ustadz-feed">
             {filteredUstadz.map(n => {
               const u = rek[n]
@@ -1902,26 +1904,27 @@ function Admin({ tok, setTok, onLogout }) {
             {!filteredUstadz.length && (
               <div className="rekap-empty-state-card">
                 <div className="empty-icon-wrap">
-                  <IconSearch size={22} />
+                  <IconCalendar size={24} />
                 </div>
-                <h4 className="empty-state-h">Tidak Ada Data Ditemukan</h4>
+                <h4 className="empty-state-h">Belum Ada Presensi Tercatat</h4>
                 <p className="empty-state-p">
                   {cariRekap
                     ? `Tidak ada personil dengan nama "${cariRekap}" pada filter ini.`
                     : !bl.length
-                    ? `Belum ada presensi yang tercatat untuk bulan ${formatBulanIndo(b)}.`
-                    : 'Tidak ada personil yang memenuhi kriteria filter terpilih.'}
+                    ? `Belum ada presensi yang masuk untuk bulan ${formatBulanIndo(b)}.`
+                    : 'Tidak ada personil yang sesuai dengan kriteria filter terpilih.'}
                 </p>
-                {(cariRekap || filterRekap !== 'semua') && (
+                {(cariRekap || filterRekap !== 'semua' || b !== bulanIniAsli) && (
                   <button
                     type="button"
                     className="rekap-reset-filter-btn"
                     onClick={() => {
                       setCariRekap('')
                       setFilterRekap('semua')
+                      setBulan(bulanIniAsli)
                     }}
                   >
-                    Reset Filter & Pencarian
+                    <span>{b !== bulanIniAsli ? '📅 Kembali ke Bulan Ini' : 'Reset Filter'}</span>
                   </button>
                 )}
               </div>
