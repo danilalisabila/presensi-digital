@@ -1723,9 +1723,14 @@ function Admin({ tok, setTok, onLogout }) {
                   title="Terlambat"
                 />
                 <div
+                  className="multi-segment sick"
+                  style={{ width: `${(totalStats.Sakit / totalTugasBulanIni) * 100}%` }}
+                  title="Sakit"
+                />
+                <div
                   className="multi-segment excuse"
-                  style={{ width: `${((totalStats.Sakit + totalStats.Izin) / totalTugasBulanIni) * 100}%` }}
-                  title="Sakit / Izin"
+                  style={{ width: `${(totalStats.Izin / totalTugasBulanIni) * 100}%` }}
+                  title="Izin"
                 />
                 <div
                   className="multi-segment alfa"
@@ -1735,18 +1740,32 @@ function Admin({ tok, setTok, onLogout }) {
               </div>
             ) : null}
 
-            <div className="legend-pills-row">
-              <span className="l-pill ontime">Tepat ({totalStats.Hadir - totalStats.Terlambat})</span>
-              <span className="l-pill late">Telat ({totalStats.Terlambat})</span>
-              <span className="l-pill sakit">Sakit ({totalStats.Sakit})</span>
-              <span className="l-pill izin">Izin ({totalStats.Izin})</span>
-              <span className="l-pill alfa">Alfa ({totalStats.Alfa})</span>
+            <div className="performance-stat-grid">
+              <div className="perf-item hadir">
+                <span className="perf-val">{totalStats.Hadir}</span>
+                <span className="perf-lbl">Hadir</span>
+                {totalStats.Terlambat > 0 && (
+                  <span className="perf-sub">{totalStats.Terlambat} telat</span>
+                )}
+              </div>
+              <div className="perf-item sakit">
+                <span className="perf-val">{totalStats.Sakit}</span>
+                <span className="perf-lbl">Sakit</span>
+              </div>
+              <div className="perf-item izin">
+                <span className="perf-val">{totalStats.Izin}</span>
+                <span className="perf-lbl">Izin</span>
+              </div>
+              <div className="perf-item alfa">
+                <span className="perf-val">{totalStats.Alfa}</span>
+                <span className="perf-lbl">Alfa</span>
+              </div>
             </div>
           </div>
 
           {/* Search & Filter */}
           <div className="rekap-filter-section">
-            <div className="rekap-search-input-wrap">
+            <div className="rekap-search-box">
               <IconSearch size={15} className="rekap-search-icon" />
               <input
                 type="text"
@@ -1758,15 +1777,16 @@ function Admin({ tok, setTok, onLogout }) {
               {cariRekap && (
                 <button
                   type="button"
-                  className="rekap-clear-search-btn"
+                  className="rekap-clear-btn"
                   onClick={() => setCariRekap('')}
+                  aria-label="Hapus Pencarian"
                 >
                   <IconClose size={13} />
                 </button>
               )}
             </div>
 
-            <div className="rekap-filter-chips-row">
+            <div className="rekap-filter-chips-bar">
               {[
                 ['semua', 'Semua (' + allRekapNames.length + ')'],
                 ['alfa', 'Ada Alfa (' + allRekapNames.filter(n => (rek[n]?.Alfa || 0) > 0).length + ')'],
@@ -1780,7 +1800,7 @@ function Admin({ tok, setTok, onLogout }) {
                 <button
                   key={k}
                   type="button"
-                  className={`rekap-filter-chip ${filterRekap === k ? 'active' : ''}`}
+                  className={`rekap-chip-btn ${filterRekap === k ? 'active' : ''}`}
                   onClick={() => setFilterRekap(k)}
                 >
                   {label}
@@ -1790,35 +1810,36 @@ function Admin({ tok, setTok, onLogout }) {
           </div>
 
           {/* List Personil Rekap */}
-          <div className="rekap-ustadz-list">
+          <div className="rekap-ustadz-feed">
             {filteredUstadz.map(n => {
               const u = rek[n]
               const tot = (u.Hadir || 0) + (u.Sakit || 0) + (u.Izin || 0) + (u.Alfa || 0)
               const rate = tot > 0 ? Math.round((u.Hadir / tot) * 100) : 0
+              const rateType = rate >= 80 ? 'good' : rate >= 50 ? 'warn' : 'bad'
 
               return (
                 <div className="rekap-ustadz-card" key={n}>
-                  <div className="rekap-ustadz-header">
-                    <div className="rekap-ustadz-left">
-                      <div className="rekap-ustadz-avatar">
+                  <div className="rekap-card-top-row">
+                    <div className="rekap-ustadz-info">
+                      <div className={`rekap-ustadz-avatar ${rateType}`}>
                         {getInitials(n)}
                       </div>
-                      <div>
+                      <div style={{ minWidth: 0, flex: 1 }}>
                         <span className="rekap-ustadz-name">{n}</span>
                         <span className="rekap-ustadz-sub">{tot} kali tugas korlap</span>
                       </div>
                     </div>
-                    <div className="rekap-ustadz-rate-badge">
+                    <div className={`rekap-rate-pill ${rateType}`}>
                       <span className="rate-num">{rate}%</span>
-                      <span className="rate-lbl">Hadir</span>
+                      <span className="rate-txt">Hadir</span>
                     </div>
                   </div>
 
                   {tot > 0 && (
-                    <div className="rekap-mini-progress">
+                    <div className="ustadz-progress-track">
                       <div
                         className="u-seg ontime"
-                        style={{ width: `${((u.Hadir - u.Terlambat) / tot) * 100}%` }}
+                        style={{ width: `${Math.max(0, (u.Hadir - u.Terlambat) / tot * 100)}%` }}
                         title="Tepat Waktu"
                       />
                       <div
@@ -1827,9 +1848,14 @@ function Admin({ tok, setTok, onLogout }) {
                         title="Terlambat"
                       />
                       <div
+                        className="u-seg sick"
+                        style={{ width: `${(u.Sakit / tot) * 100}%` }}
+                        title="Sakit"
+                      />
+                      <div
                         className="u-seg excuse"
-                        style={{ width: `${((u.Sakit + u.Izin) / tot) * 100}%` }}
-                        title="Sakit & Izin"
+                        style={{ width: `${(u.Izin / tot) * 100}%` }}
+                        title="Izin"
                       />
                       <div
                         className="u-seg alfa"
@@ -1850,18 +1876,24 @@ function Admin({ tok, setTok, onLogout }) {
                         <span className="val">{u.Terlambat}</span>
                       </span>
                     )}
-                    <span className="r-chip sakit">
-                      <span className="lbl">Sakit</span>
-                      <span className="val">{u.Sakit}</span>
-                    </span>
-                    <span className="r-chip izin">
-                      <span className="lbl">Izin</span>
-                      <span className="val">{u.Izin}</span>
-                    </span>
-                    <span className="r-chip alfa">
-                      <span className="lbl">Alfa</span>
-                      <span className="val">{u.Alfa}</span>
-                    </span>
+                    {u.Sakit > 0 && (
+                      <span className="r-chip sakit">
+                        <span className="lbl">Sakit</span>
+                        <span className="val">{u.Sakit}</span>
+                      </span>
+                    )}
+                    {u.Izin > 0 && (
+                      <span className="r-chip izin">
+                        <span className="lbl">Izin</span>
+                        <span className="val">{u.Izin}</span>
+                      </span>
+                    )}
+                    {u.Alfa > 0 && (
+                      <span className="r-chip alfa">
+                        <span className="lbl">Alfa</span>
+                        <span className="val">{u.Alfa}</span>
+                      </span>
+                    )}
                   </div>
                 </div>
               )
