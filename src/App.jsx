@@ -900,30 +900,33 @@ function Form() {
 
   if (!info) {
     return (
-      <div className="scroll-body" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '80vh', textAlign: 'center' }}>
-        <img
-          src="/logo.png"
-          alt="Logo Al-Falah"
-          style={{ width: '64px', height: '64px', objectFit: 'contain', marginBottom: '16px', filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.12))' }}
-        />
-        <h2 style={{ fontSize: '17px', fontWeight: '800', color: 'var(--slate-900)' }}>
-          Presensi Korlap Sholat Jama'ah
-        </h2>
-        <div style={{ marginTop: '3px', marginBottom: '24px', lineHeight: '1.4' }}>
-          <div style={{ fontSize: '12.5px', fontWeight: '800', color: 'var(--slate-800)' }}>PONDOK PUTRA</div>
-          <div style={{ fontSize: '10.5px', color: 'var(--slate-500)' }}>YAYASAN PONDOK PESANTREN SALAFIYAH AL-FALAH PUTAK</div>
+      <div className="onboarding-screen-wrap">
+        <div className="onboarding-card">
+          <div className="onboarding-logo-badge">
+            <img src="/logo.png" alt="Logo Al-Falah" />
+          </div>
+          <h2 className="onboarding-main-title">
+            Presensi Korlap Sholat Jama'ah
+          </h2>
+          <div className="onboarding-instansi">
+            <span className="onboarding-instansi-main">PONDOK PUTRA</span>
+            <span className="onboarding-instansi-sub">YAYASAN PONDOK PESANTREN SALAFIYAH AL-FALAH PUTAK</span>
+          </div>
+
+          {err ? (
+            <div className="notice-strip danger" style={{ textAlign: 'left', width: '100%', marginBottom: '16px' }}>
+              <div className="notice-icon-wrap"><IconAlertCircle size={18} /></div>
+              <div>{err}</div>
+            </div>
+          ) : (
+            <div className="onboarding-loading-box">
+              <div className="modern-spinner" />
+              <span className="onboarding-loading-text">Menyiapkan jadwal sholat...</span>
+            </div>
+          )}
         </div>
-        {err ? (
-          <div className="notice-strip danger" style={{ textAlign: 'left', width: '100%' }}>
-            <div className="notice-icon-wrap"><IconAlertCircle size={18} /></div>
-            <div>{err}</div>
-          </div>
-        ) : (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--emerald-700)', fontSize: '13px', fontWeight: '600' }}>
-            <IconSpinner size={18} className="spinner-spin" />
-            <span>Memuat jadwal sholat jama'ah...</span>
-          </div>
-        )}
+
+        <AppFooter subtitle="Pondok Putra Putak" />
       </div>
     )
   }
@@ -1370,11 +1373,25 @@ function Admin({ tok, setTok, onLogout }) {
 
   if (!d) {
     return (
-      <div className="scroll-body">
-        <div className="admin-wrap" style={{ textAlign: 'center', padding: '60px 20px' }}>
-          <IconSpinner size={24} className="spinner-spin" style={{ color: 'var(--emerald-700)', marginBottom: '10px' }} />
-          <p style={{ fontSize: '13px', color: 'var(--slate-500)' }}>{err || 'Memuat data dashboard...'}</p>
+      <div className="onboarding-screen-wrap">
+        <div className="onboarding-card">
+          <div className="onboarding-logo-badge">
+            <img src="/logo.png" alt="Logo Al-Falah" />
+          </div>
+          <h2 className="onboarding-main-title">
+            Dashboard Administrator
+          </h2>
+          <div className="onboarding-instansi">
+            <span className="onboarding-instansi-main">PONDOK PUTRA</span>
+            <span className="onboarding-instansi-sub">YAYASAN PONDOK PESANTREN SALAFIYAH AL-FALAH PUTAK</span>
+          </div>
+
+          <div className="onboarding-loading-box">
+            <div className="modern-spinner" />
+            <span className="onboarding-loading-text">{err || 'Memuat data dashboard admin...'}</span>
+          </div>
         </div>
+
         <AppFooter subtitle="Dashboard Admin" />
       </div>
     )
