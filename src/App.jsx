@@ -1561,27 +1561,20 @@ function Admin({ tok, setTok, onLogout }) {
       {tab === 'hari' && (
         <div className="admin-tab-content">
           {/* Filter Waktu Sholat di Admin */}
-          <div style={{ display: 'flex', gap: '4px', overflowX: 'auto', marginBottom: '12px', paddingBottom: '2px' }}>
-            {daftarSholatAdmin.map(sh => (
-              <button
-                key={sh}
-                type="button"
-                onClick={() => setFilterSholat(sh)}
-                style={{
-                  padding: '6px 12px',
-                  borderRadius: 'var(--radius-full)',
-                  border: '1px solid ' + (filterSholat === sh ? 'var(--emerald-600)' : 'var(--slate-200)'),
-                  background: filterSholat === sh ? 'var(--emerald-50)' : '#ffffff',
-                  color: filterSholat === sh ? 'var(--emerald-800)' : 'var(--slate-600)',
-                  fontSize: '12px',
-                  fontWeight: filterSholat === sh ? '800' : '600',
-                  cursor: 'pointer',
-                  whiteSpace: 'nowrap'
-                }}
-              >
-                {sh}
-              </button>
-            ))}
+          <div className="admin-filter-bar">
+            {daftarSholatAdmin.map(sh => {
+              const isActive = filterSholat === sh
+              return (
+                <button
+                  key={sh}
+                  type="button"
+                  onClick={() => setFilterSholat(sh)}
+                  className={`admin-filter-pill ${isActive ? 'active' : ''}`}
+                >
+                  {sh}
+                </button>
+              )
+            })}
           </div>
 
           {!hariIni.length ? (
@@ -1600,10 +1593,10 @@ function Admin({ tok, setTok, onLogout }) {
             <div className="mobile-officers-card">
               <div className="officers-card-header">
                 <div>
-                  <h3 className="officers-header-title">Petugas Korlap Hari Ini</h3>
-                  <span className="officers-header-sub">{hariIni.length} data kehadiran ({filterSholat})</span>
+                  <h3 className="officers-header-title">Petugas Korlap Terdata</h3>
+                  <span className="officers-header-sub">{hariIni.length} laporan ({filterSholat})</span>
                 </div>
-                <span className="officers-chip">{hariIni.length} Data</span>
+                <span className="officers-chip">{hariIni.length} Personil</span>
               </div>
 
               <div className="mobile-officers-feed">
@@ -1613,6 +1606,7 @@ function Admin({ tok, setTok, onLogout }) {
                   const isIzin = r.ket === 'Izin'
                   const isAlfa = r.ket === 'Alfa'
                   const ketClass = r.ket.toLowerCase()
+                  const sholatClass = (r.sholat || 'shubuh').toLowerCase()
 
                   return (
                     <div className={`mobile-officer-item ${ketClass}`} key={r.nama + idx}>
@@ -1622,8 +1616,8 @@ function Admin({ tok, setTok, onLogout }) {
                         </div>
                         <div className="officer-item-details">
                           <span className="officer-fullname">{r.nama}</span>
-                          <div style={{ display: 'flex', gap: '6px', alignItems: 'center', marginTop: '2px', flexWrap: 'wrap' }}>
-                            <span style={{ fontSize: '10.5px', fontWeight: '800', background: 'var(--slate-100)', color: 'var(--slate-700)', padding: '2px 6px', borderRadius: '4px' }}>
+                          <div style={{ display: 'flex', gap: '6px', alignItems: 'center', marginTop: '3px', flexWrap: 'wrap' }}>
+                            <span className={`sholat-badge-tag ${sholatClass}`}>
                               {r.sholat || 'Sholat'}
                             </span>
                             {isHadir && (
@@ -1924,10 +1918,10 @@ function Admin({ tok, setTok, onLogout }) {
             <div key={sh.id} className="ios-settings-card" style={{ marginBottom: '14px' }}>
               <div className="ios-settings-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
-                  <h3 className="ios-settings-title">Jam Operasional Sholat {sh.label}</h3>
+                  <h3 className="ios-settings-title">Jam Sholat {sh.label}</h3>
                   <p className="ios-settings-subtitle">Batas buka, tepat waktu, dan tutup form</p>
                 </div>
-                <span style={{ fontSize: '11px', fontWeight: '800', background: 'var(--emerald-100)', color: 'var(--emerald-800)', padding: '3px 8px', borderRadius: '6px' }}>
+                <span className={`settings-card-header-badge ${sh.id}`}>
                   {sh.label}
                 </span>
               </div>

@@ -1114,7 +1114,76 @@ body {
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
-/* TAB 1: Mobile Officers Feed (Hari Ini) */
+/* ================= ENHANCED ADMIN UX/UI ================= */
+.admin-filter-bar {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 4px 2px 10px;
+  margin-bottom: 10px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.admin-filter-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.admin-filter-pill {
+  padding: 7px 14px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--slate-200);
+  background: #ffffff;
+  color: var(--slate-600);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.admin-filter-pill:hover {
+  border-color: var(--emerald-500);
+  color: var(--emerald-800);
+}
+
+.admin-filter-pill.active {
+  background: linear-gradient(135deg, #0b543e 0%, #148866 100%);
+  border-color: transparent;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(11, 84, 62, 0.25);
+}
+
+.sholat-badge-tag {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 2px 8px;
+  border-radius: var(--radius-xs);
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.sholat-badge-tag.shubuh { background: #e0e7ff; color: #3730a3; }
+.sholat-badge-tag.dhuhur { background: #fef3c7; color: #92400e; }
+.sholat-badge-tag.ashar { background: #ffedd5; color: #9a3412; }
+.sholat-badge-tag.magrib { background: #fce7f3; color: #9d174d; }
+.sholat-badge-tag.isya { background: #e0f2fe; color: #075985; }
+
+.settings-card-header-badge {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+}
+
+.settings-card-header-badge.shubuh { background: #e0e7ff; color: #3730a3; }
+.settings-card-header-badge.dhuhur { background: #fef3c7; color: #92400e; }
+.settings-card-header-badge.ashar { background: #ffedd5; color: #9a3412; }
+.settings-card-header-badge.magrib { background: #fce7f3; color: #9d174d; }
+.settings-card-header-badge.isya { background: #e0f2fe; color: #075985; }
 .mobile-officers-card {
   background: #ffffff;
   border-radius: var(--radius-lg);
