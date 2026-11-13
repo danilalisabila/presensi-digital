@@ -46,7 +46,69 @@ function baca_(nama) {
 }
 
 function jam_(v) { 
-  return v instanceof Date ? Utilities.formatDate(v, TZ, 'HH:mm') : String(v).trim(); 
+  if (v instanceof Date) {
+    return Utilities.formatDate(v, TZ, 'HH:mm');
+  }
+  const s = String(v || '').trim();
+  const m = s.match(/(\d{1,2}):(\d{2})/);
+  if (m) {
+    return m[1].padStart(2, '0') + ':' + m[2];
+  }
+  return s;
+}
+
+function toMinutes_(hhmm) {
+  if (!hhmm) return 0;
+  const m = String(hhmm).match(/(\d{1,2}):(\d{2})/);
+  if (!m) return 0;
+  return parseInt(m[1], 10) * 60 + parseInt(m[2], 10);
+}
+
+// Cek apakah waktu saat ini buka, tepat waktu, atau tutup (Mendukung sesi normal maupun lintas tengah malam)
+function cekStatusWaktu_(jam, buka, batas, tutup) {
+  const mJam = toMinutes_(jam);
+  const mBuka = toMinutes_(buka);
+  const mBatas = toMinutes_(batas);
+  const mTutup = toMinutes_(tutup);
+
+  let isOpen = false;
+  if (mBuka <= mTutup) {
+    // Sesi normal (contoh: 04:15 s/d 05:30)
+    isOpen = mJam >= mBuka && mJam <= mTutup;
+  } else {
+    // Sesi lintas tengah malam (contoh: 23:30 s/d 00:30)
+    isOpen = mJam >= mBuka || mJam <= mTutup;
+  }
+
+  let statusForm = 'tutup';
+  if (isOpen) {
+    statusForm = 'buka';
+  } else {
+    if (mBuka <= mTutup) {
+      statusForm = mJam < mBuka ? 'belum' : 'tutup';
+    } else {
+      // Di luar jam buka sesi lintas tengah malam (contoh: antara 00:31 s/d 23:29)
+      const diffKeBuka = (mBuka - mJam + 1440) % 1440;
+      statusForm = diffKeBuka <= 180 ? 'belum' : 'tutup';
+    }
+  }
+
+  // Penentuan Tepat Waktu vs Terlambat
+  let statusWaktu = 'Tepat Waktu';
+  if (mBuka <= mTutup) {
+    statusWaktu = mJam <= mBatas ? 'Tepat Waktu' : 'Terlambat';
+  } else {
+    // Lintas tengah malam
+    if (mBuka <= mBatas) {
+      // batas sebelum jam 00:00 (contoh: buka 23:00, batas 23:45, tutup 00:30)
+      statusWaktu = (mJam >= mBuka && mJam <= mBatas) ? 'Tepat Waktu' : 'Terlambat';
+    } else {
+      // batas setelah jam 00:00 (contoh: buka 23:30, batas 00:15, tutup 00:30)
+      statusWaktu = (mJam >= mBuka || mJam <= mBatas) ? 'Tepat Waktu' : 'Terlambat';
+    }
+  }
+
+  return { isOpen, statusForm, statusWaktu };
 }
 
 function atur_() { 
@@ -81,19 +143,37 @@ function getJadwalSholatConfig_(a, sholat) {
   const buka = a[pfx + '_buka'] || (sholat === 'Shubuh' ? '04:15' : sholat === 'Dhuhur' ? '11:45' : sholat === 'Ashar' ? '15:00' : sholat === 'Magrib' ? '17:45' : '19:00');
   const batas = a[pfx + '_batas'] || (sholat === 'Shubuh' ? '04:45' : sholat === 'Dhuhur' ? '12:15' : sholat === 'Ashar' ? '15:30' : sholat === 'Magrib' ? '18:15' : '19:30');
   const tutup = a[pfx + '_tutup'] || (sholat === 'Shubuh' ? '05:30' : sholat === 'Dhuhur' ? '12:45' : sholat === 'Ashar' ? '16:00' : sholat === 'Magrib' ? '18:45' : '20:15');
-  return { buka, batas, tutup };
+  return { buka: jam_(buka), batas: jam_(batas), tutup: jam_(tutup) };
 }
 
 function tentukanSholatAktif_(s, a) {
   const jam = s.jam;
+
+  // 1. Cek apakah ada jadwal sholat yang sedang 'buka' sekarang
   for (let i = 0; i < DAFTAR_SHOLAT.length; i++) {
     const sh = DAFTAR_SHOLAT[i];
     const cfg = getJadwalSholatConfig_(a, sh);
-    if (jam <= cfg.tutup) {
-      return sh;
+    const st = cekStatusWaktu_(jam, cfg.buka, cfg.batas, cfg.tutup);
+    if (st.isOpen) return sh;
+  }
+
+  // 2. Jika tidak ada yang buka saat ini, pilih sholat yang waktu bukanya paling dekat
+  const mJam = toMinutes_(jam);
+  let minDiff = 999999;
+  let sholatTerdekat = 'Shubuh';
+
+  for (let i = 0; i < DAFTAR_SHOLAT.length; i++) {
+    const sh = DAFTAR_SHOLAT[i];
+    const cfg = getJadwalSholatConfig_(a, sh);
+    const mBuka = toMinutes_(cfg.buka);
+    const diff = (mBuka - mJam + 1440) % 1440;
+    if (diff < minDiff) {
+      minDiff = diff;
+      sholatTerdekat = sh;
     }
   }
-  return 'Shubuh';
+
+  return sholatTerdekat;
 }
 
 function sudahAbsen_(tgl, sholat) {
@@ -118,8 +198,7 @@ function doGet(e) {
     const sholat = DAFTAR_SHOLAT.indexOf(reqSholat) !== -1 ? reqSholat : 'Shubuh';
     const cfg = getJadwalSholatConfig_(a, sholat);
     const sudah = sudahAbsen_(s.tgl, sholat);
-
-    const status = s.jam < cfg.buka ? 'belum' : s.jam > cfg.tutup ? 'tutup' : 'buka';
+    const st = cekStatusWaktu_(s.jam, cfg.buka, cfg.batas, cfg.tutup);
 
     return out_({
       hari: s.hari, 
@@ -130,7 +209,8 @@ function doGet(e) {
       buka: cfg.buka, 
       batas: cfg.batas, 
       tutup: cfg.tutup,
-      status: status,
+      status: st.statusForm,
+      status_waktu: st.statusWaktu,
       sudah: sudah, 
       tim: timSholat_(sholat)
     });
@@ -161,16 +241,22 @@ function kirim_(d) {
     const s = sekarang_(), a = atur_();
     const sholat = d.sholat || tentukanSholatAktif_(s, a);
     const cfg = getJadwalSholatConfig_(a, sholat);
+    const st = cekStatusWaktu_(s.jam, cfg.buka, cfg.batas, cfg.tutup);
 
-    if (s.jam < cfg.buka) throw new Error('Absen ' + sholat + ' belum dibuka (mulai ' + cfg.buka + ')');
-    if (s.jam > cfg.tutup) throw new Error('Absen ' + sholat + ' sudah ditutup (' + cfg.tutup + ')');
+    if (!st.isOpen) {
+      if (st.statusForm === 'belum') {
+        throw new Error('Absen ' + sholat + ' belum dibuka (jadwal buka: ' + cfg.buka + ' WIB)');
+      } else {
+        throw new Error('Absen ' + sholat + ' sudah ditutup (jadwal tutup: ' + cfg.tutup + ' WIB)');
+      }
+    }
     if (sudahAbsen_(s.tgl, sholat)) throw new Error('Absen ' + sholat + ' hari ini sudah pernah dikirim');
     
     const tim = timSholat_(sholat);
     if (!tim.some(t => t.nama === d.pengisi)) throw new Error('Pengisi tidak termasuk tim sholat ' + sholat);
     
     const resmi = tim.find(t => t.petugas);
-    const status = s.jam <= cfg.batas ? 'Tepat Waktu' : 'Terlambat';
+    const status = st.statusWaktu; // 'Tepat Waktu' atau 'Terlambat'
     const tgl = new Date(s.tgl + 'T00:00:00+07:00');
     
     const rows = tim.map(t => {

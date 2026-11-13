@@ -304,42 +304,80 @@ function useCountdown(info) {
       const [lH, lM] = (info.batas || '04:45').split(':').map(Number)
       const [tH, tM] = (info.tutup || '05:30').split(':').map(Number)
 
-      const openToday = new Date(now)
-      openToday.setHours(bH, bM, 0, 0)
+      const mNow = now.getHours() * 60 + now.getMinutes()
+      const mBuka = bH * 60 + bM
+      const mBatas = lH * 60 + lM
+      const mTutup = tH * 60 + tM
 
-      const limitToday = new Date(now)
-      limitToday.setHours(lH, lM, 0, 0)
+      const crossesMidnight = mBuka > mTutup
 
-      const closeToday = new Date(now)
-      closeToday.setHours(tH, tM, 0, 0)
+      let isOpen = false
+      if (!crossesMidnight) {
+        isOpen = mNow >= mBuka && mNow <= mTutup
+      } else {
+        isOpen = mNow >= mBuka || mNow <= mTutup
+      }
 
-      let targetDate
+      let isOntime = false
+      if (!crossesMidnight) {
+        isOntime = mNow <= mBatas
+      } else {
+        if (mBuka <= mBatas) {
+          isOntime = mNow >= mBuka && mNow <= mBatas
+        } else {
+          isOntime = mNow >= mBuka || mNow <= mBatas
+        }
+      }
+
+      let targetDate = new Date(now)
       let title = ''
       let tagText = ''
       let targetType = ''
 
-      if (now < openToday) {
-        targetDate = openToday
-        title = `Dibuka Dalam (${sholatNama})`
-        tagText = 'Buka ' + (info.buka || '04:15') + ' WIB'
-        targetType = 'pending'
-      } else if (now >= openToday && now < limitToday) {
-        targetDate = limitToday
-        title = `Sisa Waktu Tepat (${sholatNama})`
-        tagText = 'Tepat s/d ' + (info.batas || '04:45')
-        targetType = 'ontime'
-      } else if (now >= limitToday && now < closeToday) {
-        targetDate = closeToday
-        title = `Sisa Waktu Formulir (${sholatNama})`
-        tagText = 'Tutup ' + (info.tutup || '05:30') + ' WIB'
-        targetType = 'late'
+      if (!isOpen) {
+        let isPending = false
+        if (!crossesMidnight) {
+          isPending = mNow < mBuka
+        } else {
+          const diffToOpen = (mBuka - mNow + 1440) % 1440
+          isPending = diffToOpen <= 180
+        }
+
+        if (isPending) {
+          targetDate.setHours(bH, bM, 0, 0)
+          if (targetDate <= now) {
+            targetDate.setDate(targetDate.getDate() + 1)
+          }
+          title = `Dibuka Dalam (${sholatNama})`
+          tagText = `Buka ${info.buka || '04:15'} WIB`
+          targetType = 'pending'
+        } else {
+          targetDate.setHours(bH, bM, 0, 0)
+          if (targetDate <= now) {
+            targetDate.setDate(targetDate.getDate() + 1)
+          }
+          title = `Sesi ${sholatNama} Selesai`
+          tagText = `Buka ${info.buka || '04:15'} WIB`
+          targetType = 'closed'
+        }
       } else {
-        const openTomorrow = new Date(openToday)
-        openTomorrow.setDate(openTomorrow.getDate() + 1)
-        targetDate = openTomorrow
-        title = `Sesi ${sholatNama} Selesai`
-        tagText = 'Buka ' + (info.buka || '04:15') + ' WIB'
-        targetType = 'closed'
+        if (isOntime) {
+          targetDate.setHours(lH, lM, 0, 0)
+          if (targetDate <= now) {
+            targetDate.setDate(targetDate.getDate() + 1)
+          }
+          title = `Sisa Waktu Tepat (${sholatNama})`
+          tagText = `Tepat s/d ${info.batas || '04:45'}`
+          targetType = 'ontime'
+        } else {
+          targetDate.setHours(tH, tM, 0, 0)
+          if (targetDate <= now) {
+            targetDate.setDate(targetDate.getDate() + 1)
+          }
+          title = `Sisa Waktu Formulir (${sholatNama})`
+          tagText = `Tutup ${info.tutup || '05:30'} WIB`
+          targetType = 'late'
+        }
       }
 
       const diff = Math.max(0, targetDate - now)
@@ -1261,7 +1299,21 @@ function Admin({ tok, setTok, onLogout }) {
     setErr('')
     setBusy(true)
     try {
-      const res = await api({ aksi: 'simpan', token: tok, atur })
+      const payloadAtur = { ...atur }
+      const daftarSh = [
+        { id: 'shubuh', defaultBuka: '04:15', defaultBatas: '04:45', defaultTutup: '05:30' },
+        { id: 'dhuhur', defaultBuka: '11:45', defaultBatas: '12:15', defaultTutup: '12:45' },
+        { id: 'ashar', defaultBuka: '15:00', defaultBatas: '15:30', defaultTutup: '16:00' },
+        { id: 'magrib', defaultBuka: '17:45', defaultBatas: '18:15', defaultTutup: '18:45' },
+        { id: 'isya', defaultBuka: '19:00', defaultBatas: '19:30', defaultTutup: '20:15' }
+      ]
+      daftarSh.forEach(sh => {
+        if (!payloadAtur[`${sh.id}_buka`]) payloadAtur[`${sh.id}_buka`] = sh.defaultBuka
+        if (!payloadAtur[`${sh.id}_batas`]) payloadAtur[`${sh.id}_batas`] = sh.defaultBatas
+        if (!payloadAtur[`${sh.id}_tutup`]) payloadAtur[`${sh.id}_tutup`] = sh.defaultTutup
+      })
+
+      const res = await api({ aksi: 'simpan', token: tok, atur: payloadAtur })
       setStatusModal({
         open: true,
         type: 'success',
@@ -1974,7 +2026,7 @@ function Admin({ tok, setTok, onLogout }) {
                       <input
                         type="time"
                         className="ios-time-picker"
-                        value={atur[k] || ''}
+                        value={atur[k] !== undefined && atur[k] !== '' ? atur[k] : (k.endsWith('_buka') ? sh.defaultBuka : k.endsWith('_batas') ? sh.defaultBatas : sh.defaultTutup)}
                         onChange={e => setAtur({ ...atur, [k]: e.target.value })}
                       />
                     </div>
