@@ -1108,194 +1108,20 @@ function Form() {
     )
   }
 
-  const tutup = info.status !== 'buka'
-  const tim = info.tim || []
-  const displayLimit = useIncrementalLimit(tim.length, 12, 10)
-  const visibleTim = useMemo(() => tim.slice(0, displayLimit), [tim, displayLimit])
-  const submitterObj = tim.find(t => t.nama === pengisi)
-
   return (
     <>
-      <div className="scroll-body">
-        {/* Hero Card Waktu Sholat yang Sedang Berjalan */}
-        <div className="unified-hero">
-          <div className="hero-meta-bar">
-            <span className="session-chip">
-              <IconShield size={11} />
-              Tugas {info.sholat}
-            </span>
-            <div className="status-glow-pill">
-              <span className={`status-dot-sm ${info.status === 'buka' ? 'open' : info.status === 'belum' ? 'pending' : 'closed'}`} />
-              <span>
-                {info.status === 'buka' ? 'Formulir Dibuka' : info.status === 'belum' ? 'Belum Buka' : 'Formulir Ditutup'}
-              </span>
-            </div>
-          </div>
-
-          {/* Jam Hitungan Mundur (Terisolasi dari Form) */}
-          <CountdownSection info={info} />
-
-          <div className="hero-footer-bar">
-            <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-              <IconCalendar size={12} />
-              {info.hari}, {info.tanggal}
-            </span>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-              <IconClock size={12} />
-              {info.buka} - {info.tutup} WIB
-            </span>
-          </div>
-        </div>
-
-        {/* Notice Banners */}
-        {done ? (
-          <div className="notice-strip success">
-            <div className="notice-icon-wrap"><IconCheckCircle size={18} /></div>
-            <div>Laporan {info.sholat} terkirim ({done.status}, {done.jam} WIB). Jazakumullahu khairan.</div>
-          </div>
-        ) : info.sudah ? (
-          <div className="notice-strip success">
-            <div className="notice-icon-wrap"><IconCheckCircle size={18} /></div>
-            <div>Laporan kehadiran Korlap {info.sholat} hari ini sudah selesai dikirim.</div>
-          </div>
-        ) : tutup ? (
-          <div className="notice-strip warning">
-            <div className="notice-icon-wrap"><IconAlertCircle size={18} /></div>
-            <div>
-              {info.status === 'belum'
-                ? `Formulir Sholat ${info.sholat} akan mulai dibuka pukul ${info.buka} WIB.`
-                : `Formulir Sholat ${info.sholat} ditutup setelah jam ${info.tutup} WIB.`}
-            </div>
-          </div>
-        ) : null}
-
-        {/* Section Header */}
-        <div className="list-section-header">
-          <div className="list-section-title">
-            <span>Petugas Korlap {info.sholat}</span>
-            <span className="badge-count">{tim.length}</span>
-          </div>
-          <span style={{ fontSize: '11px', color: 'var(--slate-500)', fontWeight: '600' }}>
-            Setiap Hari
-          </span>
-        </div>
-
-        {/* Grouped Officers List */}
-        <div className="grouped-list-card">
-          {visibleTim.map(t => (
-            <OfficerRowItem
-              key={t.nama}
-              t={t}
-              currentItem={item[t.nama] || { ket: 'Hadir', alasan: '' }}
-              ubah={ubah}
-            />
-          ))}
-          {displayLimit < tim.length && (
-            <div style={{ padding: '12px 14px', textAlign: 'center', fontSize: '12px', color: 'var(--slate-500)', fontWeight: '600' }}>
-              Memuat personil lainnya ({displayLimit} dari {tim.length})...
-            </div>
-          )}
-        </div>
-
-        {/* Submitter Selection Card */}
-        <div className="submitter-box">
-          <label className="submitter-label">Nama Pengisi Laporan</label>
-          <div className="select-native-wrap">
-            <select
-              className="select-native"
-              value={pengisi}
-              onChange={e => setPengisi(e.target.value)}
-            >
-              {tim.map(t => (
-                <option key={t.nama} value={t.nama}>
-                  {t.nama} {t.petugas ? '— (Petugas Resmi)' : (t.peran === 'Koordinator' || t.peran === 'Ketua') ? '— (Koordinator)' : ''}
-                </option>
-              ))}
-            </select>
-            <div className="select-chevron">
-              <IconChevronDown size={15} />
-            </div>
-          </div>
-          <p className="submitter-hint">
-            {submitterObj && submitterObj.petugas
-              ? 'Petugas yang dipilih adalah petugas absen resmi terjadwal.'
-              : 'Mengisi form sebagai pengganti akan tercatat otomatis di laporan.'}
-          </p>
-        </div>
-
-        {/* Error message */}
-        {err && (
-          <div className="notice-strip danger" style={{ marginTop: '14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <div className="notice-icon-wrap"><IconAlertCircle size={16} /></div>
-              <div style={{ fontSize: '13px', lineHeight: '1.4' }}>{err}</div>
-            </div>
-            <button
-              type="button"
-              onClick={muatDataSholatAktif}
-              style={{
-                background: '#fff',
-                border: '1px solid rgba(220, 38, 38, 0.4)',
-                color: '#DC2626',
-                borderRadius: '8px',
-                padding: '6px 12px',
-                fontSize: '12px',
-                fontWeight: '700',
-                cursor: 'pointer',
-                whiteSpace: 'nowrap',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
-              }}
-            >
-              Coba Lagi
-            </button>
-          </div>
-        )}
-
-        {/* Action Button */}
-        <div className="submit-action-area">
-          <button
-            type="button"
-            className="native-submit-btn"
-            disabled={busy || tutup || info.sudah || !!done}
-            onClick={kirim}
-          >
-            {busy ? (
-              <>
-                <IconSpinner size={18} className="spinner-spin" />
-                <span>Mengirim Laporan...</span>
-              </>
-            ) : done ? (
-              <>
-                <IconCheckCircle size={18} />
-                <span>Absen {info.sholat} Telah Terkirim</span>
-              </>
-            ) : info.sudah ? (
-              <>
-                <IconCheckCircle size={18} />
-                <span>{info.sholat} Sudah Diabsen Hari Ini</span>
-              </>
-            ) : tutup ? (
-              <>
-                <IconLock size={16} />
-                <span>Formulir Terkunci (Buka {info.buka} WIB)</span>
-              </>
-            ) : (
-              <>
-                <IconCheck size={18} />
-                <span>Kirim Presensi Korlap {info.sholat}</span>
-              </>
-            )}
-          </button>
-          
-          {tutup && !info.sudah && (
-            <p className="submit-lock-notice">
-              Presensi {info.sholat} otomatis terbuka pada pukul {info.buka} s/d {info.tutup} WIB.
-            </p>
-          )}
-
-          <AppFooter subtitle={`Presensi Korlap Sholat Jama'ah`} />
-        </div>
-      </div>
+      <FormContent
+        info={info}
+        item={item}
+        ubah={ubah}
+        pengisi={pengisi}
+        setPengisi={setPengisi}
+        busy={busy}
+        done={done}
+        err={err}
+        kirim={kirim}
+        muatDataSholatAktif={muatDataSholatAktif}
+      />
 
       <StatusModal
         modal={statusModal}
@@ -1316,6 +1142,208 @@ function Form() {
     </>
   )
 }
+
+const FormContent = memo(function FormContent({
+  info,
+  item,
+  ubah,
+  pengisi,
+  setPengisi,
+  busy,
+  done,
+  err,
+  kirim,
+  muatDataSholatAktif
+}) {
+  const tutup = info.status !== 'buka'
+  const tim = info.tim || []
+  const displayLimit = useIncrementalLimit(tim.length, 12, 10)
+  const visibleTim = useMemo(() => tim.slice(0, displayLimit), [tim, displayLimit])
+  const submitterObj = tim.find(t => t.nama === pengisi)
+
+  return (
+    <div className="scroll-body">
+      {/* Hero Card Waktu Sholat yang Sedang Berjalan */}
+      <div className="unified-hero">
+        <div className="hero-meta-bar">
+          <span className="session-chip">
+            <IconShield size={11} />
+            Tugas {info.sholat}
+          </span>
+          <div className="status-glow-pill">
+            <span className={`status-dot-sm ${info.status === 'buka' ? 'open' : info.status === 'belum' ? 'pending' : 'closed'}`} />
+            <span>
+              {info.status === 'buka' ? 'Formulir Dibuka' : info.status === 'belum' ? 'Belum Buka' : 'Formulir Ditutup'}
+            </span>
+          </div>
+        </div>
+
+        {/* Jam Hitungan Mundur (Terisolasi dari Form) */}
+        <CountdownSection info={info} />
+
+        <div className="hero-footer-bar">
+          <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <IconCalendar size={12} />
+            {info.hari}, {info.tanggal}
+          </span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <IconClock size={12} />
+            {info.buka} - {info.tutup} WIB
+          </span>
+        </div>
+      </div>
+
+      {/* Notice Banners */}
+      {done ? (
+        <div className="notice-strip success">
+          <div className="notice-icon-wrap"><IconCheckCircle size={18} /></div>
+          <div>Laporan {info.sholat} terkirim ({done.status}, {done.jam} WIB). Jazakumullahu khairan.</div>
+        </div>
+      ) : info.sudah ? (
+        <div className="notice-strip success">
+          <div className="notice-icon-wrap"><IconCheckCircle size={18} /></div>
+          <div>Laporan kehadiran Korlap {info.sholat} hari ini sudah selesai dikirim.</div>
+        </div>
+      ) : tutup ? (
+        <div className="notice-strip warning">
+          <div className="notice-icon-wrap"><IconAlertCircle size={18} /></div>
+          <div>
+            {info.status === 'belum'
+              ? `Formulir Sholat ${info.sholat} akan mulai dibuka pukul ${info.buka} WIB.`
+              : `Formulir Sholat ${info.sholat} ditutup setelah jam ${info.tutup} WIB.`}
+          </div>
+        </div>
+      ) : null}
+
+      {/* Section Header */}
+      <div className="list-section-header">
+        <div className="list-section-title">
+          <span>Petugas Korlap {info.sholat}</span>
+          <span className="badge-count">{tim.length}</span>
+        </div>
+        <span style={{ fontSize: '11px', color: 'var(--slate-500)', fontWeight: '600' }}>
+          Setiap Hari
+        </span>
+      </div>
+
+      {/* Grouped Officers List */}
+      <div className="grouped-list-card">
+        {visibleTim.map(t => (
+          <OfficerRowItem
+            key={t.nama}
+            t={t}
+            currentItem={item[t.nama] || { ket: 'Hadir', alasan: '' }}
+            ubah={ubah}
+          />
+        ))}
+        {displayLimit < tim.length && (
+          <div style={{ padding: '12px 14px', textAlign: 'center', fontSize: '12px', color: 'var(--slate-500)', fontWeight: '600' }}>
+            Memuat personil lainnya ({displayLimit} dari {tim.length})...
+          </div>
+        )}
+      </div>
+
+      {/* Submitter Selection Card */}
+      <div className="submitter-box">
+        <label className="submitter-label">Nama Pengisi Laporan</label>
+        <div className="select-native-wrap">
+          <select
+            className="select-native"
+            value={pengisi}
+            onChange={e => setPengisi(e.target.value)}
+          >
+            {tim.map(t => (
+              <option key={t.nama} value={t.nama}>
+                {t.nama} {t.petugas ? '— (Petugas Resmi)' : (t.peran === 'Koordinator' || t.peran === 'Ketua') ? '— (Koordinator)' : ''}
+              </option>
+            ))}
+          </select>
+          <div className="select-chevron">
+            <IconChevronDown size={15} />
+          </div>
+        </div>
+        <p className="submitter-hint">
+          {submitterObj && submitterObj.petugas
+            ? 'Petugas yang dipilih adalah petugas absen resmi terjadwal.'
+            : 'Mengisi form sebagai pengganti akan tercatat otomatis di laporan.'}
+        </p>
+      </div>
+
+      {/* Error message */}
+      {err && (
+        <div className="notice-strip danger" style={{ marginTop: '14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div className="notice-icon-wrap"><IconAlertCircle size={16} /></div>
+            <div style={{ fontSize: '13px', lineHeight: '1.4' }}>{err}</div>
+          </div>
+          <button
+            type="button"
+            onClick={muatDataSholatAktif}
+            style={{
+              background: '#fff',
+              border: '1px solid rgba(220, 38, 38, 0.4)',
+              color: '#DC2626',
+              borderRadius: '8px',
+              padding: '6px 12px',
+              fontSize: '12px',
+              fontWeight: '700',
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
+            }}
+          >
+            Coba Lagi
+          </button>
+        </div>
+      )}
+
+      {/* Action Button */}
+      <div className="submit-action-area">
+        <button
+          type="button"
+          className="native-submit-btn"
+          disabled={busy || tutup || info.sudah || !!done}
+          onClick={kirim}
+        >
+          {busy ? (
+            <>
+              <IconSpinner size={18} className="spinner-spin" />
+              <span>Mengirim Laporan...</span>
+            </>
+          ) : done ? (
+            <>
+              <IconCheckCircle size={18} />
+              <span>Absen {info.sholat} Telah Terkirim</span>
+            </>
+          ) : info.sudah ? (
+            <>
+              <IconCheckCircle size={18} />
+              <span>{info.sholat} Sudah Diabsen Hari Ini</span>
+            </>
+          ) : tutup ? (
+            <>
+              <IconLock size={16} />
+              <span>Formulir Terkunci (Buka {info.buka} WIB)</span>
+            </>
+          ) : (
+            <>
+              <IconCheck size={18} />
+              <span>Kirim Presensi Korlap {info.sholat}</span>
+            </>
+          )}
+        </button>
+        
+        {tutup && !info.sudah && (
+          <p className="submit-lock-notice">
+            Presensi {info.sholat} otomatis terbuka pada pukul {info.buka} s/d {info.tutup} WIB.
+          </p>
+        )}
+
+        <AppFooter subtitle={`Presensi Korlap Sholat Jama'ah`} />
+      </div>
+    </div>
+  )
+})
 
 const DEFAULTS_SHOLAT_JAM = {
   shubuh_buka: '03:45', shubuh_batas: '06:45', shubuh_tutup: '06:55',
@@ -1633,6 +1661,50 @@ function Admin({ tok, setTok, onLogout }) {
     )
   }
 
+  return (
+    <AdminDashboard
+      d={d}
+      tok={tok}
+      tab={tab}
+      setTab={setTab}
+      filterSholat={filterSholat}
+      setFilterSholat={setFilterSholat}
+      bulan={bulan}
+      setBulan={setBulan}
+      cariRekap={cariRekap}
+      setCariRekap={setCariRekap}
+      filterRekap={filterRekap}
+      setFilterRekap={setFilterRekap}
+      atur={atur}
+      setAtur={setAtur}
+      simpan={simpan}
+      busy={busy}
+      statusModal={statusModal}
+      setStatusModal={setStatusModal}
+    />
+  )
+}
+
+const AdminDashboard = memo(function AdminDashboard({
+  d,
+  tok,
+  tab,
+  setTab,
+  filterSholat,
+  setFilterSholat,
+  bulan,
+  setBulan,
+  cariRekap,
+  setCariRekap,
+  filterRekap,
+  setFilterRekap,
+  atur,
+  setAtur,
+  simpan,
+  busy,
+  statusModal,
+  setStatusModal
+}) {
   const rows = d.rows || []
   const b = bulan || d.tgl.slice(0, 7)
   const bulanIniAsli = d.tgl.slice(0, 7)
@@ -2208,4 +2280,4 @@ function Admin({ tok, setTok, onLogout }) {
       <AppFooter subtitle="Dashboard Admin" />
     </div>
   )
-}
+})
