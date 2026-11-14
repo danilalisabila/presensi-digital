@@ -12,10 +12,16 @@ async function api(body, retries = 1) {
     const fetchOptions = body
       ? {
           method: 'POST',
+          mode: 'cors',
+          redirect: 'follow',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(body)
         }
-      : { method: 'GET' }
+      : {
+          method: 'GET',
+          mode: 'cors',
+          redirect: 'follow'
+        }
 
     const r = await fetch(API, fetchOptions)
     if (!r.ok) {
@@ -337,77 +343,49 @@ function useCountdown(info) {
       const mTutup = tH * 60 + tM
 
       const crossesMidnight = mBuka > mTutup
+      let dBuka = new Date(now.getFullYear(), now.getMonth(), now.getDate(), bH, bM, 0, 0)
+      let dBatas = new Date(now.getFullYear(), now.getMonth(), now.getDate(), lH, lM, 0, 0)
+      let dTutup = new Date(now.getFullYear(), now.getMonth(), now.getDate(), tH, tM, 0, 0)
 
-      let isOpen = false
-      if (!crossesMidnight) {
-        isOpen = mNow >= mBuka && mNow <= mTutup
-      } else {
-        isOpen = mNow >= mBuka || mNow <= mTutup
-      }
-
-      let isOntime = false
-      if (!crossesMidnight) {
-        isOntime = mNow <= mBatas
-      } else {
-        if (mBuka <= mBatas) {
-          isOntime = mNow >= mBuka && mNow <= mBatas
+      if (crossesMidnight) {
+        if (mNow <= mTutup) {
+          dBuka.setDate(dBuka.getDate() - 1)
+          if (mBatas >= mBuka) dBatas.setDate(dBatas.getDate() - 1)
         } else {
-          isOntime = mNow >= mBuka || mNow <= mBatas
+          dTutup.setDate(dTutup.getDate() + 1)
+          if (mBatas < mBuka) dBatas.setDate(dBatas.getDate() + 1)
         }
       }
 
-      let targetDate = new Date(now)
+      let target
       let title = ''
       let tagText = ''
       let targetType = ''
 
-      if (!isOpen) {
-        let isPending = false
-        if (!crossesMidnight) {
-          isPending = mNow < mBuka
-        } else {
-          const diffToOpen = (mBuka - mNow + 1440) % 1440
-          isPending = diffToOpen <= 180
-        }
-
-        if (isPending) {
-          targetDate.setHours(bH, bM, 0, 0)
-          if (targetDate <= now) {
-            targetDate.setDate(targetDate.getDate() + 1)
-          }
-          title = `Dibuka Dalam (${sholatNama})`
-          tagText = `Buka ${info.buka || '03:45'} WIB`
-          targetType = 'pending'
-        } else {
-          targetDate.setHours(bH, bM, 0, 0)
-          if (targetDate <= now) {
-            targetDate.setDate(targetDate.getDate() + 1)
-          }
-          title = `Sesi ${sholatNama} Selesai`
-          tagText = `Buka ${info.buka || '03:45'} WIB`
-          targetType = 'closed'
-        }
+      if (now < dBuka) {
+        target = dBuka
+        title = `Dibuka Dalam (${sholatNama})`
+        tagText = `Buka ${info.buka || '03:45'} WIB`
+        targetType = 'pending'
+      } else if (now < dBatas) {
+        target = dBatas
+        title = `Sisa Waktu Tepat (${sholatNama})`
+        tagText = `Tepat s/d ${info.batas || '06:45'}`
+        targetType = 'ontime'
+      } else if (now < dTutup) {
+        target = dTutup
+        title = `Sisa Waktu Formulir (${sholatNama})`
+        tagText = `Tutup ${info.tutup || '06:55'} WIB`
+        targetType = 'late'
       } else {
-        if (isOntime) {
-          targetDate.setHours(lH, lM, 0, 0)
-          if (targetDate <= now) {
-            targetDate.setDate(targetDate.getDate() + 1)
-          }
-          title = `Sisa Waktu Tepat (${sholatNama})`
-          tagText = `Tepat s/d ${info.batas || '06:45'}`
-          targetType = 'ontime'
-        } else {
-          targetDate.setHours(tH, tM, 0, 0)
-          if (targetDate <= now) {
-            targetDate.setDate(targetDate.getDate() + 1)
-          }
-          title = `Sisa Waktu Formulir (${sholatNama})`
-          tagText = `Tutup ${info.tutup || '06:55'} WIB`
-          targetType = 'late'
-        }
+        target = new Date(dBuka)
+        target.setDate(target.getDate() + 1)
+        title = `Sesi ${sholatNama} Selesai`
+        tagText = `Buka ${info.buka || '03:45'} WIB`
+        targetType = 'closed'
       }
 
-      const diff = Math.max(0, targetDate - now)
+      const diff = Math.max(0, target - now)
       const totalSec = Math.floor(diff / 1000)
       const hours = String(Math.floor(totalSec / 3600)).padStart(2, '0')
       const minutes = String(Math.floor((totalSec % 3600) / 60)).padStart(2, '0')
@@ -1048,6 +1026,12 @@ function Form() {
       }
       const res = await api(payload)
       setDone(res)
+      setInfo(prev => {
+        if (!prev) return prev
+        const next = { ...prev, sudah: true }
+        setLocalInfoCache(next)
+        return next
+      })
       setStatusModal({
         open: true,
         type: 'success',
@@ -1665,6 +1649,8 @@ function Admin({ tok, setTok, onLogout }) {
     <AdminDashboard
       d={d}
       tok={tok}
+      err={err}
+      muat={muat}
       tab={tab}
       setTab={setTab}
       filterSholat={filterSholat}
@@ -1688,6 +1674,8 @@ function Admin({ tok, setTok, onLogout }) {
 const AdminDashboard = memo(function AdminDashboard({
   d,
   tok,
+  err,
+  muat,
   tab,
   setTab,
   filterSholat,

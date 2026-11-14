@@ -62,6 +62,26 @@ function jam_(v) {
   return s;
 }
 
+function formatTgl_(v) {
+  if (!v) return '';
+  if (v instanceof Date) return Utilities.formatDate(v, TZ, 'yyyy-MM-dd');
+  const s = String(v).trim();
+  if (s.includes('T')) {
+    try {
+      return Utilities.formatDate(new Date(s), TZ, 'yyyy-MM-dd');
+    } catch (e) {}
+  }
+  const m = s.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})/);
+  if (m) {
+    return m[1] + '-' + m[2].padStart(2, '0') + '-' + m[3].padStart(2, '0');
+  }
+  const m2 = s.match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{4})/);
+  if (m2) {
+    return m2[3] + '-' + m2[2].padStart(2, '0') + '-' + m2[1].padStart(2, '0');
+  }
+  return s;
+}
+
 function toMinutes_(hhmm) {
   if (!hhmm) return 0;
   const m = String(hhmm).match(/(\d{1,2})[:.](\d{2})/);
@@ -187,9 +207,7 @@ function tentukanSholatAktif_(s, a) {
 function sudahAbsen_(tgl, sholat) {
   const rows = getCachedData_('Absensi', 60); // cache 1 menit untuk absensi
   return rows.some(r => {
-    const tMatch = r.Tanggal instanceof Date 
-      ? Utilities.formatDate(r.Tanggal, TZ, 'yyyy-MM-dd') === tgl 
-      : String(r.Tanggal) === tgl;
+    const tMatch = formatTgl_(r.Tanggal) === tgl;
     const sMatch = String(r.Sholat || '').trim().toLowerCase() === String(sholat).trim().toLowerCase();
     return tMatch && sMatch;
   });
@@ -340,8 +358,8 @@ function data_(d) {
   cek_(d.token);
   const s = sekarang_(), a = atur_();
   const rows = baca_('Absensi').map(r => ({
-    tanggal: r.Tanggal instanceof Date ? Utilities.formatDate(r.Tanggal, TZ, 'yyyy-MM-dd') : String(r.Tanggal),
-    jam: r.Timestamp instanceof Date ? Utilities.formatDate(r.Timestamp, TZ, 'HH:mm') : String(r.Timestamp),
+    tanggal: formatTgl_(r.Tanggal),
+    jam: r.Timestamp instanceof Date ? Utilities.formatDate(r.Timestamp, TZ, 'HH:mm') : jam_(r.Timestamp),
     hari: r.Hari, 
     sholat: r.Sholat || 'Shubuh',
     nama: r.Nama, 
