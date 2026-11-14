@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react'
 import './style.css'
 
-const DEFAULT_API_URL = 'https://script.google.com/macros/s/AKfycbwZ1Rb8lE1s2YsqLszEFM0EWmxbWYVtk80NThcfbpk58h0k9GoRCfL69RMzkmG0RNHN/exec'
-const API = import.meta.env.VITE_API_URL || DEFAULT_API_URL
+const API = import.meta.env.VITE_API_URL || ''
 const isConfigured = Boolean(API && !API.includes('GANTI_DENGAN_ID_ANDA'))
 
 async function api(body, retries = 1) {
@@ -2051,7 +2050,8 @@ function Admin({ tok, setTok, onLogout }) {
                       setBulan(bulanIniAsli)
                     }}
                   >
-                    <span>{b !== bulanIniAsli ? '📅 Kembali ke Bulan Ini' : 'Reset Filter'}</span>
+                    <IconCalendar size={13} />
+                    <span>{b !== bulanIniAsli ? 'Kembali ke Bulan Ini' : 'Reset Filter'}</span>
                   </button>
                 )}
               </div>
