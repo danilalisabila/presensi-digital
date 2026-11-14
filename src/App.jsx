@@ -1,17 +1,37 @@
 import { useEffect, useState } from 'react'
 import './style.css'
 
-const API = import.meta.env.VITE_API_URL
-const isConfigured = API && !API.includes('GANTI_DENGAN_ID_ANDA')
+const DEFAULT_API_URL = 'https://script.google.com/macros/s/AKfycbwZ1Rb8lE1s2YsqLszEFM0EWmxbWYVtk80NThcfbpk58h0k9GoRCfL69RMzkmG0RNHN/exec'
+const API = import.meta.env.VITE_API_URL || DEFAULT_API_URL
+const isConfigured = Boolean(API && !API.includes('GANTI_DENGAN_ID_ANDA'))
 
-async function api(body) {
+async function api(body, retries = 1) {
   if (!isConfigured) {
     throw new Error('Sistem presensi belum terhubung. Silakan hubungi admin.')
   }
-  const r = await fetch(API, body ? { method: 'POST', body: JSON.stringify(body) } : {})
-  const j = await r.json()
-  if (j.error) throw new Error(j.error)
-  return j
+  try {
+    const fetchOptions = body
+      ? {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(body)
+        }
+      : { method: 'GET' }
+
+    const r = await fetch(API, fetchOptions)
+    if (!r.ok) {
+      throw new Error(`Server merespons kode status ${r.status}`)
+    }
+    const j = await r.json()
+    if (j.error) throw new Error(j.error)
+    return j
+  } catch (err) {
+    if (retries > 0) {
+      await new Promise(res => setTimeout(res, 1200))
+      return api(body, retries - 1)
+    }
+    throw err
+  }
 }
 
 function formatTanggalIndo(tglStr, hariStr) {
@@ -58,8 +78,11 @@ function geserBulan(yyyyMm, delta) {
 function sanitizeErrMsg(msg) {
   if (!msg) return 'Terjadi kendala saat memproses data. Silakan coba kembali.'
   const str = String(msg)
+  if (/failed to fetch|networkerror|load failed|cross-origin|cors|offline/i.test(str)) {
+    return 'Gagal terhubung ke server. Pastikan koneksi internet aktif dan stabil, lalu coba kembali.'
+  }
   if (/database|spreadsheet|sheet|apps script|google|gas|script|endpoint|api/i.test(str)) {
-    return 'Terjadi kendala pada jaringan server. Silakan coba kembali.'
+    return 'Terjadi kendala pada jaringan server. Silakan coba kembali beberapa saat lagi.'
   }
   return str
 }
@@ -845,17 +868,15 @@ function Form() {
     setBusy(true)
     setErr('')
     setDone(null)
-    fetch(API)
-      .then(res => res.json())
+    api()
       .then(i => {
-        if (i.error) throw new Error(i.error)
         setInfo(i)
         setLocalInfoCache(i)
         const list = i.tim || []
         setItem(Object.fromEntries(list.map(t => [t.nama, { ket: 'Hadir', alasan: '' }])))
         setPengisi((list.find(t => t.petugas) || list[0] || {}).nama || '')
       })
-      .catch(e => setErr(e.message))
+      .catch(e => setErr(sanitizeErrMsg(e.message)))
       .finally(() => setBusy(false))
   }
 
@@ -1161,9 +1182,29 @@ function Form() {
 
         {/* Error message */}
         {err && (
-          <div className="notice-strip danger" style={{ marginTop: '14px' }}>
-            <div className="notice-icon-wrap"><IconAlertCircle size={16} /></div>
-            <div>{err}</div>
+          <div className="notice-strip danger" style={{ marginTop: '14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div className="notice-icon-wrap"><IconAlertCircle size={16} /></div>
+              <div style={{ fontSize: '13px', lineHeight: '1.4' }}>{err}</div>
+            </div>
+            <button
+              type="button"
+              onClick={muatDataSholatAktif}
+              style={{
+                background: '#fff',
+                border: '1px solid rgba(220, 38, 38, 0.4)',
+                color: '#DC2626',
+                borderRadius: '8px',
+                padding: '6px 12px',
+                fontSize: '12px',
+                fontWeight: '700',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
+              }}
+            >
+              Coba Lagi
+            </button>
           </div>
         )}
 
@@ -1551,9 +1592,29 @@ function Admin({ tok, setTok, onLogout }) {
       </nav>
 
       {err && (
-        <div className="notice-strip danger" style={{ marginBottom: '14px' }}>
-          <div className="notice-icon-wrap"><IconAlertCircle size={16} /></div>
-          <div>{err}</div>
+        <div className="notice-strip danger" style={{ marginBottom: '14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div className="notice-icon-wrap"><IconAlertCircle size={16} /></div>
+            <div style={{ fontSize: '13px', lineHeight: '1.4' }}>{err}</div>
+          </div>
+          <button
+            type="button"
+            onClick={() => tok && muat(tok)}
+            style={{
+              background: '#fff',
+              border: '1px solid rgba(220, 38, 38, 0.4)',
+              color: '#DC2626',
+              borderRadius: '8px',
+              padding: '6px 12px',
+              fontSize: '12px',
+              fontWeight: '700',
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
+            }}
+          >
+            Muat Ulang
+          </button>
         </div>
       )}
 
