@@ -72,25 +72,25 @@ const JADWAL_AWAL = [
 
 // Pengaturan jam bawaan per waktu sholat (bisa disesuaikan via admin)
 const PENGATURAN_AWAL = [
-  ['shubuh_buka',  '04:15', 'Shubuh: Form absen mulai dibuka (JJ:MM)'],
-  ['shubuh_batas', '04:45', 'Shubuh: Batas maksimal tepat waktu (JJ:MM)'],
-  ['shubuh_tutup', '05:30', 'Shubuh: Form absen ditutup (JJ:MM)'],
+  ['shubuh_buka',  '03:45', 'Shubuh: Form absen mulai dibuka (JJ:MM)'],
+  ['shubuh_batas', '06:45', 'Shubuh: Batas maksimal tepat waktu (JJ:MM)'],
+  ['shubuh_tutup', '06:55', 'Shubuh: Form absen ditutup (JJ:MM)'],
 
-  ['dhuhur_buka',  '11:45', 'Dhuhur: Form absen mulai dibuka (JJ:MM)'],
-  ['dhuhur_batas', '12:15', 'Dhuhur: Batas maksimal tepat waktu (JJ:MM)'],
-  ['dhuhur_tutup', '12:45', 'Dhuhur: Form absen ditutup (JJ:MM)'],
+  ['dhuhur_buka',  '12:00', 'Dhuhur: Form absen mulai dibuka (JJ:MM)'],
+  ['dhuhur_batas', '13:10', 'Dhuhur: Batas maksimal tepat waktu (JJ:MM)'],
+  ['dhuhur_tutup', '13:30', 'Dhuhur: Form absen ditutup (JJ:MM)'],
 
-  ['ashar_buka',   '15:00', 'Ashar: Form absen mulai dibuka (JJ:MM)'],
-  ['ashar_batas',  '15:30', 'Ashar: Batas maksimal tepat waktu (JJ:MM)'],
-  ['ashar_tutup',  '16:00', 'Ashar: Form absen ditutup (JJ:MM)'],
+  ['ashar_buka',   '15:10', 'Ashar: Form absen mulai dibuka (JJ:MM)'],
+  ['ashar_batas',  '16:00', 'Ashar: Batas maksimal tepat waktu (JJ:MM)'],
+  ['ashar_tutup',  '16:15', 'Ashar: Form absen ditutup (JJ:MM)'],
 
   ['magrib_buka',  '17:45', 'Magrib: Form absen mulai dibuka (JJ:MM)'],
-  ['magrib_batas', '18:15', 'Magrib: Batas maksimal tepat waktu (JJ:MM)'],
-  ['magrib_tutup', '18:45', 'Magrib: Form absen ditutup (JJ:MM)'],
+  ['magrib_batas', '18:45', 'Magrib: Batas maksimal tepat waktu (JJ:MM)'],
+  ['magrib_tutup', '19:00', 'Magrib: Form absen ditutup (JJ:MM)'],
 
-  ['isya_buka',    '19:00', 'Isya: Form absen mulai dibuka (JJ:MM)'],
-  ['isya_batas',   '19:30', 'Isya: Batas maksimal tepat waktu (JJ:MM)'],
-  ['isya_tutup',   '20:15', 'Isya: Form absen ditutup (JJ:MM)']
+  ['isya_buka',    '19:50', 'Isya: Form absen mulai dibuka (JJ:MM)'],
+  ['isya_batas',   '20:25', 'Isya: Batas maksimal tepat waktu (JJ:MM)'],
+  ['isya_tutup',   '20:30', 'Isya: Form absen ditutup (JJ:MM)']
 ];
 
 // ---------- WARNA ----------

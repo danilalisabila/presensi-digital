@@ -300,9 +300,14 @@ function useCountdown(info) {
     function hitung() {
       const now = new Date()
       const sholatNama = info.sholat || 'Sholat'
-      const [bH, bM] = (info.buka || '04:15').split(':').map(Number)
-      const [lH, lM] = (info.batas || '04:45').split(':').map(Number)
-      const [tH, tM] = (info.tutup || '05:30').split(':').map(Number)
+      const parseJam = (val, def) => {
+        const s = String(val || def).trim().replace('.', ':')
+        const parts = s.split(':').map(Number)
+        return [isNaN(parts[0]) ? 0 : parts[0], isNaN(parts[1]) ? 0 : parts[1]]
+      }
+      const [bH, bM] = parseJam(info.buka, '03:45')
+      const [lH, lM] = parseJam(info.batas, '06:45')
+      const [tH, tM] = parseJam(info.tutup, '06:55')
 
       const mNow = now.getHours() * 60 + now.getMinutes()
       const mBuka = bH * 60 + bM
@@ -349,7 +354,7 @@ function useCountdown(info) {
             targetDate.setDate(targetDate.getDate() + 1)
           }
           title = `Dibuka Dalam (${sholatNama})`
-          tagText = `Buka ${info.buka || '04:15'} WIB`
+          tagText = `Buka ${info.buka || '03:45'} WIB`
           targetType = 'pending'
         } else {
           targetDate.setHours(bH, bM, 0, 0)
@@ -357,7 +362,7 @@ function useCountdown(info) {
             targetDate.setDate(targetDate.getDate() + 1)
           }
           title = `Sesi ${sholatNama} Selesai`
-          tagText = `Buka ${info.buka || '04:15'} WIB`
+          tagText = `Buka ${info.buka || '03:45'} WIB`
           targetType = 'closed'
         }
       } else {
@@ -367,7 +372,7 @@ function useCountdown(info) {
             targetDate.setDate(targetDate.getDate() + 1)
           }
           title = `Sisa Waktu Tepat (${sholatNama})`
-          tagText = `Tepat s/d ${info.batas || '04:45'}`
+          tagText = `Tepat s/d ${info.batas || '06:45'}`
           targetType = 'ontime'
         } else {
           targetDate.setHours(tH, tM, 0, 0)
@@ -375,7 +380,7 @@ function useCountdown(info) {
             targetDate.setDate(targetDate.getDate() + 1)
           }
           title = `Sisa Waktu Formulir (${sholatNama})`
-          tagText = `Tutup ${info.tutup || '05:30'} WIB`
+          tagText = `Tutup ${info.tutup || '06:55'} WIB`
           targetType = 'late'
         }
       }
@@ -1228,6 +1233,14 @@ function Form() {
   )
 }
 
+const DEFAULTS_SHOLAT_JAM = {
+  shubuh_buka: '03:45', shubuh_batas: '06:45', shubuh_tutup: '06:55',
+  dhuhur_buka: '12:00', dhuhur_batas: '13:10', dhuhur_tutup: '13:30',
+  ashar_buka: '15:10', ashar_batas: '16:00', ashar_tutup: '16:15',
+  magrib_buka: '17:45', magrib_batas: '18:45', magrib_tutup: '19:00',
+  isya_buka: '19:50', isya_batas: '20:25', isya_tutup: '20:30'
+}
+
 /* ================= ADMIN DASHBOARD ================= */
 function Admin({ tok, setTok, onLogout }) {
   const [f, setF] = useState({ email: '', pin: '' })
@@ -1239,7 +1252,7 @@ function Admin({ tok, setTok, onLogout }) {
   const [bulan, setBulan] = useState('')
   const [cariRekap, setCariRekap] = useState('')
   const [filterRekap, setFilterRekap] = useState('semua')
-  const [atur, setAtur] = useState({})
+  const [atur, setAtur] = useState(DEFAULTS_SHOLAT_JAM)
   const [busy, setBusy] = useState(false)
   const [statusModal, setStatusModal] = useState({ open: false, type: 'success', title: '', message: '' })
 
@@ -1255,7 +1268,7 @@ function Admin({ tok, setTok, onLogout }) {
     api({ aksi: 'data', token: t })
       .then(x => {
         setD(x)
-        setAtur(x.atur || {})
+        setAtur({ ...DEFAULTS_SHOLAT_JAM, ...(x.atur || {}) })
       })
       .catch(e => {
         setErr(e.message)
@@ -1299,21 +1312,19 @@ function Admin({ tok, setTok, onLogout }) {
     setErr('')
     setBusy(true)
     try {
-      const payloadAtur = { ...atur }
-      const daftarSh = [
-        { id: 'shubuh', defaultBuka: '04:15', defaultBatas: '04:45', defaultTutup: '05:30' },
-        { id: 'dhuhur', defaultBuka: '11:45', defaultBatas: '12:15', defaultTutup: '12:45' },
-        { id: 'ashar', defaultBuka: '15:00', defaultBatas: '15:30', defaultTutup: '16:00' },
-        { id: 'magrib', defaultBuka: '17:45', defaultBatas: '18:15', defaultTutup: '18:45' },
-        { id: 'isya', defaultBuka: '19:00', defaultBatas: '19:30', defaultTutup: '20:15' }
-      ]
-      daftarSh.forEach(sh => {
-        if (!payloadAtur[`${sh.id}_buka`]) payloadAtur[`${sh.id}_buka`] = sh.defaultBuka
-        if (!payloadAtur[`${sh.id}_batas`]) payloadAtur[`${sh.id}_batas`] = sh.defaultBatas
-        if (!payloadAtur[`${sh.id}_tutup`]) payloadAtur[`${sh.id}_tutup`] = sh.defaultTutup
+      const payloadAtur = { ...DEFAULTS_SHOLAT_JAM, ...atur }
+
+      // Normalisasi semua nilai ke format JJ:MM dua digit
+      Object.keys(payloadAtur).forEach(k => {
+        let v = String(payloadAtur[k] || '').trim().replace('.', ':')
+        const m = v.match(/^(\d{1,2}):(\d{2})$/)
+        if (m) {
+          payloadAtur[k] = m[1].padStart(2, '0') + ':' + m[2]
+        }
       })
 
       const res = await api({ aksi: 'simpan', token: tok, atur: payloadAtur })
+      setAtur(payloadAtur)
       setStatusModal({
         open: true,
         type: 'success',
@@ -1330,6 +1341,9 @@ function Admin({ tok, setTok, onLogout }) {
         title: 'Gagal Menyimpan',
         message: msg
       })
+      if (String(e.message || '').includes('Sesi habis')) {
+        setTimeout(keluar, 1500)
+      }
     } finally {
       setBusy(false)
     }
@@ -1989,11 +2003,11 @@ function Admin({ tok, setTok, onLogout }) {
       {tab === 'atur' && (
         <div className="admin-tab-content">
           {[
-            { id: 'shubuh', label: 'Shubuh', defaultBuka: '04:15', defaultBatas: '04:45', defaultTutup: '05:30' },
-            { id: 'dhuhur', label: 'Dhuhur', defaultBuka: '11:45', defaultBatas: '12:15', defaultTutup: '12:45' },
-            { id: 'ashar', label: 'Ashar', defaultBuka: '15:00', defaultBatas: '15:30', defaultTutup: '16:00' },
-            { id: 'magrib', label: 'Magrib', defaultBuka: '17:45', defaultBatas: '18:15', defaultTutup: '18:45' },
-            { id: 'isya', label: 'Isya', defaultBuka: '19:00', defaultBatas: '19:30', defaultTutup: '20:15' }
+            { id: 'shubuh', label: 'Shubuh', defaultBuka: '03:45', defaultBatas: '06:45', defaultTutup: '06:55' },
+            { id: 'dhuhur', label: 'Dhuhur', defaultBuka: '12:00', defaultBatas: '13:10', defaultTutup: '13:30' },
+            { id: 'ashar', label: 'Ashar', defaultBuka: '15:10', defaultBatas: '16:00', defaultTutup: '16:15' },
+            { id: 'magrib', label: 'Magrib', defaultBuka: '17:45', defaultBatas: '18:45', defaultTutup: '19:00' },
+            { id: 'isya', label: 'Isya', defaultBuka: '19:50', defaultBatas: '20:25', defaultTutup: '20:30' }
           ].map(sh => (
             <div key={sh.id} className="ios-settings-card" style={{ marginBottom: '14px' }}>
               <div className="ios-settings-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -2026,7 +2040,7 @@ function Admin({ tok, setTok, onLogout }) {
                       <input
                         type="time"
                         className="ios-time-picker"
-                        value={atur[k] !== undefined && atur[k] !== '' ? atur[k] : (k.endsWith('_buka') ? sh.defaultBuka : k.endsWith('_batas') ? sh.defaultBatas : sh.defaultTutup)}
+                        value={atur[k] || DEFAULTS_SHOLAT_JAM[k] || ''}
                         onChange={e => setAtur({ ...atur, [k]: e.target.value })}
                       />
                     </div>

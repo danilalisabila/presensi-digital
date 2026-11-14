@@ -50,7 +50,12 @@ function jam_(v) {
     return Utilities.formatDate(v, TZ, 'HH:mm');
   }
   const s = String(v || '').trim();
-  const m = s.match(/(\d{1,2}):(\d{2})/);
+  if (s.includes('T') && !isNaN(Date.parse(s))) {
+    try {
+      return Utilities.formatDate(new Date(s), TZ, 'HH:mm');
+    } catch (e) {}
+  }
+  const m = s.match(/(\d{1,2})[:.](\d{2})/);
   if (m) {
     return m[1].padStart(2, '0') + ':' + m[2];
   }
@@ -59,7 +64,7 @@ function jam_(v) {
 
 function toMinutes_(hhmm) {
   if (!hhmm) return 0;
-  const m = String(hhmm).match(/(\d{1,2}):(\d{2})/);
+  const m = String(hhmm).match(/(\d{1,2})[:.](\d{2})/);
   if (!m) return 0;
   return parseInt(m[1], 10) * 60 + parseInt(m[2], 10);
 }
@@ -113,7 +118,10 @@ function cekStatusWaktu_(jam, buka, batas, tutup) {
 
 function atur_() { 
   const o = {}; 
-  getCachedData_('Pengaturan', 300).forEach(r => o[r.Kunci] = jam_(r.Nilai)); 
+  baca_('Pengaturan').forEach(r => {
+    const k = String(r.Kunci || '').trim();
+    if (k) o[k] = jam_(r.Nilai);
+  }); 
   return o; 
 }
 
@@ -140,9 +148,9 @@ function timSholat_(sholat) {
 
 function getJadwalSholatConfig_(a, sholat) {
   const pfx = String(sholat).toLowerCase();
-  const buka = a[pfx + '_buka'] || (sholat === 'Shubuh' ? '04:15' : sholat === 'Dhuhur' ? '11:45' : sholat === 'Ashar' ? '15:00' : sholat === 'Magrib' ? '17:45' : '19:00');
-  const batas = a[pfx + '_batas'] || (sholat === 'Shubuh' ? '04:45' : sholat === 'Dhuhur' ? '12:15' : sholat === 'Ashar' ? '15:30' : sholat === 'Magrib' ? '18:15' : '19:30');
-  const tutup = a[pfx + '_tutup'] || (sholat === 'Shubuh' ? '05:30' : sholat === 'Dhuhur' ? '12:45' : sholat === 'Ashar' ? '16:00' : sholat === 'Magrib' ? '18:45' : '20:15');
+  const buka = a[pfx + '_buka'] || (sholat === 'Shubuh' ? '03:45' : sholat === 'Dhuhur' ? '12:00' : sholat === 'Ashar' ? '15:10' : sholat === 'Magrib' ? '17:45' : '19:50');
+  const batas = a[pfx + '_batas'] || (sholat === 'Shubuh' ? '06:45' : sholat === 'Dhuhur' ? '13:10' : sholat === 'Ashar' ? '16:00' : sholat === 'Magrib' ? '18:45' : '20:25');
+  const tutup = a[pfx + '_tutup'] || (sholat === 'Shubuh' ? '06:55' : sholat === 'Dhuhur' ? '13:30' : sholat === 'Ashar' ? '16:15' : sholat === 'Magrib' ? '19:00' : '20:30');
   return { buka: jam_(buka), batas: jam_(batas), tutup: jam_(tutup) };
 }
 
@@ -303,13 +311,29 @@ function login_(d) {
   c.remove(k);
   const t = Utilities.getUuid(); 
   c.put('tok_' + t, em, 21600);
+  try {
+    PropertiesService.getScriptProperties().setProperty('tok_' + t, JSON.stringify({ email: em, time: new Date().getTime() }));
+  } catch (e) {}
   return { token: t, nama: ad.Nama };
 }
 
 function cek_(t) { 
-  if (!t || !CacheService.getScriptCache().get('tok_' + t)) {
-    throw new Error('Sesi habis, silakan login lagi'); 
-  }
+  if (!t) throw new Error('Sesi habis, silakan login lagi');
+  const c = CacheService.getScriptCache();
+  if (c.get('tok_' + t)) return;
+  
+  try {
+    const p = PropertiesService.getScriptProperties().getProperty('tok_' + t);
+    if (p) {
+      const data = JSON.parse(p);
+      if (new Date().getTime() - data.time < 24 * 60 * 60 * 1000) {
+        c.put('tok_' + t, data.email, 21600);
+        return;
+      }
+    }
+  } catch (e) {}
+  
+  throw new Error('Sesi habis, silakan login lagi'); 
 }
 
 function data_(d) {
@@ -350,16 +374,23 @@ function simpan_(d) {
   const keys = Object.keys(d.atur || {});
   
   keys.forEach(k => {
-    const x = String(d.atur[k]).trim();
-    if (!/^\d\d:\d\d$/.test(x)) return;
-    const i = v.findIndex(r => r[0] === k);
+    const rawVal = String(d.atur[k] || '').trim().replace('.', ':');
+    const m = rawVal.match(/^(\d{1,2}):(\d{2})$/);
+    if (!m) return;
+    const formattedJam = m[1].padStart(2, '0') + ':' + m[2];
+    
+    const cleanKey = String(k).trim().toLowerCase();
+    const i = v.findIndex(r => String(r[0] || '').trim().toLowerCase() === cleanKey);
     if (i !== -1) {
-      sh.getRange(i + 1, 2).setValue(x);
+      sh.getRange(i + 1, 2).setNumberFormat('@').setValue(formattedJam);
+      v[i][1] = formattedJam;
     } else {
-      sh.appendRow([k, x, 'Pengaturan waktu']);
+      sh.appendRow([k, formattedJam, 'Pengaturan waktu']);
+      v.push([k, formattedJam, 'Pengaturan waktu']);
     }
   });
   
+  SpreadsheetApp.flush();
   clearSheetCache_('Pengaturan');
   return { ok: true, pesan: 'Pengaturan jam sholat berhasil diperbarui' };
 }
