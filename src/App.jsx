@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo, useCallback, memo } from 'react'
 import './style.css'
 
 const API = import.meta.env.VITE_API_URL || ''
@@ -431,6 +431,60 @@ function useCountdown(info) {
   return cd
 }
 
+// Hook Progressive Rendering ("Nyicil" rendering kartu agar UI 60fps tanpa freeze)
+function useIncrementalLimit(totalCount, initial = 12, step = 10) {
+  const [limit, setLimit] = useState(initial)
+
+  useEffect(() => {
+    setLimit(initial)
+  }, [totalCount, initial])
+
+  useEffect(() => {
+    if (limit >= totalCount) return
+    const id = setTimeout(() => {
+      setLimit(prev => Math.min(prev + step, totalCount))
+    }, 35)
+    return () => clearTimeout(id)
+  }, [limit, totalCount, step])
+
+  return limit
+}
+
+// Komponen Hitung Mundur Terisolasi (Hanya me-render timer tanpa memicu re-render form personil)
+const CountdownSection = memo(function CountdownSection({ info }) {
+  const countdown = useCountdown(info)
+  return (
+    <div className="hero-timer-panel">
+      <div className="timer-label-row">
+        <span className="timer-target-title">
+          <IconHourglass size={13} />
+          <span>{countdown.title}</span>
+        </span>
+        <span className="timer-sub-tag">
+          {countdown.tagText}
+        </span>
+      </div>
+
+      <div className="timer-digits-row">
+        <div className="timer-unit-card">
+          <span className="timer-val">{countdown.hours}</span>
+          <span className="timer-unit-label">Jam</span>
+        </div>
+        <span className="timer-separator">:</span>
+        <div className="timer-unit-card">
+          <span className="timer-val">{countdown.minutes}</span>
+          <span className="timer-unit-label">Menit</span>
+        </div>
+        <span className="timer-separator">:</span>
+        <div className="timer-unit-card">
+          <span className="timer-val">{countdown.seconds}</span>
+          <span className="timer-unit-label">Detik</span>
+        </div>
+      </div>
+    </div>
+  )
+})
+
 const KET = ['Hadir', 'Sakit', 'Izin', 'Alfa']
 const DAFTAR_SHOLAT_DEFAULT = ['Shubuh', 'Dhuhur', 'Ashar', 'Magrib', 'Isya']
 
@@ -839,6 +893,72 @@ function setLocalInfoCache(data) {
   } catch (e) {}
 }
 
+// Komponen Baris Personil yang dimemoize (Hanya me-render ulang jika status personil bersangkutan berubah)
+const OfficerRowItem = memo(function OfficerRowItem({ t, currentItem, ubah }) {
+  const isKoor = t.peran === 'Koordinator' || t.peran === 'Ketua'
+  const isOfficial = t.petugas
+
+  return (
+    <div className="officer-row-item">
+      <div className="officer-top-info">
+        <div className="officer-avatar-name">
+          <div className={`avatar-initial ${isKoor ? 'ketua' : isOfficial ? 'petugas' : ''}`}>
+            {getInitials(t.nama)}
+          </div>
+          <div className="name-role-col">
+            <span className="officer-fullname">{t.nama}</span>
+            <div className="role-pill-tags">
+              {isKoor && (
+                <span className="mini-role-pill ketua">
+                  <IconShield size={9} />
+                  Koordinator
+                </span>
+              )}
+              {isOfficial && !isKoor && (
+                <span className="mini-role-pill petugas">
+                  <IconBadgeCheck size={9} />
+                  Petugas Absen
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 4 Segmented Pills (Hadir, Sakit, Izin, Alfa) */}
+      <div className="segmented-pill-bar">
+        {KET.map(k => {
+          const isSelected = currentItem.ket === k
+          return (
+            <button
+              key={k}
+              type="button"
+              className={`pill-option-btn ${k} ${isSelected ? 'active' : ''}`}
+              onClick={() => ubah(t.nama, { ket: k })}
+            >
+              {isSelected && <IconCheck size={11} />}
+              <span>{k}</span>
+            </button>
+          )
+        })}
+      </div>
+
+      {/* Reason Drawer */}
+      {(currentItem.ket === 'Sakit' || currentItem.ket === 'Izin') && (
+        <div className="reason-drawer">
+          <input
+            type="text"
+            className="inline-reason-input"
+            placeholder={`Alasan ${currentItem.ket.toLowerCase()} untuk ${t.nama}...`}
+            value={currentItem.alasan || ''}
+            onChange={e => ubah(t.nama, { alasan: e.target.value })}
+          />
+        </div>
+      )}
+    </div>
+  )
+})
+
 /* ================= FORM KORLAP SHOLAT JAMA'AH ================= */
 function Form() {
   const [info, setInfo] = useState(() => getLocalInfoCache())
@@ -883,8 +1003,9 @@ function Form() {
     muatDataSholatAktif()
   }, [])
 
-  const countdown = useCountdown(info)
-  const ubah = (n, p) => setItem(s => ({ ...s, [n]: { ...(s[n] || { ket: 'Hadir', alasan: '' }), ...p } }))
+  const ubah = useCallback((n, p) => {
+    setItem(s => ({ ...s, [n]: { ...(s[n] || { ket: 'Hadir', alasan: '' }), ...p } }))
+  }, [])
 
   async function kirim() {
     setErr('')
@@ -989,6 +1110,8 @@ function Form() {
 
   const tutup = info.status !== 'buka'
   const tim = info.tim || []
+  const displayLimit = useIncrementalLimit(tim.length, 12, 10)
+  const visibleTim = useMemo(() => tim.slice(0, displayLimit), [tim, displayLimit])
   const submitterObj = tim.find(t => t.nama === pengisi)
 
   return (
@@ -1009,35 +1132,8 @@ function Form() {
             </div>
           </div>
 
-          {/* Jam Hitungan Mundur */}
-          <div className="hero-timer-panel">
-            <div className="timer-label-row">
-              <span className="timer-target-title">
-                <IconHourglass size={13} />
-                <span>{countdown.title}</span>
-              </span>
-              <span className="timer-sub-tag">
-                {countdown.tagText}
-              </span>
-            </div>
-
-            <div className="timer-digits-row">
-              <div className="timer-unit-card">
-                <span className="timer-val">{countdown.hours}</span>
-                <span className="timer-unit-label">Jam</span>
-              </div>
-              <span className="timer-separator">:</span>
-              <div className="timer-unit-card">
-                <span className="timer-val">{countdown.minutes}</span>
-                <span className="timer-unit-label">Menit</span>
-              </div>
-              <span className="timer-separator">:</span>
-              <div className="timer-unit-card">
-                <span className="timer-val">{countdown.seconds}</span>
-                <span className="timer-unit-label">Detik</span>
-              </div>
-            </div>
-          </div>
+          {/* Jam Hitungan Mundur (Terisolasi dari Form) */}
+          <CountdownSection info={info} />
 
           <div className="hero-footer-bar">
             <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
@@ -1086,71 +1182,19 @@ function Form() {
 
         {/* Grouped Officers List */}
         <div className="grouped-list-card">
-          {tim.map(t => {
-            const currentItem = item[t.nama] || { ket: 'Hadir', alasan: '' }
-            const isKoor = t.peran === 'Koordinator' || t.peran === 'Ketua'
-            const isOfficial = t.petugas
-
-            return (
-              <div className="officer-row-item" key={t.nama}>
-                <div className="officer-top-info">
-                  <div className="officer-avatar-name">
-                    <div className={`avatar-initial ${isKoor ? 'ketua' : isOfficial ? 'petugas' : ''}`}>
-                      {getInitials(t.nama)}
-                    </div>
-                    <div className="name-role-col">
-                      <span className="officer-fullname">{t.nama}</span>
-                      <div className="role-pill-tags">
-                        {isKoor && (
-                          <span className="mini-role-pill ketua">
-                            <IconShield size={9} />
-                            Koordinator
-                          </span>
-                        )}
-                        {isOfficial && !isKoor && (
-                          <span className="mini-role-pill petugas">
-                            <IconBadgeCheck size={9} />
-                            Petugas Absen
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* 4 Segmented Pills (Hadir, Sakit, Izin, Alfa) */}
-                <div className="segmented-pill-bar">
-                  {KET.map(k => {
-                    const isSelected = currentItem.ket === k
-                    return (
-                      <button
-                        key={k}
-                        type="button"
-                        className={`pill-option-btn ${k} ${isSelected ? 'active' : ''}`}
-                        onClick={() => ubah(t.nama, { ket: k })}
-                      >
-                        {isSelected && <IconCheck size={11} />}
-                        <span>{k}</span>
-                      </button>
-                    )
-                  })}
-                </div>
-
-                {/* Reason Drawer */}
-                {(currentItem.ket === 'Sakit' || currentItem.ket === 'Izin') && (
-                  <div className="reason-drawer">
-                    <input
-                      type="text"
-                      className="inline-reason-input"
-                      placeholder={`Alasan ${currentItem.ket.toLowerCase()} untuk ${t.nama}...`}
-                      value={currentItem.alasan}
-                      onChange={e => ubah(t.nama, { alasan: e.target.value })}
-                    />
-                  </div>
-                )}
-              </div>
-            )
-          })}
+          {visibleTim.map(t => (
+            <OfficerRowItem
+              key={t.nama}
+              t={t}
+              currentItem={item[t.nama] || { ket: 'Hadir', alasan: '' }}
+              ubah={ubah}
+            />
+          ))}
+          {displayLimit < tim.length && (
+            <div style={{ padding: '12px 14px', textAlign: 'center', fontSize: '12px', color: 'var(--slate-500)', fontWeight: '600' }}>
+              Memuat personil lainnya ({displayLimit} dari {tim.length})...
+            </div>
+          )}
         </div>
 
         {/* Submitter Selection Card */}
@@ -1280,6 +1324,99 @@ const DEFAULTS_SHOLAT_JAM = {
   magrib_buka: '17:45', magrib_batas: '18:45', magrib_tutup: '19:00',
   isya_buka: '19:50', isya_batas: '20:25', isya_tutup: '20:30'
 }
+
+// Komponen Kartu Rekap Personil yang dimemoize (Mencegah re-render massal)
+const RekapCardItem = memo(function RekapCardItem({ n, u }) {
+  const tot = (u?.Hadir || 0) + (u?.Sakit || 0) + (u?.Izin || 0) + (u?.Alfa || 0)
+  const rate = tot > 0 ? Math.round(((u?.Hadir || 0) / tot) * 100) : 0
+  const rateType = rate >= 80 ? 'good' : rate >= 50 ? 'warn' : 'bad'
+  const terlambat = u?.Terlambat || 0
+  const sakit = u?.Sakit || 0
+  const izin = u?.Izin || 0
+  const alfa = u?.Alfa || 0
+  const hadir = u?.Hadir || 0
+
+  return (
+    <div className="rekap-ustadz-card">
+      <div className="rekap-card-top-row">
+        <div className="rekap-ustadz-info">
+          <div className={`rekap-ustadz-avatar ${rateType}`}>
+            {getInitials(n)}
+          </div>
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <span className="rekap-ustadz-name">{n}</span>
+            <span className="rekap-ustadz-sub">{tot} kali tugas korlap</span>
+          </div>
+        </div>
+        <div className={`rekap-rate-pill ${rateType}`}>
+          <span className="rate-num">{rate}%</span>
+          <span className="rate-txt">Hadir</span>
+        </div>
+      </div>
+
+      {tot > 0 && (
+        <div className="ustadz-progress-track">
+          <div
+            className="u-seg ontime"
+            style={{ width: `${Math.max(0, (hadir - terlambat) / tot * 100)}%` }}
+            title="Tepat Waktu"
+          />
+          <div
+            className="u-seg late"
+            style={{ width: `${(terlambat / tot) * 100}%` }}
+            title="Terlambat"
+          />
+          <div
+            className="u-seg sick"
+            style={{ width: `${(sakit / tot) * 100}%` }}
+            title="Sakit"
+          />
+          <div
+            className="u-seg excuse"
+            style={{ width: `${(izin / tot) * 100}%` }}
+            title="Izin"
+          />
+          <div
+            className="u-seg alfa"
+            style={{ width: `${(alfa / tot) * 100}%` }}
+            title="Alfa"
+          />
+        </div>
+      )}
+
+      <div className="rekap-stat-chips-row">
+        <span className="r-chip hadir">
+          <span className="lbl">Hadir</span>
+          <span className="val">{hadir}</span>
+        </span>
+        {terlambat > 0 && (
+          <span className="r-chip terlambat">
+            <span className="lbl">Telat</span>
+            <span className="val">{terlambat}</span>
+          </span>
+        )}
+        {sakit > 0 && (
+          <span className="r-chip sakit">
+            <span className="lbl">Sakit</span>
+            <span className="val">{sakit}</span>
+          </span>
+        )}
+        {izin > 0 && (
+          <span className="r-chip izin">
+            <span className="lbl">Izin</span>
+            <span className="val">{izin}</span>
+          </span>
+        )}
+        {alfa > 0 && (
+          <span className="r-chip alfa">
+            <span className="lbl">Alfa</span>
+            <span className="val">{alfa}</span>
+          </span>
+        )}
+      </div>
+    </div>
+  )
+})
 
 /* ================= ADMIN DASHBOARD ================= */
 function Admin({ tok, setTok, onLogout }) {
@@ -1567,6 +1704,12 @@ function Admin({ tok, setTok, onLogout }) {
     return true
   })
 
+  const displayLimitHariIni = useIncrementalLimit(hariIni.length, 15, 10)
+  const visibleHariIni = useMemo(() => hariIni.slice(0, displayLimitHariIni), [hariIni, displayLimitHariIni])
+
+  const displayLimitRekap = useIncrementalLimit(filteredUstadz.length, 15, 10)
+  const visibleUstadz = useMemo(() => filteredUstadz.slice(0, displayLimitRekap), [filteredUstadz, displayLimitRekap])
+
   const daftarSholatAdmin = ['Semua', 'Shubuh', 'Dhuhur', 'Ashar', 'Magrib', 'Isya']
 
   return (
@@ -1720,7 +1863,7 @@ function Admin({ tok, setTok, onLogout }) {
               </div>
 
               <div className="mobile-officers-feed">
-                {hariIni.map((r, idx) => {
+                {visibleHariIni.map((r, idx) => {
                   const isHadir = r.ket === 'Hadir'
                   const isSakit = r.ket === 'Sakit'
                   const isIzin = r.ket === 'Izin'
@@ -1772,6 +1915,12 @@ function Admin({ tok, setTok, onLogout }) {
                     </div>
                   )
                 })}
+
+                {displayLimitHariIni < hariIni.length && (
+                  <div style={{ padding: '12px 14px', textAlign: 'center', fontSize: '12px', color: 'var(--slate-500)', fontWeight: '600' }}>
+                    Memuat data personil lainnya ({displayLimitHariIni} dari {hariIni.length})...
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -1937,95 +2086,17 @@ function Admin({ tok, setTok, onLogout }) {
             </div>
           </div>
 
-          {/* 3. Feed List Personil Rekap */}
+          {/* 3. Feed List Personil Rekap (Rendering bertahap / nyicil) */}
           <div className="rekap-ustadz-feed">
-            {filteredUstadz.map(n => {
-              const u = rek[n]
-              const tot = (u.Hadir || 0) + (u.Sakit || 0) + (u.Izin || 0) + (u.Alfa || 0)
-              const rate = tot > 0 ? Math.round((u.Hadir / tot) * 100) : 0
-              const rateType = rate >= 80 ? 'good' : rate >= 50 ? 'warn' : 'bad'
+            {visibleUstadz.map(n => (
+              <RekapCardItem key={n} n={n} u={rek[n]} />
+            ))}
 
-              return (
-                <div className="rekap-ustadz-card" key={n}>
-                  <div className="rekap-card-top-row">
-                    <div className="rekap-ustadz-info">
-                      <div className={`rekap-ustadz-avatar ${rateType}`}>
-                        {getInitials(n)}
-                      </div>
-                      <div style={{ minWidth: 0, flex: 1 }}>
-                        <span className="rekap-ustadz-name">{n}</span>
-                        <span className="rekap-ustadz-sub">{tot} kali tugas korlap</span>
-                      </div>
-                    </div>
-                    <div className={`rekap-rate-pill ${rateType}`}>
-                      <span className="rate-num">{rate}%</span>
-                      <span className="rate-txt">Hadir</span>
-                    </div>
-                  </div>
-
-                  {tot > 0 && (
-                    <div className="ustadz-progress-track">
-                      <div
-                        className="u-seg ontime"
-                        style={{ width: `${Math.max(0, (u.Hadir - u.Terlambat) / tot * 100)}%` }}
-                        title="Tepat Waktu"
-                      />
-                      <div
-                        className="u-seg late"
-                        style={{ width: `${(u.Terlambat / tot) * 100}%` }}
-                        title="Terlambat"
-                      />
-                      <div
-                        className="u-seg sick"
-                        style={{ width: `${(u.Sakit / tot) * 100}%` }}
-                        title="Sakit"
-                      />
-                      <div
-                        className="u-seg excuse"
-                        style={{ width: `${(u.Izin / tot) * 100}%` }}
-                        title="Izin"
-                      />
-                      <div
-                        className="u-seg alfa"
-                        style={{ width: `${(u.Alfa / tot) * 100}%` }}
-                        title="Alfa"
-                      />
-                    </div>
-                  )}
-
-                  <div className="rekap-stat-chips-row">
-                    <span className="r-chip hadir">
-                      <span className="lbl">Hadir</span>
-                      <span className="val">{u.Hadir}</span>
-                    </span>
-                    {u.Terlambat > 0 && (
-                      <span className="r-chip terlambat">
-                        <span className="lbl">Telat</span>
-                        <span className="val">{u.Terlambat}</span>
-                      </span>
-                    )}
-                    {u.Sakit > 0 && (
-                      <span className="r-chip sakit">
-                        <span className="lbl">Sakit</span>
-                        <span className="val">{u.Sakit}</span>
-                      </span>
-                    )}
-                    {u.Izin > 0 && (
-                      <span className="r-chip izin">
-                        <span className="lbl">Izin</span>
-                        <span className="val">{u.Izin}</span>
-                      </span>
-                    )}
-                    {u.Alfa > 0 && (
-                      <span className="r-chip alfa">
-                        <span className="lbl">Alfa</span>
-                        <span className="val">{u.Alfa}</span>
-                      </span>
-                    )}
-                  </div>
-                </div>
-              )
-            })}
+            {displayLimitRekap < filteredUstadz.length && (
+              <div style={{ padding: '12px 14px', textAlign: 'center', fontSize: '12px', color: 'var(--slate-500)', fontWeight: '600' }}>
+                Memuat personil berikutnya ({displayLimitRekap} dari {filteredUstadz.length})...
+              </div>
+            )}
 
             {!filteredUstadz.length && (
               <div className="rekap-empty-state-card">
