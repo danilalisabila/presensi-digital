@@ -3236,31 +3236,76 @@ button, input, select, textarea {
 /* ================= HARMONIZED ADMIN DASHBOARD STYLES ================= */
 /* 1. Responsive Desktop / Mobile Admin Viewport */
 @media (min-width: 768px) {
+  body {
+    background-color: #edf2f7;
+  }
+
   .mobile-viewport.admin-layout {
-    max-width: 880px !important;
-    border-left: 1px solid var(--slate-200);
-    border-right: 1px solid var(--slate-200);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+    max-width: 1160px !important;
+    width: 94% !important;
+    margin: 24px auto !important;
+    border-radius: 20px !important;
+    border: 1px solid rgba(226, 232, 240, 0.95) !important;
+    box-shadow: 0 20px 50px -10px rgba(12, 18, 28, 0.08), 0 4px 16px -2px rgba(12, 18, 28, 0.04) !important;
+    background: #ffffff !important;
+    overflow: hidden !important;
+  }
+
+  .mobile-viewport.admin-layout .sticky-top-appbar {
+    border-radius: 20px 20px 0 0 !important;
+    padding: 14px 28px !important;
+    border-bottom: 1px solid var(--slate-200) !important;
   }
 
   .mobile-viewport.admin-layout .scroll-body {
-    padding: 20px 24px 44px;
+    padding: 24px 28px 48px !important;
+    background: #f8fafc !important;
+  }
+
+  .segmented-admin-tabs {
+    max-width: 520px !important;
+    margin: 0 auto 20px !important;
   }
 
   .kpi-grid-4 {
     grid-template-columns: repeat(4, 1fr) !important;
-    gap: 12px !important;
+    gap: 14px !important;
+  }
+
+  .kpi-card {
+    padding: 16px 14px !important;
+  }
+
+  .kpi-val {
+    font-size: 26px !important;
   }
 
   .wa-share-action-card {
     flex-direction: row !important;
     align-items: center !important;
     justify-content: space-between !important;
+    padding: 16px 22px !important;
   }
 
   .wa-share-action-card .btn-wa-share {
     width: auto !important;
-    padding: 10px 20px !important;
+    padding: 11px 24px !important;
+    font-size: 13px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .admin-two-col-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 18px !important;
+    align-items: start !important;
+  }
+
+  .settings-grid-2col {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 16px !important;
+    align-items: start !important;
   }
 }
 
@@ -3514,28 +3559,46 @@ button, input, select, textarea {
   background: #ffffff;
   border: 1px solid var(--slate-200);
   border-radius: var(--radius-md);
-  padding: 10px 14px;
+  padding: 12px 16px;
   margin-bottom: 14px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
 .rate-strip-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 11.5px;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  width: 100% !important;
+  font-size: 12px;
   font-weight: 700;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   color: var(--slate-700);
 }
 
+.rate-strip-label {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: var(--slate-800) !important;
+}
+
+.rate-strip-count {
+  font-size: 11px !important;
+  color: var(--slate-500) !important;
+  font-weight: 600 !important;
+}
+
 .rate-strip-val {
-  font-weight: 800;
-  color: #064e3b;
+  font-size: 13.5px !important;
+  font-weight: 800 !important;
+  color: #064e3b !important;
+  margin-left: auto !important;
 }
 
 .rate-progress-track {
-  height: 8px;
+  height: 9px;
   border-radius: 999px;
   background: #e2e8f0;
   overflow: hidden;
@@ -3756,4 +3819,182 @@ button, input, select, textarea {
   color: #1e293b;
   line-height: 1.5;
   margin-bottom: 12px;
+}
+
+/* 11. Mobile Precision Optimization (< 768px) */
+@media (max-width: 767px) {
+  .mobile-viewport.admin-layout {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  .mobile-viewport.admin-layout .scroll-body {
+    padding: 12px 12px 32px !important;
+  }
+
+  .segmented-admin-tabs {
+    width: 100% !important;
+    padding: 3px !important;
+    gap: 3px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .admin-tab-btn {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    padding: 7px 4px !important;
+    font-size: 11px !important;
+    gap: 4px !important;
+  }
+
+  .admin-tab-btn span {
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  .admin-greeting-hero {
+    padding: 14px 14px 12px !important;
+    border-radius: 14px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .greeting-title {
+    font-size: 15px !important;
+  }
+
+  .greeting-sub {
+    font-size: 11px !important;
+  }
+
+  .wa-share-action-card {
+    padding: 12px 14px !important;
+    border-radius: 14px !important;
+    margin-bottom: 12px !important;
+    gap: 10px !important;
+  }
+
+  .wa-share-left {
+    gap: 10px !important;
+  }
+
+  .wa-share-icon-wrap {
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 10px !important;
+  }
+
+  .wa-share-title {
+    font-size: 13px !important;
+  }
+
+  .wa-share-desc {
+    font-size: 10.5px !important;
+  }
+
+  .btn-wa-share {
+    padding: 9px 12px !important;
+    font-size: 12px !important;
+    border-radius: 10px !important;
+  }
+
+  .kpi-grid-4 {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .kpi-card {
+    padding: 10px 8px !important;
+    border-radius: 12px !important;
+  }
+
+  .kpi-label {
+    font-size: 10.5px !important;
+  }
+
+  .kpi-val {
+    font-size: 20px !important;
+    margin: 4px 0 !important;
+  }
+
+  .kpi-sub {
+    font-size: 9.5px !important;
+    padding: 2px 6px !important;
+    white-space: nowrap !important;
+  }
+
+  .kpi-rate-strip {
+    padding: 10px 12px !important;
+    border-radius: 12px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .rate-strip-header {
+    font-size: 11.5px !important;
+  }
+
+  .chart-card-wrapper {
+    padding: 12px !important;
+    border-radius: 14px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .chart-toggle-btn {
+    font-size: 10px !important;
+    padding: 6px 2px !important;
+  }
+
+  .activity-log-card {
+    padding: 12px !important;
+    border-radius: 14px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .mobile-officers-card {
+    border-radius: 14px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .admin-filter-bar {
+    display: flex !important;
+    gap: 6px !important;
+    overflow-x: auto !important;
+    padding-bottom: 4px !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+  }
+
+  .admin-filter-bar::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .admin-filter-pill {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+    padding: 6px 12px !important;
+    font-size: 11.5px !important;
+  }
+
+  .admin-two-col-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  .settings-grid-2col {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  .ios-settings-card {
+    border-radius: 14px !important;
+    margin-bottom: 12px !important;
+  }
 }

@@ -2032,24 +2032,25 @@ function SvgBarChart({ data, mode }) {
     )
   }
 
-  const svgWidth = 560
-  const svgHeight = 210
-  const padLeft = 20
-  const padRight = 20
-  const padTop = 30
-  const padBottom = 45
+  const count = data.length
+  const minColWidth = count <= 5 ? 100 : (count <= 7 ? 80 : 54)
+  const svgWidth = Math.max(600, count * minColWidth + 60)
+  const svgHeight = 220
+  const padLeft = 24
+  const padRight = 36
+  const padTop = 32
+  const padBottom = 48
   const chartWidth = svgWidth - padLeft - padRight
   const chartHeight = svgHeight - padTop - padBottom
 
-  const count = data.length
   const colWidth = chartWidth / count
-  const barWidth = Math.min(42, Math.max(22, colWidth * 0.55))
+  const barWidth = Math.min(46, Math.max(20, colWidth * 0.52))
 
   return (
     <div style={{ width: '100%', overflowX: 'auto' }}>
       <svg
         viewBox={`0 0 ${svgWidth} ${svgHeight}`}
-        style={{ width: '100%', minWidth: count > 6 ? '480px' : '100%', height: 'auto', display: 'block' }}
+        style={{ width: '100%', minWidth: count > 6 ? `${Math.min(svgWidth, 680)}px` : '100%', height: 'auto', display: 'block' }}
       >
         <defs>
           <linearGradient id="barGradientGreen" x1="0" y1="0" x2="0" y2="1">
@@ -2789,15 +2790,18 @@ const AdminDashboard = memo(function AdminDashboard({
                 <span className="kpi-label">Alfa</span>
                 <IconAlertCircle size={15} className="kpi-icon" />
               </div>
-              <div className="kpi-val">{hariIniStats.Alfa === 0 ? 'NIHIL' : hariIniStats.Alfa}</div>
-              <div className="kpi-sub">{hariIniStats.Alfa === 0 ? 'Tertib 100%' : `${hariIniStats.Alfa} Tanpa Ket.`}</div>
+              <div className="kpi-val">{hariIniStats.Alfa}</div>
+              <div className="kpi-sub">{hariIniStats.Alfa === 0 ? 'NIHIL (Tertib)' : `${hariIniStats.Alfa} Tanpa Ket.`}</div>
             </div>
           </div>
 
           {/* 4. Progress Strip Rate Kehadiran */}
           <div className="kpi-rate-strip">
             <div className="rate-strip-header">
-              <span className="rate-strip-label">Akumulasi Kehadiran Hari Ini ({hariIniSemua.length} Petugas Terdata)</span>
+              <span className="rate-strip-label">
+                <span>Akumulasi Kehadiran Hari Ini</span>
+                <span className="rate-strip-count">({hariIniSemua.length} Petugas Terdata)</span>
+              </span>
               <span className="rate-strip-val">{rateHariIni}%</span>
             </div>
             <div className="rate-progress-track">
@@ -2845,15 +2849,18 @@ const AdminDashboard = memo(function AdminDashboard({
             </div>
           </div>
 
-          {/* 6. Activity Log Card */}
-          <div className="activity-log-card">
-            <div className="activity-log-header">
-              <h3 className="activity-log-title">
-                <IconClock size={16} />
-                <span>Log Aktivitas Pengiriman Presensi Terkini</span>
-              </h3>
-              <span className="officers-chip">{daftarSesi.length} Sesi Terakhir</span>
-            </div>
+          {/* Lower Section: 2 Columns on Desktop, Stacked on Mobile */}
+          <div className="admin-two-col-grid">
+            <div className="admin-grid-col">
+              {/* 6. Activity Log Card */}
+              <div className="activity-log-card">
+                <div className="activity-log-header">
+                  <h3 className="activity-log-title">
+                    <IconClock size={16} />
+                    <span>Log Aktivitas Pengiriman Presensi Terkini</span>
+                  </h3>
+                  <span className="officers-chip">{daftarSesi.length} Sesi Terakhir</span>
+                </div>
             <div className="activity-log-list">
               {daftarSesi.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '16px', color: 'var(--slate-500)', fontSize: '12px' }}>
@@ -2893,9 +2900,11 @@ const AdminDashboard = memo(function AdminDashboard({
               )}
             </div>
           </div>
+        </div>
 
+        <div className="admin-grid-col">
           {/* 7. Detailed Officers Feed Today with Filter */}
-          <div className="admin-filter-bar" style={{ marginTop: '6px' }}>
+          <div className="admin-filter-bar" style={{ marginTop: '0', marginBottom: '12px' }}>
             {daftarSholatAdmin.map(sh => {
               const isActive = filterSholatHariIni === sh
               return (
@@ -2995,6 +3004,8 @@ const AdminDashboard = memo(function AdminDashboard({
               </div>
             </div>
           )}
+            </div>
+          </div>
         </div>
       )}
 
@@ -3266,53 +3277,55 @@ const AdminDashboard = memo(function AdminDashboard({
       {/* ================= TAB 3: SETELAN WAKTU SHOLAT ================= */}
       {tab === 'atur' && (
         <div className="admin-tab-content">
-          {[
-            { id: 'shubuh', label: 'Shubuh', defaultBuka: '03:45', defaultBatas: '06:45', defaultTutup: '06:55' },
-            { id: 'dhuhur', label: 'Dhuhur', defaultBuka: '12:00', defaultBatas: '13:10', defaultTutup: '13:30' },
-            { id: 'ashar', label: 'Ashar', defaultBuka: '15:10', defaultBatas: '16:00', defaultTutup: '16:15' },
-            { id: 'magrib', label: 'Magrib', defaultBuka: '17:45', defaultBatas: '18:45', defaultTutup: '19:00' },
-            { id: 'isya', label: 'Isya', defaultBuka: '19:50', defaultBatas: '20:25', defaultTutup: '20:30' }
-          ].map(sh => (
-            <div key={sh.id} className="ios-settings-card" style={{ marginBottom: '14px' }}>
-              <div className="ios-settings-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
-                  <h3 className="ios-settings-title">Jam Sholat {sh.label}</h3>
-                  <p className="ios-settings-subtitle">Batas buka, tepat waktu, dan tutup form</p>
-                </div>
-                <span className={`settings-card-header-badge ${sh.id}`}>
-                  {sh.label}
-                </span>
-              </div>
-
-              <div className="ios-settings-group">
-                {[
-                  [`${sh.id}_buka`, 'Jam Buka Form', 'Mulai bisa dibuka untuk presensi', <IconClock size={16} key="i1" />],
-                  [`${sh.id}_batas`, 'Batas Waktu Tepat', 'Lewat dari jam ini tercatat Terlambat', <IconShield size={16} key="i2" />],
-                  [`${sh.id}_tutup`, 'Jam Penutupan Form', 'Formulir otomatis terkunci dan ditutup', <IconLock size={16} key="i3" />]
-                ].map(([k, n, desc, icon]) => (
-                  <div key={k} className="ios-settings-row">
-                    <div className="ios-row-left">
-                      <div className="ios-icon-box">
-                        {icon}
-                      </div>
-                      <div className="ios-row-text">
-                        <span className="ios-row-label">{n}</span>
-                        <span className="ios-row-desc">{desc}</span>
-                      </div>
-                    </div>
-                    <div className="ios-row-right">
-                      <input
-                        type="time"
-                        className="ios-time-picker"
-                        value={atur[k] || DEFAULTS_SHOLAT_JAM[k] || ''}
-                        onChange={e => setAtur({ ...atur, [k]: e.target.value })}
-                      />
-                    </div>
+          <div className="settings-grid-2col">
+            {[
+              { id: 'shubuh', label: 'Shubuh', defaultBuka: '03:45', defaultBatas: '06:45', defaultTutup: '06:55' },
+              { id: 'dhuhur', label: 'Dhuhur', defaultBuka: '12:00', defaultBatas: '13:10', defaultTutup: '13:30' },
+              { id: 'ashar', label: 'Ashar', defaultBuka: '15:10', defaultBatas: '16:00', defaultTutup: '16:15' },
+              { id: 'magrib', label: 'Magrib', defaultBuka: '17:45', defaultBatas: '18:45', defaultTutup: '19:00' },
+              { id: 'isya', label: 'Isya', defaultBuka: '19:50', defaultBatas: '20:25', defaultTutup: '20:30' }
+            ].map(sh => (
+              <div key={sh.id} className="ios-settings-card" style={{ marginBottom: '0' }}>
+                <div className="ios-settings-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div>
+                    <h3 className="ios-settings-title">Jam Sholat {sh.label}</h3>
+                    <p className="ios-settings-subtitle">Batas buka, tepat waktu, dan tutup form</p>
                   </div>
-                ))}
+                  <span className={`settings-card-header-badge ${sh.id}`}>
+                    {sh.label}
+                  </span>
+                </div>
+
+                <div className="ios-settings-group">
+                  {[
+                    [`${sh.id}_buka`, 'Jam Buka Form', 'Mulai bisa dibuka untuk presensi', <IconClock size={16} key="i1" />],
+                    [`${sh.id}_batas`, 'Batas Waktu Tepat', 'Lewat dari jam ini tercatat Terlambat', <IconShield size={16} key="i2" />],
+                    [`${sh.id}_tutup`, 'Jam Penutupan Form', 'Formulir otomatis terkunci dan ditutup', <IconLock size={16} key="i3" />]
+                  ].map(([k, n, desc, icon]) => (
+                    <div key={k} className="ios-settings-row">
+                      <div className="ios-row-left">
+                        <div className="ios-icon-box">
+                          {icon}
+                        </div>
+                        <div className="ios-row-text">
+                          <span className="ios-row-label">{n}</span>
+                          <span className="ios-row-desc">{desc}</span>
+                        </div>
+                      </div>
+                      <div className="ios-row-right">
+                        <input
+                          type="time"
+                          className="ios-time-picker"
+                          value={atur[k] || DEFAULTS_SHOLAT_JAM[k] || ''}
+                          onChange={e => setAtur({ ...atur, [k]: e.target.value })}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
 
           <button
             type="button"
