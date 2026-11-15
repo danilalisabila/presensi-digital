@@ -1062,13 +1062,16 @@ body {
 }
 
 /* iOS Segmented Navigation Bar */
+.prayer-selector-wrap {
+  margin-bottom: 12px;
+}
+
 .prayer-selector-bar {
   display: flex;
   gap: 3px;
   background: #f1f5f9;
   padding: 4px;
   border-radius: var(--radius-md);
-  margin-bottom: 12px;
   border: 1px solid var(--slate-200);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
 }
@@ -1104,9 +1107,61 @@ body {
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
+.prayer-tab-btn.loading {
+  color: var(--emerald-900);
+  background: #ffffff;
+}
+
 .prayer-tab-btn:disabled {
   cursor: not-allowed;
-  opacity: 0.65;
+}
+
+/* Tab Loading Transition & Strip */
+.tab-loading-strip {
+  position: relative;
+  overflow: hidden;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.15s ease-out;
+}
+
+.tab-loading-line-anim {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #10B981, transparent);
+  animation: indeterminateBar 1s infinite linear;
+}
+
+@keyframes indeterminateBar {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.tab-loading-content {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--emerald-900);
+}
+
+.content-loading {
+  opacity: 0.72;
+  transition: opacity 0.2s ease;
 }
 
 .segmented-admin-tabs {

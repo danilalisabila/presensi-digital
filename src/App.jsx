@@ -967,6 +967,7 @@ function Form() {
   const [done, setDone] = useState(null)
   const [statusModal, setStatusModal] = useState({ open: false, type: 'success', title: '', message: '', data: null })
   const [confirmModal, setConfirmModal] = useState({ open: false, summary: null })
+  const [loadingSholat, setLoadingSholat] = useState(null)
   const prayerCacheRef = useRef({})
 
   // Sinkronkan cache lokal untuk sholat yang sedang aktif dilihat
@@ -983,7 +984,9 @@ function Form() {
 
   // Memuat data sholat tertentu atau sholat aktif otomatis dari server
   const muatDataSholat = useCallback((targetSholat = null) => {
-    // Jika data untuk sholat target sudah ada di cache, gunakan langsung (0ms instant response)
+    setLoadingSholat(targetSholat)
+
+    // Jika data untuk sholat target sudah ada di cache, gunakan langsung
     if (targetSholat && prayerCacheRef.current[targetSholat]) {
       const cached = prayerCacheRef.current[targetSholat]
       setInfo(cached.info)
@@ -991,6 +994,7 @@ function Form() {
       setPengisi(cached.pengisi)
       setErr('')
       setDone(cached.done || null)
+      setTimeout(() => setLoadingSholat(null), 120)
       return
     }
 
@@ -1019,7 +1023,10 @@ function Form() {
         }
       })
       .catch(e => setErr(sanitizeErrMsg(e.message)))
-      .finally(() => setBusy(false))
+      .finally(() => {
+        setBusy(false)
+        setLoadingSholat(null)
+      })
   }, [])
 
   useEffect(() => {
@@ -1150,6 +1157,7 @@ function Form() {
         pengisi={pengisi}
         setPengisi={setPengisi}
         busy={busy}
+        loadingSholat={loadingSholat}
         done={done}
         err={err}
         kirim={kirim}
@@ -1184,6 +1192,7 @@ const FormContent = memo(function FormContent({
   pengisi,
   setPengisi,
   busy,
+  loadingSholat,
   done,
   err,
   kirim,
@@ -1197,27 +1206,44 @@ const FormContent = memo(function FormContent({
   const submitterObj = tim.find(t => t.nama === pengisi)
 
   return (
-    <div className="scroll-body">
+    <div className={`scroll-body ${loadingSholat ? 'content-loading' : ''}`}>
       {/* 5 Waktu Sholat Navigation Tabs */}
-      <div className="prayer-selector-bar">
-        {DAFTAR_SHOLAT_DEFAULT.map(sh => {
-          const isActive = info.sholat === sh
-          return (
-            <button
-              key={sh}
-              type="button"
-              className={`prayer-tab-btn ${isActive ? 'active' : ''}`}
-              onClick={() => {
-                if (!busy && info.sholat !== sh) {
-                  onPilihSholat(sh)
-                }
-              }}
-              disabled={busy}
-            >
-              <span>{sh}</span>
-            </button>
-          )
-        })}
+      <div className="prayer-selector-wrap">
+        <div className="prayer-selector-bar">
+          {DAFTAR_SHOLAT_DEFAULT.map(sh => {
+            const isActive = (loadingSholat || info.sholat) === sh
+            const isLoadingThis = loadingSholat === sh
+            return (
+              <button
+                key={sh}
+                type="button"
+                className={`prayer-tab-btn ${isActive ? 'active' : ''} ${isLoadingThis ? 'loading' : ''}`}
+                onClick={() => {
+                  if (!busy && info.sholat !== sh) {
+                    onPilihSholat(sh)
+                  }
+                }}
+                disabled={busy}
+              >
+                {isLoadingThis ? (
+                  <IconSpinner size={12} className="spinner-spin" />
+                ) : null}
+                <span>{sh}</span>
+              </button>
+            )
+          })}
+        </div>
+
+        {/* Indikator Loading Saat Berpindah Tab */}
+        {loadingSholat && (
+          <div className="tab-loading-strip">
+            <div className="tab-loading-line-anim" />
+            <div className="tab-loading-content">
+              <IconSpinner size={13} className="spinner-spin" />
+              <span>Memuat data {loadingSholat}...</span>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Hero Card Waktu Sholat yang Sedang Berjalan */}
@@ -1844,27 +1870,48 @@ const AdminDashboard = memo(function AdminDashboard({
   const visibleUstadz = useMemo(() => filteredUstadz.slice(0, displayLimitRekap), [filteredUstadz, displayLimitRekap])
 
   const daftarSholatAdmin = ['Semua', 'Shubuh', 'Dhuhur', 'Ashar', 'Magrib', 'Isya']
+  const [tabLoading, setTabLoading] = useState(false)
+
+  const gantiTabAdmin = (k) => {
+    if (tab === k) return
+    setTabLoading(true)
+    setTab(k)
+    setTimeout(() => setTabLoading(false), 140)
+  }
 
   return (
-    <div className="scroll-body">
+    <div className={`scroll-body ${tabLoading ? 'content-loading' : ''}`}>
       {/* 1. Modern Segmented Tabs Navigation (Pinned at Top) */}
       <nav className="segmented-admin-tabs">
         {[
           ['hari', 'Hari Ini', <IconCalendar size={13} key="t1" />],
           ['rekap', 'Rekap Bulanan', <IconFileText size={13} key="t2" />],
           ['atur', 'Setelan Waktu', <IconSettings size={13} key="t3" />]
-        ].map(([k, n, icon]) => (
-          <button
-            key={k}
-            type="button"
-            className={`admin-tab-btn ${tab === k ? 'active' : ''}`}
-            onClick={() => setTab(k)}
-          >
-            {icon}
-            <span>{n}</span>
-          </button>
-        ))}
+        ].map(([k, n, icon]) => {
+          const isThisLoading = tabLoading && tab === k
+          return (
+            <button
+              key={k}
+              type="button"
+              className={`admin-tab-btn ${tab === k ? 'active' : ''}`}
+              onClick={() => gantiTabAdmin(k)}
+            >
+              {isThisLoading ? <IconSpinner size={13} className="spinner-spin" /> : icon}
+              <span>{n}</span>
+            </button>
+          )
+        })}
       </nav>
+
+      {tabLoading && (
+        <div className="tab-loading-strip" style={{ marginTop: '-8px', marginBottom: '14px' }}>
+          <div className="tab-loading-line-anim" />
+          <div className="tab-loading-content">
+            <IconSpinner size={12} className="spinner-spin" />
+            <span>Menyiapkan data tab...</span>
+          </div>
+        </div>
+      )}
 
       {err && (
         <div className="notice-strip danger" style={{ marginBottom: '14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
