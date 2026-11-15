@@ -42,7 +42,11 @@ function baca_(nama) {
   const v = sh.getDataRange().getValues();
   if (v.length <= 1) return [];
   const h = v.shift();
-  return v.filter(r => r[0] !== '').map(r => { const o = {}; h.forEach((k, i) => o[k] = r[i]); return o; });
+  return v.filter(r => r.some(cell => String(cell || '').trim() !== '')).map(r => {
+    const o = {};
+    h.forEach((k, i) => o[String(k || '').trim()] = r[i]);
+    return o;
+  });
 }
 
 function jam_(v) { 
@@ -155,15 +159,39 @@ function sekarang_() {
   };
 }
 
+function normalisasiSholat_(s) {
+  const str = String(s || '').trim().toLowerCase();
+  if (str.includes('sub') || str.includes('shub')) return 'Shubuh';
+  if (str.includes('dhu') || str.includes('dzu') || str.includes('zuh')) return 'Dhuhur';
+  if (str.includes('ash') || str.includes('asa')) return 'Ashar';
+  if (str.includes('mag')) return 'Magrib';
+  if (str.includes('isy')) return 'Isya';
+  return String(s || '').trim();
+}
+
 function timSholat_(sholat) {
   const u = {}; 
-  getCachedData_('Ustadz', 600).forEach(r => u[r.ID] = r.Nama);
-  return getCachedData_('Jadwal', 600).filter(r => r.Sholat === sholat)
-    .map(r => ({ 
-      nama: u[r.IDUstadz] || r.IDUstadz, 
-      peran: r.Peran, 
-      petugas: r.PetugasAbsen === 'Ya' 
-    }));
+  getCachedData_('Ustadz', 30).forEach((r, idx) => {
+    const id = String(r.ID || '').trim();
+    const nama = String(r.Nama || '').trim();
+    if (id) u[id] = nama;
+    if (nama) u[nama] = nama;
+  });
+
+  const targetSholat = normalisasiSholat_(sholat);
+
+  return getCachedData_('Jadwal', 30)
+    .filter(r => normalisasiSholat_(r.Sholat) === targetSholat)
+    .map(r => {
+      const idUst = String(r.IDUstadz || '').trim();
+      const nama = u[idUst] || String(r.Nama || idUst || '').trim();
+      return { 
+        nama: nama, 
+        peran: String(r.Peran || 'Anggota').trim(), 
+        petugas: String(r.PetugasAbsen || '').trim().toLowerCase() === 'ya' 
+      };
+    })
+    .filter(t => t.nama !== '');
 }
 
 function getJadwalSholatConfig_(a, sholat) {
@@ -205,10 +233,11 @@ function tentukanSholatAktif_(s, a) {
 }
 
 function sudahAbsen_(tgl, sholat) {
-  const rows = getCachedData_('Absensi', 60); // cache 1 menit untuk absensi
+  const rows = getCachedData_('Absensi', 30);
+  const targetNorm = normalisasiSholat_(sholat);
   return rows.some(r => {
     const tMatch = formatTgl_(r.Tanggal) === tgl;
-    const sMatch = String(r.Sholat || '').trim().toLowerCase() === String(sholat).trim().toLowerCase();
+    const sMatch = normalisasiSholat_(r.Sholat) === targetNorm;
     return tMatch && sMatch;
   });
 }
