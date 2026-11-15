@@ -1,14 +1,22 @@
-import { useEffect, useState, useMemo, useCallback, memo } from 'react'
+import { useEffect, useState, useMemo, useCallback, memo, useRef } from 'react'
 import './style.css'
 
 const API = import.meta.env.VITE_API_URL || ''
 const isConfigured = Boolean(API && !API.includes('GANTI_DENGAN_ID_ANDA'))
 
-async function api(body, retries = 1) {
+async function api(body, retries = 1, queryParams = null) {
   if (!isConfigured) {
     throw new Error('Sistem presensi belum terhubung. Silakan hubungi admin.')
   }
   try {
+    let url = API
+    if (queryParams && typeof queryParams === 'object') {
+      const qs = new URLSearchParams(queryParams).toString()
+      if (qs) {
+        url += (url.includes('?') ? '&' : '?') + qs
+      }
+    }
+
     const fetchOptions = body
       ? {
           method: 'POST',
@@ -23,7 +31,7 @@ async function api(body, retries = 1) {
           redirect: 'follow'
         }
 
-    const r = await fetch(API, fetchOptions)
+    const r = await fetch(url, fetchOptions)
     if (!r.ok) {
       throw new Error(`Server merespons kode status ${r.status}`)
     }
@@ -959,27 +967,64 @@ function Form() {
   const [done, setDone] = useState(null)
   const [statusModal, setStatusModal] = useState({ open: false, type: 'success', title: '', message: '', data: null })
   const [confirmModal, setConfirmModal] = useState({ open: false, summary: null })
+  const prayerCacheRef = useRef({})
 
-  // Hanya memuat 1 waktu sholat yang sedang aktif saat ini (tanpa parameter, server otomatis tentukan)
-  const muatDataSholatAktif = () => {
+  // Sinkronkan cache lokal untuk sholat yang sedang aktif dilihat
+  useEffect(() => {
+    if (info?.sholat) {
+      prayerCacheRef.current[info.sholat] = {
+        info,
+        item,
+        pengisi,
+        done
+      }
+    }
+  }, [info, item, pengisi, done])
+
+  // Memuat data sholat tertentu atau sholat aktif otomatis dari server
+  const muatDataSholat = useCallback((targetSholat = null) => {
+    // Jika data untuk sholat target sudah ada di cache, gunakan langsung (0ms instant response)
+    if (targetSholat && prayerCacheRef.current[targetSholat]) {
+      const cached = prayerCacheRef.current[targetSholat]
+      setInfo(cached.info)
+      setItem(cached.item)
+      setPengisi(cached.pengisi)
+      setErr('')
+      setDone(cached.done || null)
+      return
+    }
+
     setBusy(true)
     setErr('')
     setDone(null)
-    api()
+    const queryParams = targetSholat ? { sholat: targetSholat } : null
+
+    api(null, 1, queryParams)
       .then(i => {
         setInfo(i)
         setLocalInfoCache(i)
         const list = i.tim || []
-        setItem(Object.fromEntries(list.map(t => [t.nama, { ket: 'Hadir', alasan: '' }])))
-        setPengisi((list.find(t => t.petugas) || list[0] || {}).nama || '')
+        const newItem = Object.fromEntries(list.map(t => [t.nama, { ket: 'Hadir', alasan: '' }]))
+        const newPengisi = (list.find(t => t.petugas) || list[0] || {}).nama || ''
+        setItem(newItem)
+        setPengisi(newPengisi)
+
+        if (i.sholat) {
+          prayerCacheRef.current[i.sholat] = {
+            info: i,
+            item: newItem,
+            pengisi: newPengisi,
+            done: null
+          }
+        }
       })
       .catch(e => setErr(sanitizeErrMsg(e.message)))
       .finally(() => setBusy(false))
-  }
+  }, [])
 
   useEffect(() => {
-    muatDataSholatAktif()
-  }, [])
+    muatDataSholat()
+  }, [muatDataSholat])
 
   const ubah = useCallback((n, p) => {
     setItem(s => ({ ...s, [n]: { ...(s[n] || { ket: 'Hadir', alasan: '' }), ...p } }))
@@ -1030,6 +1075,10 @@ function Form() {
         if (!prev) return prev
         const next = { ...prev, sudah: true }
         setLocalInfoCache(next)
+        if (prayerCacheRef.current[prev.sholat]) {
+          prayerCacheRef.current[prev.sholat].info = next
+          prayerCacheRef.current[prev.sholat].done = res
+        }
         return next
       })
       setStatusModal({
@@ -1104,7 +1153,8 @@ function Form() {
         done={done}
         err={err}
         kirim={kirim}
-        muatDataSholatAktif={muatDataSholatAktif}
+        onPilihSholat={muatDataSholat}
+        muatDataSholat={muatDataSholat}
       />
 
       <StatusModal
@@ -1137,7 +1187,8 @@ const FormContent = memo(function FormContent({
   done,
   err,
   kirim,
-  muatDataSholatAktif
+  onPilihSholat,
+  muatDataSholat
 }) {
   const tutup = info.status !== 'buka'
   const tim = info.tim || []
@@ -1147,6 +1198,28 @@ const FormContent = memo(function FormContent({
 
   return (
     <div className="scroll-body">
+      {/* 5 Waktu Sholat Navigation Tabs */}
+      <div className="prayer-selector-bar">
+        {DAFTAR_SHOLAT_DEFAULT.map(sh => {
+          const isActive = info.sholat === sh
+          return (
+            <button
+              key={sh}
+              type="button"
+              className={`prayer-tab-btn ${isActive ? 'active' : ''}`}
+              onClick={() => {
+                if (!busy && info.sholat !== sh) {
+                  onPilihSholat(sh)
+                }
+              }}
+              disabled={busy}
+            >
+              <span>{sh}</span>
+            </button>
+          )
+        })}
+      </div>
+
       {/* Hero Card Waktu Sholat yang Sedang Berjalan */}
       <div className="unified-hero">
         <div className="hero-meta-bar">
@@ -1262,7 +1335,7 @@ const FormContent = memo(function FormContent({
           </div>
           <button
             type="button"
-            onClick={muatDataSholatAktif}
+            onClick={() => muatDataSholat(info.sholat)}
             style={{
               background: '#fff',
               border: '1px solid rgba(220, 38, 38, 0.4)',
