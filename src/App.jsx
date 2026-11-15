@@ -41,7 +41,7 @@ async function api(body, retries = 1, queryParams = null) {
   } catch (err) {
     if (retries > 0) {
       await new Promise(res => setTimeout(res, 1200))
-      return api(body, retries - 1)
+      return api(body, retries - 1, queryParams)
     }
     throw err
   }
