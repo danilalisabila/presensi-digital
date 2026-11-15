@@ -735,7 +735,7 @@ export default function App() {
   }
 
   return (
-    <div className="mobile-viewport">
+    <div className={`mobile-viewport ${admin && tok ? 'admin-layout' : ''}`}>
       {/* 1. Sticky Header Bar */}
       <header className="sticky-top-appbar">
         <div className="brand-identity">
@@ -2053,12 +2053,12 @@ function SvgBarChart({ data, mode }) {
       >
         <defs>
           <linearGradient id="barGradientGreen" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#059669" />
-            <stop offset="100%" stopColor="#0D9488" />
+            <stop offset="0%" stopColor="#063d2c" />
+            <stop offset="100%" stopColor="#0b543e" />
           </linearGradient>
           <linearGradient id="barGradientWarning" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#F59E0B" />
-            <stop offset="100%" stopColor="#D97706" />
+            <stop offset="0%" stopColor="#b45309" />
+            <stop offset="100%" stopColor="#d97706" />
           </linearGradient>
         </defs>
 
@@ -2082,6 +2082,7 @@ function SvgBarChart({ data, mode }) {
                 fill="#94A3B8"
                 fontSize="9"
                 fontWeight="600"
+                fontFamily="Plus Jakarta Sans, sans-serif"
                 textAnchor="start"
               >
                 {p}%
@@ -2130,7 +2131,8 @@ function SvgBarChart({ data, mode }) {
                 textAnchor="middle"
                 fontSize="11"
                 fontWeight="800"
-                fill={p > 0 ? (isWarning ? '#B45309' : '#047857') : '#94A3B8'}
+                fontFamily="Plus Jakarta Sans, sans-serif"
+                fill={p > 0 ? (isWarning ? '#92400e' : '#063d2c') : '#94A3B8'}
               >
                 {item.percent}%
               </text>
@@ -2142,6 +2144,7 @@ function SvgBarChart({ data, mode }) {
                 textAnchor="middle"
                 fontSize="11"
                 fontWeight="700"
+                fontFamily="Plus Jakarta Sans, sans-serif"
                 fill="#1E293B"
               >
                 {item.label}
@@ -2155,6 +2158,7 @@ function SvgBarChart({ data, mode }) {
                   textAnchor="middle"
                   fontSize="9.5"
                   fontWeight="600"
+                  fontFamily="Plus Jakarta Sans, sans-serif"
                   fill="#64748B"
                 >
                   {item.sublabel}
@@ -2716,17 +2720,19 @@ const AdminDashboard = memo(function AdminDashboard({
           {/* 1. Official Greeting Hero */}
           <div className="admin-greeting-hero">
             <div className="greeting-top-badge">
-              <IconShield size={12} />
-              <span>PUSAT KENDALI KORLAP SHOLAT JAMA'AH</span>
+              <span className="greeting-role-chip">
+                <IconShield size={12} />
+                <span>PUSAT KENDALI KORLAP SHOLAT JAMA'AH</span>
+              </span>
+              <span className="greeting-live-indicator">
+                <span className="greeting-live-dot" />
+                <span>Sistem Online</span>
+              </span>
             </div>
             <div className="greeting-main-row">
               <div className="greeting-text-group">
                 <h2 className="greeting-title">Ahlan wa Sahlan, Sekretaris Pondok Putra</h2>
                 <p className="greeting-sub">Yayasan Pondok Pesantren Salafiyah Al-Falah Putak • {formatTanggalIndo(d.tgl, d.hari)}</p>
-              </div>
-              <div className="admin-live-status">
-                <span className="live-dot" />
-                <span>Sistem Siap</span>
               </div>
             </div>
           </div>
@@ -2735,11 +2741,11 @@ const AdminDashboard = memo(function AdminDashboard({
           <div className="wa-share-action-card">
             <div className="wa-share-left">
               <div className="wa-share-icon-wrap">
-                <IconWhatsApp size={24} />
+                <IconWhatsApp size={22} />
               </div>
               <div className="wa-share-text">
                 <h3 className="wa-share-title">Bagikan Rekap 5 Sholat ke WhatsApp</h3>
-                <p className="wa-share-desc">Rangkum otomatis 5 waktu sholat harian (NIHIL / rincian izin) lengkap dengan watermark sistem.</p>
+                <p className="wa-share-desc">Rangkum otomatis 5 jadwal sholat jama'ah hari ini (NIHIL / rincian izin) untuk grup pondok.</p>
               </div>
             </div>
             <button
@@ -2747,8 +2753,8 @@ const AdminDashboard = memo(function AdminDashboard({
               className="btn-wa-share"
               onClick={() => setWaModalOpen(true)}
             >
-              <IconShare2 size={15} />
-              <span>Bagikan WA</span>
+              <IconWhatsApp size={16} />
+              <span>Bagikan ke WA</span>
             </button>
           </div>
 
@@ -2757,7 +2763,7 @@ const AdminDashboard = memo(function AdminDashboard({
             <div className="kpi-card hadir">
               <div className="kpi-top">
                 <span className="kpi-label">Hadir</span>
-                <IconCheckCircle size={15} />
+                <IconCheckCircle size={15} className="kpi-icon" />
               </div>
               <div className="kpi-val">{hariIniStats.Hadir}</div>
               <div className="kpi-sub">{rateHariIni}% Kehadiran</div>
@@ -2765,7 +2771,7 @@ const AdminDashboard = memo(function AdminDashboard({
             <div className="kpi-card sakit">
               <div className="kpi-top">
                 <span className="kpi-label">Sakit</span>
-                <IconClock size={15} />
+                <IconClock size={15} className="kpi-icon" />
               </div>
               <div className="kpi-val">{hariIniStats.Sakit}</div>
               <div className="kpi-sub">{hariIniStats.Sakit === 0 ? 'NIHIL' : `${hariIniStats.Sakit} Orang`}</div>
@@ -2773,7 +2779,7 @@ const AdminDashboard = memo(function AdminDashboard({
             <div className="kpi-card izin">
               <div className="kpi-top">
                 <span className="kpi-label">Izin</span>
-                <IconClock size={15} />
+                <IconClock size={15} className="kpi-icon" />
               </div>
               <div className="kpi-val">{hariIniStats.Izin}</div>
               <div className="kpi-sub">{hariIniStats.Izin === 0 ? 'NIHIL' : `${hariIniStats.Izin} Orang`}</div>
@@ -2781,7 +2787,7 @@ const AdminDashboard = memo(function AdminDashboard({
             <div className="kpi-card alfa">
               <div className="kpi-top">
                 <span className="kpi-label">Alfa</span>
-                <IconAlertCircle size={15} />
+                <IconAlertCircle size={15} className="kpi-icon" />
               </div>
               <div className="kpi-val">{hariIniStats.Alfa === 0 ? 'NIHIL' : hariIniStats.Alfa}</div>
               <div className="kpi-sub">{hariIniStats.Alfa === 0 ? 'Tertib 100%' : `${hariIniStats.Alfa} Tanpa Ket.`}</div>

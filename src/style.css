@@ -180,6 +180,7 @@
   margin: 0;
   padding: 0;
   -webkit-tap-highlight-color: transparent;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
 }
 
 html {
@@ -194,8 +195,13 @@ body {
   margin: 0;
   padding: 0;
   background-color: var(--bg-app);
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+button, input, select, textarea {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
 }
 
 /* Mobile Viewport Wrapper */
@@ -3227,131 +3233,143 @@ body {
   transform: scale(0.98);
 }
 
-/* ================= NEW ADMIN DASHBOARD STYLES ================= */
-.admin-greeting-hero {
-  background: linear-gradient(135deg, #064E3B 0%, #047857 50%, #059669 100%);
-  color: #ffffff;
-  border-radius: var(--radius-lg);
-  padding: 18px 18px;
-  margin-bottom: 14px;
-  box-shadow: 0 4px 18px rgba(6, 78, 59, 0.18);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  position: relative;
-  overflow: hidden;
+/* ================= HARMONIZED ADMIN DASHBOARD STYLES ================= */
+/* 1. Responsive Desktop / Mobile Admin Viewport */
+@media (min-width: 768px) {
+  .mobile-viewport.admin-layout {
+    max-width: 880px !important;
+    border-left: 1px solid var(--slate-200);
+    border-right: 1px solid var(--slate-200);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+  }
+
+  .mobile-viewport.admin-layout .scroll-body {
+    padding: 20px 24px 44px;
+  }
+
+  .kpi-grid-4 {
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  .wa-share-action-card {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+  }
+
+  .wa-share-action-card .btn-wa-share {
+    width: auto !important;
+    padding: 10px 20px !important;
+  }
 }
 
-.admin-greeting-hero::before {
-  content: '';
-  position: absolute;
-  top: -30px;
-  right: -30px;
-  width: 140px;
-  height: 140px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, transparent 70%);
-  pointer-events: none;
+/* 2. Official Greeting Hero Card (Matching Presensi Hero 100%) */
+.admin-greeting-hero {
+  background: linear-gradient(145deg, #022319 0%, #063d2c 55%, #0b543e 100%);
+  color: #ffffff;
+  border-radius: var(--radius-xl);
+  padding: 18px 20px 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 10px 24px -4px rgba(6, 61, 44, 0.35);
+  border: 1px solid rgba(254, 244, 223, 0.16);
+  position: relative;
+  overflow: hidden;
 }
 
 .greeting-top-badge {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
-.admin-role-pill {
+.greeting-role-chip {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(255, 255, 255, 0.16);
-  backdrop-filter: blur(4px);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 11px;
+  border-radius: var(--radius-full);
+  font-size: 10.5px;
   font-weight: 700;
-  letter-spacing: 0.3px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ecfdf5;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
-.admin-live-status {
+.greeting-live-indicator {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
   font-size: 11px;
-  font-weight: 600;
-  color: #A7F3D0;
+  font-weight: 700;
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #a7f3d0;
 }
 
-.live-status-dot {
-  width: 7px;
-  height: 7px;
+.greeting-live-dot {
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background: #34D399;
-  box-shadow: 0 0 8px #34D399;
-  animation: pulse 1.8s infinite;
+  background: #34d399;
+  box-shadow: 0 0 8px #34d399;
 }
 
-.greeting-content {
-  margin-bottom: 14px;
+.greeting-main-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .greeting-title {
   font-size: 17px;
   font-weight: 800;
-  margin: 0 0 4px 0;
   color: #ffffff;
+  margin: 0;
   line-height: 1.3;
 }
 
-.greeting-subtitle {
+.greeting-sub {
   font-size: 11.5px;
+  font-weight: 600;
+  color: var(--gold-400);
   margin: 0;
-  color: rgba(255, 255, 255, 0.85);
   line-height: 1.4;
 }
 
-.greeting-meta-bar {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding-top: 10px;
-  border-top: 1px solid rgba(255, 255, 255, 0.15);
-  font-size: 11px;
-  color: #D1FAE5;
-  font-weight: 600;
-}
-
-.greeting-meta-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-}
-
-/* WhatsApp Share Action Card */
+/* 3. WhatsApp Share Action Card */
 .wa-share-action-card {
   background: #ffffff;
-  border: 1.5px solid #10b981;
+  border: 1px solid var(--slate-200);
   border-radius: var(--radius-lg);
-  padding: 16px;
+  padding: 14px 16px;
   margin-bottom: 14px;
-  box-shadow: 0 2px 10px rgba(16, 185, 129, 0.08);
+  box-shadow: 0 1px 4px rgba(6, 61, 44, 0.04);
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.wa-share-header {
+.wa-share-left {
   display: flex;
   align-items: center;
   gap: 12px;
+  min-width: 0;
 }
 
 .wa-share-icon-wrap {
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  height: 42px;
   border-radius: 12px;
   background: #ecfdf5;
-  color: #059669;
+  color: #064e3b;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3359,110 +3377,149 @@ body {
   border: 1px solid #a7f3d0;
 }
 
+.wa-share-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
 .wa-share-title {
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 800;
-  color: #064e3b;
+  color: #063d2c;
   margin: 0 0 2px 0;
+  line-height: 1.3;
 }
 
 .wa-share-desc {
-  font-size: 11.5px;
-  color: #64748b;
+  font-size: 11px;
+  color: var(--slate-500);
   margin: 0;
-  line-height: 1.4;
+  line-height: 1.35;
 }
 
 .btn-wa-share {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: linear-gradient(135deg, #063d2c 0%, #0b543e 100%);
   color: #ffffff;
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 700;
-  padding: 11px 16px;
+  padding: 10px 16px;
   border-radius: var(--radius-md);
   border: none;
   cursor: pointer;
-  box-shadow: 0 3px 10px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 2px 8px rgba(6, 61, 44, 0.25);
   transition: all 0.15s ease;
   width: 100%;
+  white-space: nowrap;
 }
 
 .btn-wa-share:hover {
-  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  background: linear-gradient(135deg, #022319 0%, #063d2c 100%);
   transform: translateY(-1px);
-  box-shadow: 0 5px 14px rgba(16, 185, 129, 0.4);
+  box-shadow: 0 4px 12px rgba(6, 61, 44, 0.35);
 }
 
 .btn-wa-share:active {
   transform: scale(0.98);
 }
 
-/* KPI Grid 4 */
+/* 4. KPI Grid 4 (2x2 on Mobile, 4 in 1 on Desktop) */
 .kpi-grid-4 {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
   margin-bottom: 14px;
 }
 
 .kpi-card {
   background: #ffffff;
   border-radius: var(--radius-md);
-  padding: 10px 8px;
-  text-align: center;
+  padding: 12px 10px;
   border: 1px solid var(--slate-200);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
+  transition: transform 0.15s ease;
+}
+
+.kpi-top {
+  display: flex;
+  align-items: center;
   justify-content: center;
+  gap: 6px;
+  margin-bottom: 6px;
 }
 
-.kpi-card .val {
-  font-size: 18px;
-  font-weight: 800;
-  line-height: 1.1;
-  margin-bottom: 3px;
-}
-
-.kpi-card .lbl {
-  font-size: 10px;
+.kpi-label {
+  font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.04em;
 }
 
-.kpi-card.hadir { border-top: 3px solid #10b981; }
-.kpi-card.hadir .val { color: #059669; }
-.kpi-card.hadir .lbl { color: #047857; }
+.kpi-val {
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 6px;
+}
 
-.kpi-card.sakit { border-top: 3px solid #f59e0b; }
-.kpi-card.sakit .val { color: #d97706; }
-.kpi-card.sakit .lbl { color: #b45309; }
+.kpi-sub {
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
 
-.kpi-card.izin { border-top: 3px solid #3b82f6; }
-.kpi-card.izin .val { color: #2563eb; }
-.kpi-card.izin .lbl { color: #1d4ed8; }
+.kpi-card.hadir {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+.kpi-card.hadir .kpi-label, .kpi-card.hadir .kpi-icon { color: #065f46; }
+.kpi-card.hadir .kpi-val { color: #064e3b; }
+.kpi-card.hadir .kpi-sub { color: #047857; background: #d1fae5; }
 
-.kpi-card.alfa { border-top: 3px solid #ef4444; }
-.kpi-card.alfa .val { color: #dc2626; }
-.kpi-card.alfa .lbl { color: #b91c1c; }
+.kpi-card.sakit {
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+.kpi-card.sakit .kpi-label, .kpi-card.sakit .kpi-icon { color: #92400e; }
+.kpi-card.sakit .kpi-val { color: #b45309; }
+.kpi-card.sakit .kpi-sub { color: #92400e; background: #fef3c7; }
 
-/* Rate progress bar below KPI */
+.kpi-card.izin {
+  background: #f0f9ff;
+  border-color: #bae6fd;
+}
+.kpi-card.izin .kpi-label, .kpi-card.izin .kpi-icon { color: #075985; }
+.kpi-card.izin .kpi-val { color: #0369a1; }
+.kpi-card.izin .kpi-sub { color: #0369a1; background: #e0f2fe; }
+
+.kpi-card.alfa {
+  background: #fff1f2;
+  border-color: #fecdd3;
+}
+.kpi-card.alfa .kpi-label, .kpi-card.alfa .kpi-icon { color: #9f1239; }
+.kpi-card.alfa .kpi-val { color: #be123c; }
+.kpi-card.alfa .kpi-sub { color: #9f1239; background: #ffe4e6; }
+
+/* 5. Progress Strip Rate Kehadiran */
 .kpi-rate-strip {
   background: #ffffff;
   border: 1px solid var(--slate-200);
   border-radius: var(--radius-md);
   padding: 10px 14px;
   margin-bottom: 14px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
-.kpi-rate-header {
+.rate-strip-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -3472,29 +3529,70 @@ body {
   color: var(--slate-700);
 }
 
-.kpi-rate-track {
+.rate-strip-val {
+  font-weight: 800;
+  color: #064e3b;
+}
+
+.rate-progress-track {
   height: 8px;
   border-radius: 999px;
-  background: #f1f5f9;
+  background: #e2e8f0;
   overflow: hidden;
   position: relative;
 }
 
-.kpi-rate-fill {
+.rate-progress-bar {
   height: 100%;
   border-radius: 999px;
-  background: linear-gradient(90deg, #10b981, #059669);
+  background: linear-gradient(90deg, #0b543e, #148866);
   transition: width 0.4s ease;
 }
 
-/* Chart Container & Switcher */
+/* 6. Pinned Segmented Tabs */
+.segmented-admin-tabs {
+  display: flex;
+  gap: 4px;
+  background: #e2e8f0;
+  padding: 4px;
+  border-radius: var(--radius-md);
+  margin-bottom: 14px;
+  border: 1px solid var(--slate-300);
+}
+
+.admin-tab-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 6px;
+  border: none;
+  background: transparent;
+  color: var(--slate-600);
+  font-size: 11.5px;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.admin-tab-btn.active {
+  background: #063d2c;
+  color: #ffffff;
+  font-weight: 800;
+  box-shadow: 0 2px 6px rgba(6, 61, 44, 0.25);
+}
+
+/* 7. Pure SVG Chart Container & Switcher */
 .chart-card-wrapper {
   background: #ffffff;
   border: 1px solid var(--slate-200);
   border-radius: var(--radius-lg);
   padding: 16px;
   margin-bottom: 14px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
 }
 
 .chart-card-header {
@@ -3513,7 +3611,7 @@ body {
 .chart-title {
   font-size: 13.5px;
   font-weight: 800;
-  color: var(--slate-800);
+  color: var(--slate-900);
   margin: 0;
 }
 
@@ -3522,29 +3620,31 @@ body {
   background: #f1f5f9;
   padding: 3px;
   border-radius: var(--radius-sm);
-  gap: 2px;
+  gap: 3px;
   margin-bottom: 14px;
+  border: 1px solid var(--slate-200);
 }
 
 .chart-toggle-btn {
   flex: 1;
-  padding: 6px 4px;
+  padding: 7px 4px;
   font-size: 11px;
   font-weight: 700;
   border: none;
   background: transparent;
-  color: var(--slate-500);
+  color: var(--slate-600);
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.15s ease;
   white-space: nowrap;
+  text-align: center;
 }
 
 .chart-toggle-btn.active {
-  background: #ffffff;
-  color: var(--emerald-900);
+  background: #063d2c;
+  color: #ffffff;
   font-weight: 800;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 4px rgba(6, 61, 44, 0.2);
 }
 
 .svg-chart-container {
@@ -3553,14 +3653,14 @@ body {
   padding: 4px 0;
 }
 
-/* Activity Log List */
+/* 8. Activity Log Card */
 .activity-log-card {
   background: #ffffff;
   border: 1px solid var(--slate-200);
   border-radius: var(--radius-lg);
   padding: 16px;
   margin-bottom: 14px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
 }
 
 .activity-log-header {
@@ -3573,7 +3673,7 @@ body {
 .activity-log-title {
   font-size: 13.5px;
   font-weight: 800;
-  color: var(--slate-800);
+  color: var(--slate-900);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -3584,7 +3684,7 @@ body {
   padding: 10px 12px;
   border-radius: var(--radius-md);
   background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--slate-200);
   margin-bottom: 8px;
   transition: background-color 0.15s ease;
 }
@@ -3601,59 +3701,53 @@ body {
 }
 
 .log-sholat-name {
-  font-size: 12.5px;
-  font-weight: 800;
+  font-size: 12px;
+  font-weight: 700;
   color: var(--slate-800);
-}
-
-.log-time-badge {
-  font-size: 11px;
-  color: var(--slate-500);
-  font-weight: 600;
 }
 
 .log-entry-details {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 11.5px;
+  font-size: 11px;
+  flex-wrap: wrap;
+  gap: 4px;
 }
 
 .log-submitter {
   color: var(--slate-600);
-  font-weight: 600;
 }
 
 .log-counts-pill {
   display: inline-flex;
   gap: 4px;
-  font-size: 11px;
   font-weight: 700;
 }
 
-/* Drawer item active styling */
+/* 9. Drawer Navigation Admin Active Highlighting */
 .drawer-nav-item.admin-active {
   background: #ecfdf5;
   border-color: #a7f3d0;
 }
 
 .drawer-nav-item.admin-active .drawer-item-title {
-  color: #065f46;
+  color: #063d2c;
   font-weight: 800;
 }
 
 .drawer-nav-item.admin-active .drawer-item-icon {
-  background: #059669;
+  background: #063d2c;
   color: #ffffff;
 }
 
-/* WhatsApp Message Preview Box */
+/* 10. WhatsApp Message Preview Box */
 .wa-preview-box {
   background: #f8fafc;
   border: 1px solid #cbd5e1;
   border-radius: var(--radius-md);
   padding: 12px;
-  font-family: monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 11.5px;
   white-space: pre-wrap;
   word-break: break-word;
