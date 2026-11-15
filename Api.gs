@@ -247,13 +247,18 @@ function doGet(e) {
   try {
     const s = sekarang_(), a = atur_();
     const reqSholat = (e && e.parameter && e.parameter.sholat) 
-      ? e.parameter.sholat 
+      ? normalisasiSholat_(e.parameter.sholat)
       : tentukanSholatAktif_(s, a);
 
     const sholat = DAFTAR_SHOLAT.indexOf(reqSholat) !== -1 ? reqSholat : 'Shubuh';
     const cfg = getJadwalSholatConfig_(a, sholat);
     const sudah = sudahAbsen_(s.tgl, sholat);
     const st = cekStatusWaktu_(s.jam, cfg.buka, cfg.batas, cfg.tutup);
+
+    const semuaTim = {};
+    DAFTAR_SHOLAT.forEach(sh => {
+      semuaTim[sh] = timSholat_(sh);
+    });
 
     return out_({
       hari: s.hari, 
@@ -267,7 +272,8 @@ function doGet(e) {
       status: st.statusForm,
       status_waktu: st.statusWaktu,
       sudah: sudah, 
-      tim: timSholat_(sholat)
+      tim: semuaTim[sholat] || timSholat_(sholat),
+      semua_tim: semuaTim
     });
   } catch (x) {
     return out_({ error: x.message });

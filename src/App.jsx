@@ -945,22 +945,155 @@ const OfficerRowItem = memo(function OfficerRowItem({ t, currentItem, ubah }) {
   )
 })
 
+/* ================= JADWAL & PERSONIL RESMI KORLAP (BUILT-IN PRELOAD) ================= */
+const JADWAL_RESMI_KORLAP = {
+  Shubuh: {
+    buka: '03:45', batas: '06:45', tutup: '06:55',
+    tim: [
+      { nama: 'Petugas Jaga Malam', peran: 'Koordinator', petugas: true }
+    ]
+  },
+  Dhuhur: {
+    buka: '12:00', batas: '13:10', tutup: '13:30',
+    tim: [
+      { nama: 'Ust. Rabil Afraja + Guru Piket', peran: 'Koordinator', petugas: false },
+      { nama: 'Hairul Fadli', peran: 'Anggota', petugas: true },
+      { nama: 'Habib Rifki', peran: 'Anggota', petugas: false },
+      { nama: 'Ahmad Syamsudin', peran: 'Anggota', petugas: false },
+      { nama: 'Fikri Caisar', peran: 'Anggota', petugas: false },
+      { nama: 'Fachrityo', peran: 'Anggota', petugas: false },
+      { nama: 'Refi Setiawan', peran: 'Anggota', petugas: false },
+      { nama: 'Wahyudi Rahman', peran: 'Anggota', petugas: false },
+      { nama: 'Chairil Annas', peran: 'Anggota', petugas: false },
+      { nama: 'Restu Qodri', peran: 'Anggota', petugas: false }
+    ]
+  },
+  Ashar: {
+    buka: '15:10', batas: '16:00', tutup: '16:15',
+    tim: [
+      { nama: 'Ust. Robbul Insan', peran: 'Koordinator', petugas: false },
+      { nama: 'Ust. Danil Ali Sabila', peran: 'Anggota', petugas: true },
+      { nama: 'Nanda Bagus Setiawan', peran: 'Anggota', petugas: false },
+      { nama: 'Azwil Yoga Pratama', peran: 'Anggota', petugas: false },
+      { nama: 'Anggi Franitar', peran: 'Anggota', petugas: false },
+      { nama: 'Fachri Jamil', peran: 'Anggota', petugas: false },
+      { nama: 'Abdul Muiz', peran: 'Anggota', petugas: false },
+      { nama: 'Bagas Satrio', peran: 'Anggota', petugas: false },
+      { nama: 'Zahran Akbar Prabowo', peran: 'Anggota', petugas: false },
+      { nama: 'Hamid', peran: 'Anggota', petugas: false }
+    ]
+  },
+  Magrib: {
+    buka: '17:45', batas: '18:45', tutup: '19:00',
+    tim: [
+      { nama: 'Ust. Muhammad Sendi', peran: 'Koordinator', petugas: false },
+      { nama: 'Aska Saputra', peran: 'Anggota', petugas: true },
+      { nama: 'Tegar Firmansyah', peran: 'Anggota', petugas: false },
+      { nama: 'Aldo Apriansyah', peran: 'Anggota', petugas: false },
+      { nama: 'Miftahul Munir', peran: 'Anggota', petugas: false },
+      { nama: 'Hasbi AN', peran: 'Anggota', petugas: false },
+      { nama: 'Dwi Prayoga', peran: 'Anggota', petugas: false },
+      { nama: 'Yusuf Ramadhan', peran: 'Anggota', petugas: false },
+      { nama: 'Fauzan Azima', peran: 'Anggota', petugas: false },
+      { nama: 'Hariyadi', peran: 'Anggota', petugas: false }
+    ]
+  },
+  Isya: {
+    buka: '19:50', batas: '20:25', tutup: '20:30',
+    tim: [
+      { nama: 'Ust. Muhammad Sendi', peran: 'Koordinator', petugas: false },
+      { nama: 'Fahri Aji', peran: 'Anggota', petugas: true },
+      { nama: 'Ranu Irawan', peran: 'Anggota', petugas: false },
+      { nama: 'Rehan Ahmadal', peran: 'Anggota', petugas: false },
+      { nama: 'Andika WK', peran: 'Anggota', petugas: false },
+      { nama: 'Agustyadi', peran: 'Anggota', petugas: false },
+      { nama: 'Dafinza Sadewa', peran: 'Anggota', petugas: false },
+      { nama: 'Ahda Fadholi', peran: 'Anggota', petugas: false },
+      { nama: 'Diski Ridho', peran: 'Anggota', petugas: false },
+      { nama: 'Rehan Azahir', peran: 'Anggota', petugas: false }
+    ]
+  }
+}
+
+function tentukanSholatLokal() {
+  const now = new Date()
+  const minutes = now.getHours() * 60 + now.getMinutes()
+  if (minutes >= 225 && minutes <= 415) return 'Shubuh'
+  if (minutes >= 720 && minutes <= 810) return 'Dhuhur'
+  if (minutes >= 910 && minutes <= 975) return 'Ashar'
+  if (minutes >= 1065 && minutes <= 1140) return 'Magrib'
+  if (minutes >= 1190 && minutes <= 1230) return 'Isya'
+  const list = [
+    { s: 'Shubuh', m: 225 },
+    { s: 'Dhuhur', m: 720 },
+    { s: 'Ashar', m: 910 },
+    { s: 'Magrib', m: 1065 },
+    { s: 'Isya', m: 1190 }
+  ]
+  let minDiff = 999999, closest = 'Shubuh'
+  list.forEach(item => {
+    const diff = (item.m - minutes + 1440) % 1440
+    if (diff < minDiff) {
+      minDiff = diff
+      closest = item.s
+    }
+  })
+  return closest
+}
+
+function buatDataSholatDefault(sholat) {
+  const now = new Date()
+  const hariList = ['Ahad', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu']
+  const cfg = JADWAL_RESMI_KORLAP[sholat] || JADWAL_RESMI_KORLAP.Shubuh
+  const curMin = now.getHours() * 60 + now.getMinutes()
+  const [bH, bM] = cfg.buka.split(':').map(Number)
+  const [tH, tM] = cfg.tutup.split(':').map(Number)
+  const minBuka = bH * 60 + bM
+  const minTutup = tH * 60 + tM
+
+  let status = 'tutup'
+  if (curMin >= minBuka && curMin <= minTutup) {
+    status = 'buka'
+  } else if (curMin < minBuka) {
+    status = 'belum'
+  }
+
+  const yyyy = now.getFullYear()
+  const mm = String(now.getMonth() + 1).padStart(2, '0')
+  const dd = String(now.getDate()).padStart(2, '0')
+
+  return {
+    hari: hariList[now.getDay()],
+    tanggal: `${yyyy}-${mm}-${dd}`,
+    jam: now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+    sholat,
+    daftar_sholat: DAFTAR_SHOLAT_DEFAULT,
+    buka: cfg.buka,
+    batas: cfg.batas,
+    tutup: cfg.tutup,
+    status,
+    sudah: false,
+    tim: cfg.tim
+  }
+}
+
 /* ================= FORM KORLAP SHOLAT JAMA'AH ================= */
 function Form() {
-  const [info, setInfo] = useState(() => getLocalInfoCache())
+  const defaultSholatAwal = useMemo(() => tentukanSholatLokal(), [])
+  const [info, setInfo] = useState(() => {
+    const cached = getLocalInfoCache()
+    if (cached?.tim && cached.tim.length > 0) return cached
+    return buatDataSholatDefault(defaultSholatAwal)
+  })
   const [item, setItem] = useState(() => {
     const cached = getLocalInfoCache()
-    if (cached?.tim) {
-      return Object.fromEntries(cached.tim.map(t => [t.nama, { ket: 'Hadir', alasan: '' }]))
-    }
-    return {}
+    const tim = (cached?.tim && cached.tim.length > 0) ? cached.tim : JADWAL_RESMI_KORLAP[defaultSholatAwal].tim
+    return Object.fromEntries(tim.map(t => [t.nama, { ket: 'Hadir', alasan: '' }]))
   })
   const [pengisi, setPengisi] = useState(() => {
     const cached = getLocalInfoCache()
-    if (cached?.tim) {
-      return (cached.tim.find(t => t.petugas) || cached.tim[0] || {}).nama || ''
-    }
-    return ''
+    const tim = (cached?.tim && cached.tim.length > 0) ? cached.tim : JADWAL_RESMI_KORLAP[defaultSholatAwal].tim
+    return (tim.find(t => t.petugas) || tim[0] || {}).nama || ''
   })
   const [err, setErr] = useState('')
   const [busy, setBusy] = useState(false)
@@ -968,7 +1101,20 @@ function Form() {
   const [statusModal, setStatusModal] = useState({ open: false, type: 'success', title: '', message: '', data: null })
   const [confirmModal, setConfirmModal] = useState({ open: false, summary: null })
   const [loadingSholat, setLoadingSholat] = useState(null)
-  const prayerCacheRef = useRef({})
+
+  const prayerCacheRef = useRef(
+    Object.fromEntries(
+      DAFTAR_SHOLAT_DEFAULT.map(sh => [
+        sh,
+        {
+          info: buatDataSholatDefault(sh),
+          item: Object.fromEntries(JADWAL_RESMI_KORLAP[sh].tim.map(t => [t.nama, { ket: 'Hadir', alasan: '' }])),
+          pengisi: (JADWAL_RESMI_KORLAP[sh].tim.find(t => t.petugas) || JADWAL_RESMI_KORLAP[sh].tim[0] || {}).nama || '',
+          done: null
+        }
+      ])
+    )
+  )
 
   // Sinkronkan cache lokal untuk sholat yang sedang aktif dilihat
   useEffect(() => {
@@ -984,9 +1130,7 @@ function Form() {
 
   // Memuat data sholat tertentu atau sholat aktif otomatis dari server
   const muatDataSholat = useCallback((targetSholat = null) => {
-    setLoadingSholat(targetSholat)
-
-    // Jika data untuk sholat target sudah ada di cache, gunakan langsung
+    // 1. Tampilkan langsung data dari cache (0ms instant response)
     if (targetSholat && prayerCacheRef.current[targetSholat]) {
       const cached = prayerCacheRef.current[targetSholat]
       setInfo(cached.info)
@@ -994,20 +1138,17 @@ function Form() {
       setPengisi(cached.pengisi)
       setErr('')
       setDone(cached.done || null)
-      setTimeout(() => setLoadingSholat(null), 120)
-      return
     }
 
     setBusy(true)
     setErr('')
-    setDone(null)
     const queryParams = targetSholat ? { sholat: targetSholat } : null
 
     api(null, 1, queryParams)
       .then(i => {
         setInfo(i)
         setLocalInfoCache(i)
-        const list = i.tim || []
+        const list = (i.tim && i.tim.length > 0) ? i.tim : (JADWAL_RESMI_KORLAP[i.sholat]?.tim || [])
         const newItem = Object.fromEntries(list.map(t => [t.nama, { ket: 'Hadir', alasan: '' }]))
         const newPengisi = (list.find(t => t.petugas) || list[0] || {}).nama || ''
         setItem(newItem)
@@ -1021,8 +1162,30 @@ function Form() {
             done: null
           }
         }
+
+        // Jika server mengembalikan data semua sholat sekaligus, perbarui semua cache
+        if (i.semua_tim && typeof i.semua_tim === 'object') {
+          Object.keys(i.semua_tim).forEach(sh => {
+            const shTim = i.semua_tim[sh]
+            if (shTim && shTim.length > 0) {
+              const prevCached = prayerCacheRef.current[sh]
+              const updatedInfo = { ...(prevCached?.info || buatDataSholatDefault(sh)), tim: shTim }
+              const updatedItem = Object.fromEntries(shTim.map(t => [t.nama, { ket: 'Hadir', alasan: '' }]))
+              const updatedPengisi = (shTim.find(t => t.petugas) || shTim[0] || {}).nama || ''
+              prayerCacheRef.current[sh] = {
+                info: updatedInfo,
+                item: updatedItem,
+                pengisi: updatedPengisi,
+                done: prevCached?.done || null
+              }
+            }
+          })
+        }
       })
-      .catch(e => setErr(sanitizeErrMsg(e.message)))
+      .catch(e => {
+        // Jika offline atau server lambat, kita tetap aman dengan data built-in
+        console.warn('API error, using cached/offline data:', e.message)
+      })
       .finally(() => {
         setBusy(false)
         setLoadingSholat(null)
@@ -1201,8 +1364,6 @@ const FormContent = memo(function FormContent({
 }) {
   const tutup = info.status !== 'buka'
   const tim = info.tim || []
-  const displayLimit = useIncrementalLimit(tim.length, 12, 10)
-  const visibleTim = useMemo(() => tim.slice(0, displayLimit), [tim, displayLimit])
   const submitterObj = tim.find(t => t.nama === pengisi)
 
   return (
@@ -1219,11 +1380,10 @@ const FormContent = memo(function FormContent({
                 type="button"
                 className={`prayer-tab-btn ${isActive ? 'active' : ''} ${isLoadingThis ? 'loading' : ''}`}
                 onClick={() => {
-                  if (!busy && info.sholat !== sh) {
+                  if (info.sholat !== sh) {
                     onPilihSholat(sh)
                   }
                 }}
-                disabled={busy}
               >
                 {isLoadingThis ? (
                   <IconSpinner size={12} className="spinner-spin" />
@@ -1311,7 +1471,7 @@ const FormContent = memo(function FormContent({
 
       {/* Grouped Officers List */}
       <div className="grouped-list-card">
-        {visibleTim.map(t => (
+        {tim.map(t => (
           <OfficerRowItem
             key={t.nama}
             t={t}
@@ -1319,11 +1479,6 @@ const FormContent = memo(function FormContent({
             ubah={ubah}
           />
         ))}
-        {displayLimit < tim.length && (
-          <div style={{ padding: '12px 14px', textAlign: 'center', fontSize: '12px', color: 'var(--slate-500)', fontWeight: '600' }}>
-            Memuat personil lainnya ({displayLimit} dari {tim.length})...
-          </div>
-        )}
       </div>
 
       {/* Submitter Selection Card */}
