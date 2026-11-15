@@ -11,63 +11,63 @@
 // ---------- DATA PERSONIL & JADWAL SESUAI DOKUMEN RESMI ----------
 
 const USTADZ_AWAL = [
-  'Petugas Jaga Malam',           // U001 (Koor Shubuh)
+  'Petugas Jaga Malam',            // U001 (Koor Shubuh)
   'Ust. Rabil Afraja + Guru Piket',// U002 (Koor Dhuhur)
-  'Ust. Robbul Insan',            // U003 (Koor Ashar)
-  'Ust. Muhammad Sendi',          // U004 (Koor Magrib & Isya)
+  'Ust. Robbul Insan',             // U003 (Koor Ashar)
+  'Ust. Muhammad Sendi',           // U004 (Koor Magrib & Isya)
   // Anggota Dhuhur
-  'Hairul Fadli',                 // U005
-  'Habib Rifki',                  // U006
-  'Ahmad Syamsudin',              // U007
-  'Fikri Caisar',                 // U008
-  'Fachrityo',                    // U009
-  'Refi Setiawan',                // U010
-  'Wahyudi Rahman',               // U011
-  'Chairil Annas',                // U012
-  'Restu Qodri',                  // U013
+  'Hairul Fadli',                  // U005
+  'Habib Rifki',                   // U006
+  'Ahmad Syamsudin',               // U007
+  'Fikri Caisar',                  // U008
+  'Fachrityo',                     // U009
+  'Refi Setiawan',                 // U010
+  'Wahyudi Rahman',                // U011
+  'Chairil Annas',                 // U012
+  'Restu Qodri',                   // U013
   // Anggota Ashar
-  'Ust. Danil Ali',               // U014
-  'Abdul Muiz',                   // U015
-  'Azwil Yoga',                   // U016
-  'Anggi Franitar',               // U017
-  'Nanda Bagus',                  // U018
-  'Bagas Satrio',                 // U019
-  'Fachri Jamil',                 // U020
-  'Prabowo',                      // U021
-  'Hamid',                        // U022
+  'Ust. Danil Ali Sabila',         // U014
+  'Nanda Bagus Setiawan',          // U015
+  'Azwil Yoga Pratama',            // U016
+  'Anggi Franitar',                // U017
+  'Fachri Jamil',                  // U018
+  'Abdul Muiz',                    // U019
+  'Bagas Satrio',                  // U020
+  'Zahran Akbar Prabowo',          // U021
+  'Hamid',                         // U022
   // Anggota Magrib
-  'Aska Saputra',                 // U023
+  'Aska Saputra',                  // U023
   'Tegar Firmansyah',              // U024
-  'Aldo Apriansyah',              // U025
-  'Miftahul Munir',               // U026
-  'Hasbi An',                     // U027
-  'Dwi Prayoga',                  // U028
-  'Yusuf R',                      // U029
-  'Fauzan Azima',                 // U030
-  'Hariyadi',                     // U031
+  'Aldo Apriansyah',               // U025
+  'Miftahul Munir',                // U026
+  'Hasbi AN',                      // U027
+  'Dwi Prayoga',                   // U028
+  'Yusuf Ramadhan',                // U029
+  'Fauzan Azima',                  // U030
+  'Hariyadi',                      // U031
   // Anggota Isya
-  'Fahri Aji Aditiya',            // U032
-  'Ranu Irawan',                  // U033
-  'Rehan Ahmadal',                // U034
-  'Andika WK',                    // U035
-  'Agustyadi',                    // U036
-  'Dafinza Sadewa',               // U037
-  'Ahda Fadoli',                  // U038
-  'Diski Ridho',                  // U039
-  'Rehan Azahir'                  // U040
+  'Fahri Aji',                     // U032
+  'Ranu Irawan',                   // U033
+  'Rehan Ahmadal',                 // U034
+  'Andika WK',                     // U035
+  'Agustyadi',                     // U036
+  'Dafinza Sadewa',                // U037
+  'Ahda Fadholi',                  // U038
+  'Diski Ridho',                   // U039
+  'Rehan Azahir'                   // U040
 ];
 
 const JADWAL_AWAL = [
-  // 1. SHUBUH
+  // 1. SHUBUH (1 personil)
   { sholat: 'Shubuh', koor: 'U001', absen: 'U001', anggota: [] },
-  // 2. DHUHUR
-  { sholat: 'Dhuhur', koor: 'U002', absen: 'U005', anggota: ['U006', 'U007', 'U008', 'U009', 'U010', 'U011', 'U012', 'U013'] },
-  // 3. ASHAR
-  { sholat: 'Ashar', koor: 'U003', absen: 'U014', anggota: ['U015', 'U016', 'U017', 'U018', 'U019', 'U020', 'U021', 'U022'] },
-  // 4. MAGRIB
-  { sholat: 'Magrib', koor: 'U004', absen: 'U023', anggota: ['U024', 'U025', 'U026', 'U027', 'U028', 'U029', 'U030', 'U031'] },
-  // 5. ISYA
-  { sholat: 'Isya', koor: 'U004', absen: 'U032', anggota: ['U033', 'U034', 'U035', 'U036', 'U037', 'U038', 'U039', 'U040'] }
+  // 2. DHUHUR (1 koor + 9 anggota = 10 personil)
+  { sholat: 'Dhuhur', koor: 'U002', absen: 'U005', anggota: ['U005', 'U006', 'U007', 'U008', 'U009', 'U010', 'U011', 'U012', 'U013'] },
+  // 3. ASHAR (1 koor + 9 anggota = 10 personil)
+  { sholat: 'Ashar', koor: 'U003', absen: 'U014', anggota: ['U014', 'U015', 'U016', 'U017', 'U018', 'U019', 'U020', 'U021', 'U022'] },
+  // 4. MAGRIB (1 koor + 9 anggota = 10 personil)
+  { sholat: 'Magrib', koor: 'U004', absen: 'U023', anggota: ['U023', 'U024', 'U025', 'U026', 'U027', 'U028', 'U029', 'U030', 'U031'] },
+  // 5. ISYA (1 koor + 9 anggota = 10 personil)
+  { sholat: 'Isya', koor: 'U004', absen: 'U032', anggota: ['U032', 'U033', 'U034', 'U035', 'U036', 'U037', 'U038', 'U039', 'U040'] }
 ];
 
 // Pengaturan jam bawaan per waktu sholat (bisa disesuaikan via admin)
@@ -107,8 +107,37 @@ function onOpen() {
     .createMenu('📋 Absensi')
     .addItem('🛠️ Buat / Perbarui Semua Tabel', 'buatSemuaTabel')
     .addSeparator()
+    .addItem('🔄 Perbarui Data Personil & Jadwal Resmi', 'perbaruiDataPersonilDanJadwal')
     .addItem('📥 Isi Ulang Data Awal (Personil & Jadwal)', 'isiDataAwal')
     .addToUi();
+}
+
+function perbaruiDataPersonilDanJadwal() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ust = ss.getSheetByName('Ustadz');
+  const jad = ss.getSheetByName('Jadwal');
+  if (!ust || !jad) {
+    SpreadsheetApp.getUi().alert('Tab Ustadz atau Jadwal belum ada. Jalankan "Buat / Perbarui Semua Tabel" terlebih dahulu.');
+    return;
+  }
+
+  // Tulis ulang Ustadz dan Jadwal dengan data resmi
+  ust.getRange('A2:C100').clearContent();
+  jad.getRange('A2:D200').clearContent();
+  isiUstadz_(ust);
+  isiJadwal_(jad);
+
+  // Bersihkan cache script
+  try {
+    CacheService.getScriptCache().remove('sheet_Ustadz');
+    CacheService.getScriptCache().remove('sheet_Jadwal');
+  } catch (e) {}
+
+  SpreadsheetApp.getUi().alert(
+    'Berhasil Diperbarui!',
+    'Data personil (Ustadz) dan Jadwal 5 Sholat telah diperbarui sesuai daftar resmi Korlap Pondok Putra.',
+    SpreadsheetApp.getUi().ButtonSet.OK
+  );
 }
 
 // ---------- FUNGSI UTAMA ----------

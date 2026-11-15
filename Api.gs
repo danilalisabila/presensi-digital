@@ -184,7 +184,7 @@ function timSholat_(sholat) {
     .filter(r => normalisasiSholat_(r.Sholat) === targetSholat)
     .map(r => {
       const idUst = String(r.IDUstadz || '').trim();
-      const nama = u[idUst] || String(r.Nama || idUst || '').trim();
+      const nama = u[idUst] || String(r.NamaOtomatis || r.Nama || idUst || '').trim();
       return { 
         nama: nama, 
         peran: String(r.Peran || 'Anggota').trim(), 
