@@ -259,6 +259,77 @@ function IconClose({ size = 18, className = '' }) {
   )
 }
 
+function IconLayoutDashboard({ size = 18, className = '' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <rect x="3" y="3" width="7" height="9" />
+      <rect x="14" y="3" width="7" height="5" />
+      <rect x="14" y="12" width="7" height="9" />
+      <rect x="3" y="16" width="7" height="5" />
+    </svg>
+  )
+}
+
+function IconBarChart3({ size = 18, className = '' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <line x1="18" y1="20" x2="18" y2="10" />
+      <line x1="12" y1="20" x2="12" y2="4" />
+      <line x1="6" y1="20" x2="6" y2="14" />
+    </svg>
+  )
+}
+
+function IconShare2({ size = 18, className = '' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <circle cx="18" cy="5" r="3" />
+      <circle cx="6" cy="12" r="3" />
+      <circle cx="18" cy="19" r="3" />
+      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+    </svg>
+  )
+}
+
+function IconCopy({ size = 16, className = '' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+    </svg>
+  )
+}
+
+function IconArrowLeft({ size = 18, className = '' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <line x1="19" y1="12" x2="5" y2="12" />
+      <polyline points="12 19 5 12 12 5" />
+    </svg>
+  )
+}
+
+function IconTrendingUp({ size = 16, className = '' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+      <polyline points="17 6 23 6 23 12" />
+    </svg>
+  )
+}
+
+function IconUsers({ size = 18, className = '' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
+  )
+}
+
 function IconWhatsApp({ size = 19, className = '' }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -598,6 +669,7 @@ function AppFooter() {
 export default function App() {
   const [admin, setAdmin] = useState(location.hash === '#admin')
   const [tok, setTok] = useState(() => sessionStorage.getItem('tok') || '')
+  const [adminTab, setAdminTab] = useState('dashboard')
   const [menuOpen, setMenuOpen] = useState(false)
   const [laporOpen, setLaporOpen] = useState(false)
   const [namaLapor, setNamaLapor] = useState('')
@@ -654,6 +726,14 @@ export default function App() {
     setDeskripsiLapor('')
   }
 
+  const getHeaderTitle = () => {
+    if (!admin) return "KORLAP SHOLAT JAMA'AH"
+    if (!tok) return "LOGIN ADMINISTRATOR"
+    if (adminTab === 'dashboard') return "DASHBOARD UTAMA"
+    if (adminTab === 'rekap') return "REKAPITULASI"
+    return "SETELAN WAKTU"
+  }
+
   return (
     <div className="mobile-viewport">
       {/* 1. Sticky Header Bar */}
@@ -664,7 +744,7 @@ export default function App() {
           </div>
           <div className="brand-text-col">
             <span className="brand-main-title">
-              {admin ? 'DASHBOARD ADMIN' : "KORLAP SHOLAT JAMA'AH"}
+              {getHeaderTitle()}
             </span>
             <span className="brand-sub-title">
               Pondok Putra • Al-Falah Putak
@@ -696,29 +776,87 @@ export default function App() {
 
       <div className={`menu-top-sheet ${menuOpen ? 'open' : ''}`}>
         <div className="menu-sheet-inner">
-          <p className="menu-section-label">LAYANAN & NAVIGASI</p>
+          <p className="menu-section-label">
+            {admin && tok ? 'NAVIGASI ADMINISTRATOR' : 'LAYANAN & NAVIGASI'}
+          </p>
 
           <div className="menu-sheet-grid">
-            <button
-              type="button"
-              className="drawer-nav-item primary"
-              onClick={() => {
-                setMenuOpen(false)
-                setLaporOpen(true)
-              }}
-            >
-              <div className="drawer-item-icon whatsapp">
-                <IconWhatsApp size={22} />
-              </div>
-              <div className="drawer-item-text">
-                <span className="drawer-item-title">Laporkan Kendala</span>
-                <span className="drawer-item-desc">Pengaduan via WA (0821-1870-2717)</span>
-              </div>
-              <IconChevronRight size={16} className="drawer-chevron" />
-            </button>
-
-            {admin ? (
+            {admin && tok ? (
               <>
+                <div style={{ padding: '4px 6px 12px 6px', borderBottom: '1px solid #e2e8f0', marginBottom: '8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#ecfdf5', color: '#059669', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <IconShield size={18} />
+                    </div>
+                    <div>
+                      <span style={{ display: 'block', fontSize: '13px', fontWeight: '800', color: '#064e3b' }}>Sekretaris Pondok Putra</span>
+                      <span style={{ display: 'block', fontSize: '11px', color: '#64748b' }}>Administrator Sistem</span>
+                    </div>
+                  </div>
+                  <span className="admin-live-status" style={{ color: '#059669', fontSize: '11px' }}>
+                    <span className="live-status-dot" />
+                    Online
+                  </span>
+                </div>
+
+                {/* Menu 1: Dashboard Utama */}
+                <button
+                  type="button"
+                  className={`drawer-nav-item ${adminTab === 'dashboard' ? 'admin-active' : ''}`}
+                  onClick={() => {
+                    setAdminTab('dashboard')
+                    setMenuOpen(false)
+                  }}
+                >
+                  <div className="drawer-item-icon admin">
+                    <IconLayoutDashboard size={19} />
+                  </div>
+                  <div className="drawer-item-text">
+                    <span className="drawer-item-title">Dashboard Utama</span>
+                    <span className="drawer-item-desc">Statistik, grafik, log & bagikan WA</span>
+                  </div>
+                  <IconChevronRight size={16} className="drawer-chevron" />
+                </button>
+
+                {/* Menu 2: Rekapitulasi */}
+                <button
+                  type="button"
+                  className={`drawer-nav-item ${adminTab === 'rekap' ? 'admin-active' : ''}`}
+                  onClick={() => {
+                    setAdminTab('rekap')
+                    setMenuOpen(false)
+                  }}
+                >
+                  <div className="drawer-item-icon admin">
+                    <IconFileText size={19} />
+                  </div>
+                  <div className="drawer-item-text">
+                    <span className="drawer-item-title">Rekapitulasi Kehadiran</span>
+                    <span className="drawer-item-desc">Filter per sholat, tanggal & bulan</span>
+                  </div>
+                  <IconChevronRight size={16} className="drawer-chevron" />
+                </button>
+
+                {/* Menu 3: Setelan Waktu */}
+                <button
+                  type="button"
+                  className={`drawer-nav-item ${adminTab === 'atur' ? 'admin-active' : ''}`}
+                  onClick={() => {
+                    setAdminTab('atur')
+                    setMenuOpen(false)
+                  }}
+                >
+                  <div className="drawer-item-icon admin">
+                    <IconSettings size={19} />
+                  </div>
+                  <div className="drawer-item-text">
+                    <span className="drawer-item-title">Setelan Waktu Sholat</span>
+                    <span className="drawer-item-desc">Atur jam buka, batas & tutup form</span>
+                  </div>
+                  <IconChevronRight size={16} className="drawer-chevron" />
+                </button>
+
+                {/* Menu 4: Kembali ke Presensi */}
                 <button
                   type="button"
                   className="drawer-nav-item"
@@ -728,7 +866,7 @@ export default function App() {
                   }}
                 >
                   <div className="drawer-item-icon admin">
-                    <IconCalendar size={20} />
+                    <IconArrowLeft size={19} />
                   </div>
                   <div className="drawer-item-text">
                     <span className="drawer-item-title">Kembali ke Presensi</span>
@@ -737,13 +875,14 @@ export default function App() {
                   <IconChevronRight size={16} className="drawer-chevron" />
                 </button>
 
+                {/* Menu 5: Keluar / Logout */}
                 <button
                   type="button"
                   className="drawer-nav-item logout-danger"
                   onClick={handleKeluarAdmin}
                 >
                   <div className="drawer-item-icon logout">
-                    <IconLogOut size={20} />
+                    <IconLogOut size={19} />
                   </div>
                   <div className="drawer-item-text">
                     <span className="drawer-item-title">Keluar Admin</span>
@@ -752,24 +891,82 @@ export default function App() {
                   <IconChevronRight size={16} className="drawer-chevron" />
                 </button>
               </>
+            ) : admin && !tok ? (
+              <>
+                <button
+                  type="button"
+                  className="drawer-nav-item primary"
+                  onClick={() => {
+                    setMenuOpen(false)
+                    setLaporOpen(true)
+                  }}
+                >
+                  <div className="drawer-item-icon whatsapp">
+                    <IconWhatsApp size={22} />
+                  </div>
+                  <div className="drawer-item-text">
+                    <span className="drawer-item-title">Laporkan Kendala</span>
+                    <span className="drawer-item-desc">Pengaduan via WA (0821-1870-2717)</span>
+                  </div>
+                  <IconChevronRight size={16} className="drawer-chevron" />
+                </button>
+
+                <button
+                  type="button"
+                  className="drawer-nav-item"
+                  onClick={() => {
+                    setMenuOpen(false)
+                    window.location.hash = ''
+                  }}
+                >
+                  <div className="drawer-item-icon admin">
+                    <IconArrowLeft size={19} />
+                  </div>
+                  <div className="drawer-item-text">
+                    <span className="drawer-item-title">Kembali ke Presensi</span>
+                    <span className="drawer-item-desc">Buka formulir presensi sholat jama'ah</span>
+                  </div>
+                  <IconChevronRight size={16} className="drawer-chevron" />
+                </button>
+              </>
             ) : (
-              <button
-                type="button"
-                className="drawer-nav-item"
-                onClick={() => {
-                  setMenuOpen(false)
-                  window.location.hash = '#admin'
-                }}
-              >
-                <div className="drawer-item-icon admin">
-                  <IconShield size={20} />
-                </div>
-                <div className="drawer-item-text">
-                  <span className="drawer-item-title">Login Administrator</span>
-                  <span className="drawer-item-desc">Kelola jadwal, rekap & konfigurasi</span>
-                </div>
-                <IconChevronRight size={16} className="drawer-chevron" />
-              </button>
+              <>
+                <button
+                  type="button"
+                  className="drawer-nav-item primary"
+                  onClick={() => {
+                    setMenuOpen(false)
+                    setLaporOpen(true)
+                  }}
+                >
+                  <div className="drawer-item-icon whatsapp">
+                    <IconWhatsApp size={22} />
+                  </div>
+                  <div className="drawer-item-text">
+                    <span className="drawer-item-title">Laporkan Kendala</span>
+                    <span className="drawer-item-desc">Pengaduan via WA (0821-1870-2717)</span>
+                  </div>
+                  <IconChevronRight size={16} className="drawer-chevron" />
+                </button>
+
+                <button
+                  type="button"
+                  className="drawer-nav-item"
+                  onClick={() => {
+                    setMenuOpen(false)
+                    window.location.hash = '#admin'
+                  }}
+                >
+                  <div className="drawer-item-icon admin">
+                    <IconShield size={20} />
+                  </div>
+                  <div className="drawer-item-text">
+                    <span className="drawer-item-title">Login Administrator</span>
+                    <span className="drawer-item-desc">Kelola jadwal, rekap & konfigurasi</span>
+                  </div>
+                  <IconChevronRight size={16} className="drawer-chevron" />
+                </button>
+              </>
             )}
           </div>
         </div>
@@ -777,7 +974,7 @@ export default function App() {
 
       {/* Main Page Content */}
       {admin ? (
-        <Admin tok={tok} setTok={setTok} onLogout={handleKeluarAdmin} />
+        <Admin tok={tok} setTok={setTok} onLogout={handleKeluarAdmin} adminTab={adminTab} setAdminTab={setAdminTab} />
       ) : (
         <Form />
       )}
@@ -1746,17 +1943,239 @@ const RekapCardItem = memo(function RekapCardItem({ n, u }) {
   )
 })
 
+/* ================= HELPER: REKAP 5 SHOLAT UNTUK WHATSAPP ================= */
+function buatPesanWARekapHarian(tanggal, hari, rows) {
+  const tglTeks = formatTanggalIndo(tanggal, hari)
+  const now = new Date()
+  const jamSekarang = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')} WIB`
+  
+  const daftarSholat = ['Shubuh', 'Dhuhur', 'Ashar', 'Magrib', 'Isya']
+  const rowsHariIni = (rows || []).filter(r => r.tanggal === tanggal)
+  
+  const akumulasi = { total: 0, hadir: 0, sakit: 0, izin: 0, alfa: 0 }
+  
+  const detailSholatTeks = daftarSholat.map((sh, idx) => {
+    const records = rowsHariIni.filter(r => (r.sholat || '').toLowerCase() === sh.toLowerCase())
+    if (!records.length) {
+      return `${idx + 1}. *SHOLAT ${sh.toUpperCase()}*\n   • Status Presensi: _Belum ada laporan_`
+    }
+    
+    const pengisi = records[0].pengisi || 'Petugas Korlap'
+    const waktuStatus = records[0].waktu || 'Tepat Waktu'
+    const jamKirim = records[0].jam ? ` (${records[0].jam} WIB)` : ''
+    
+    let hadir = 0
+    const absentees = []
+    
+    records.forEach(r => {
+      akumulasi.total++
+      if (r.ket === 'Hadir') {
+        hadir++
+        akumulasi.hadir++
+      } else if (r.ket === 'Sakit') {
+        akumulasi.sakit++
+        absentees.push(`     - *${r.nama}* [Sakit${r.alasan ? ': ' + r.alasan : ''}]`)
+      } else if (r.ket === 'Izin') {
+        akumulasi.izin++
+        absentees.push(`     - *${r.nama}* [Izin${r.alasan ? ': ' + r.alasan : ''}]`)
+      } else if (r.ket === 'Alfa') {
+        akumulasi.alfa++
+        absentees.push(`     - *${r.nama}* [Alfa: Tanpa Keterangan]`)
+      }
+    })
+    
+    let ketidakhadiranTeks = ''
+    if (absentees.length === 0) {
+      ketidakhadiranTeks = `   • Ketidakhadiran: *NIHIL* (Lengkap ${hadir} Petugas Hadir)`
+    } else {
+      ketidakhadiranTeks = `   • Ketidakhadiran (${absentees.length} Orang):\n${absentees.join('\n')}`
+    }
+    
+    return `${idx + 1}. *SHOLAT ${sh.toUpperCase()}*
+   • Status Presensi: *Tercatat* - ${waktuStatus}${jamKirim}
+   • Pengisi Form: ${pengisi}
+${ketidakhadiranTeks}`
+  }).join('\n\n')
+  
+  const persenHadir = akumulasi.total > 0 ? Math.round((akumulasi.hadir / akumulasi.total) * 100) : 0
+  const teksAlfa = akumulasi.alfa === 0 ? '0 (NIHIL)' : `${akumulasi.alfa} Orang`
+  
+  const header = `*LAPORAN REKAPITULASI PRESENSI KORLAP SHOLAT JAMA'AH*
+*PONDOK PUTRA - YPP SALAFIYAH AL-FALAH PUTAK*
+--------------------------------------------------
+📅 *Hari/Tanggal:* ${tglTeks}
+🕒 *Waktu Rekap:* ${jamSekarang}
+👤 *Koordinator Harian:* Sekretaris Pondok Putra
+--------------------------------------------------`
+
+  const footer = `--------------------------------------------------
+📊 *Ringkasan Akumulasi Harian:*
+• Total Tugas: ${akumulasi.total}
+• Total Hadir: ${akumulasi.hadir}
+• Total Sakit: ${akumulasi.sakit}
+• Total Izin: ${akumulasi.izin}
+• Total Alfa: ${teksAlfa}
+• Persentase Kehadiran: ${persenHadir}%
+--------------------------------------------------
+_Pesan ini dibuat dan dikirimkan secara otomatis oleh Sistem Presensi Korlap Sholat Jama'ah Pondok Putra Al-Falah._`
+
+  return `${header}\n\n${detailSholatTeks}\n\n${footer}`
+}
+
+/* ================= COMPONENT: PURE SVG BAR CHART (Bebas Emoji) ================= */
+function SvgBarChart({ data, mode }) {
+  if (!data || data.length === 0) {
+    return (
+      <div style={{ textAlign: 'center', padding: '30px 10px', color: 'var(--slate-500)', fontSize: '13px' }}>
+        Belum ada data grafik untuk ditampilkan.
+      </div>
+    )
+  }
+
+  const svgWidth = 560
+  const svgHeight = 210
+  const padLeft = 20
+  const padRight = 20
+  const padTop = 30
+  const padBottom = 45
+  const chartWidth = svgWidth - padLeft - padRight
+  const chartHeight = svgHeight - padTop - padBottom
+
+  const count = data.length
+  const colWidth = chartWidth / count
+  const barWidth = Math.min(42, Math.max(22, colWidth * 0.55))
+
+  return (
+    <div style={{ width: '100%', overflowX: 'auto' }}>
+      <svg
+        viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+        style={{ width: '100%', minWidth: count > 6 ? '480px' : '100%', height: 'auto', display: 'block' }}
+      >
+        <defs>
+          <linearGradient id="barGradientGreen" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#059669" />
+            <stop offset="100%" stopColor="#0D9488" />
+          </linearGradient>
+          <linearGradient id="barGradientWarning" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#F59E0B" />
+            <stop offset="100%" stopColor="#D97706" />
+          </linearGradient>
+        </defs>
+
+        {/* Grid lines: 0%, 50%, 100% */}
+        {[0, 50, 100].map(p => {
+          const y = padTop + chartHeight - (p / 100) * chartHeight
+          return (
+            <g key={p}>
+              <line
+                x1={padLeft}
+                y1={y}
+                x2={svgWidth - padRight}
+                y2={y}
+                stroke="#E2E8F0"
+                strokeDasharray="4 4"
+                strokeWidth="1"
+              />
+              <text
+                x={svgWidth - padRight + 2}
+                y={y + 3}
+                fill="#94A3B8"
+                fontSize="9"
+                fontWeight="600"
+                textAnchor="start"
+              >
+                {p}%
+              </text>
+            </g>
+          )
+        })}
+
+        {/* Bars */}
+        {data.map((item, idx) => {
+          const xCenter = padLeft + idx * colWidth + colWidth / 2
+          const xBar = xCenter - barWidth / 2
+          const p = Math.min(100, Math.max(0, item.percent || 0))
+          const bHeight = Math.max(6, (p / 100) * chartHeight)
+          const yBar = padTop + chartHeight - bHeight
+          const isWarning = p < 80 && p > 0
+
+          return (
+            <g key={idx}>
+              {/* Background Track */}
+              <rect
+                x={xBar}
+                y={padTop}
+                width={barWidth}
+                height={chartHeight}
+                rx="6"
+                fill="#F1F5F9"
+              />
+
+              {/* Active Bar */}
+              {p > 0 && (
+                <rect
+                  x={xBar}
+                  y={yBar}
+                  width={barWidth}
+                  height={bHeight}
+                  rx="6"
+                  fill={isWarning ? 'url(#barGradientWarning)' : 'url(#barGradientGreen)'}
+                />
+              )}
+
+              {/* Top Label (Percentage) */}
+              <text
+                x={xCenter}
+                y={p > 0 ? yBar - 6 : padTop + chartHeight - 6}
+                textAnchor="middle"
+                fontSize="11"
+                fontWeight="800"
+                fill={p > 0 ? (isWarning ? '#B45309' : '#047857') : '#94A3B8'}
+              >
+                {item.percent}%
+              </text>
+
+              {/* Bottom Label 1 */}
+              <text
+                x={xCenter}
+                y={padTop + chartHeight + 16}
+                textAnchor="middle"
+                fontSize="11"
+                fontWeight="700"
+                fill="#1E293B"
+              >
+                {item.label}
+              </text>
+
+              {/* Bottom Sub-label (e.g. 8/8) */}
+              {item.sublabel && (
+                <text
+                  x={xCenter}
+                  y={padTop + chartHeight + 30}
+                  textAnchor="middle"
+                  fontSize="9.5"
+                  fontWeight="600"
+                  fill="#64748B"
+                >
+                  {item.sublabel}
+                </text>
+              )}
+            </g>
+          )
+        })}
+      </svg>
+    </div>
+  )
+}
+
 /* ================= ADMIN DASHBOARD ================= */
-function Admin({ tok, setTok, onLogout }) {
+function Admin({ tok, setTok, onLogout, adminTab = 'dashboard', setAdminTab }) {
   const [f, setF] = useState({ email: '', pin: '' })
   const [showPin, setShowPin] = useState(false)
   const [err, setErr] = useState('')
   const [d, setD] = useState(null)
-  const [tab, setTab] = useState('hari')
-  const [filterSholat, setFilterSholat] = useState('Semua')
-  const [bulan, setBulan] = useState('')
-  const [cariRekap, setCariRekap] = useState('')
-  const [filterRekap, setFilterRekap] = useState('semua')
+  const tab = adminTab || 'dashboard'
+  const setTab = setAdminTab || (() => {})
   const [atur, setAtur] = useState(DEFAULTS_SHOLAT_JAM)
   const [busy, setBusy] = useState(false)
   const [statusModal, setStatusModal] = useState({ open: false, type: 'success', title: '', message: '' })
@@ -1969,14 +2388,6 @@ function Admin({ tok, setTok, onLogout }) {
       muat={muat}
       tab={tab}
       setTab={setTab}
-      filterSholat={filterSholat}
-      setFilterSholat={setFilterSholat}
-      bulan={bulan}
-      setBulan={setBulan}
-      cariRekap={cariRekap}
-      setCariRekap={setCariRekap}
-      filterRekap={filterRekap}
-      setFilterRekap={setFilterRekap}
       atur={atur}
       setAtur={setAtur}
       simpan={simpan}
@@ -1994,14 +2405,6 @@ const AdminDashboard = memo(function AdminDashboard({
   muat,
   tab,
   setTab,
-  filterSholat,
-  setFilterSholat,
-  bulan,
-  setBulan,
-  cariRekap,
-  setCariRekap,
-  filterRekap,
-  setFilterRekap,
   atur,
   setAtur,
   simpan,
@@ -2010,81 +2413,23 @@ const AdminDashboard = memo(function AdminDashboard({
   setStatusModal
 }) {
   const rows = d.rows || []
-  const b = bulan || d.tgl.slice(0, 7)
   const bulanIniAsli = d.tgl.slice(0, 7)
   const hariIniSemua = rows.filter(r => r.tanggal === d.tgl)
-  const hariIni = filterSholat === 'Semua' 
-    ? hariIniSemua 
-    : hariIniSemua.filter(r => r.sholat === filterSholat)
 
-  const bl = rows.filter(r => r.tanggal.startsWith(b))
+  // State Dashboard
+  const [chartMode, setChartMode] = useState('tanggal') // 'tanggal' | 'sholat' | 'bulan'
+  const [waModalOpen, setWaModalOpen] = useState(false)
+  const [waCopied, setWaCopied] = useState(false)
+  const [waDate, setWaDate] = useState(d.tgl)
+  const [filterSholatHariIni, setFilterSholatHariIni] = useState('Semua')
 
-  const rek = {}
-  bl.forEach(r => {
-    rek[r.nama] ??= { Hadir: 0, Terlambat: 0, Sakit: 0, Izin: 0, Alfa: 0 }
-    if (rek[r.nama][r.ket] !== undefined) {
-      rek[r.nama][r.ket]++
-    }
-    if (r.ket === 'Hadir' && r.waktu === 'Terlambat') {
-      rek[r.nama].Terlambat++
-    }
-  })
-
-  const totalStats = Object.values(rek).reduce(
-    (acc, cur) => {
-      acc.Hadir += cur.Hadir || 0
-      acc.Terlambat += cur.Terlambat || 0
-      acc.Sakit += cur.Sakit || 0
-      acc.Izin += cur.Izin || 0
-      acc.Alfa += cur.Alfa || 0
-      return acc
-    },
-    { Hadir: 0, Terlambat: 0, Sakit: 0, Izin: 0, Alfa: 0 }
-  )
-
-  const unduh = () => {
-    const h = 'Tanggal,Hari,Sholat,Nama,Keterangan,Alasan,Status Waktu,Diisi Oleh,Pengganti\n'
-    const c = bl.map(r => [r.tanggal, r.hari, r.sholat, r.nama, r.ket, r.alasan, r.waktu, r.pengisi, r.pengganti]
-      .map(x => '"' + String(x || '').replace(/"/g, '""') + '"').join(',')).join('\n')
-    const a = document.createElement('a')
-    a.href = URL.createObjectURL(new Blob(['\ufeff' + h + c], { type: 'text/csv' }))
-    a.download = 'absensi-korlap-sholat-' + b + '.csv'
-    a.click()
-  }
-
-  const hariIniStats = { Hadir: 0, Sakit: 0, Izin: 0, Alfa: 0 }
-  hariIni.forEach(r => {
-    if (hariIniStats[r.ket] !== undefined) {
-      hariIniStats[r.ket]++
-    }
-  })
-
-  // Perhitungan Rekap Bulanan
-  const totalTugasBulanIni = totalStats.Hadir + totalStats.Sakit + totalStats.Izin + totalStats.Alfa
-  const rateKehadiranBulanIni = totalTugasBulanIni > 0 ? Math.round((totalStats.Hadir / totalTugasBulanIni) * 100) : 0
-
-  const allRekapNames = Object.keys(rek).sort()
-  const filteredUstadz = allRekapNames.filter(n => {
-    const u = rek[n]
-    const tot = (u.Hadir || 0) + (u.Sakit || 0) + (u.Izin || 0) + (u.Alfa || 0)
-    const rRate = tot > 0 ? Math.round((u.Hadir / tot) * 100) : 0
-
-    if (cariRekap.trim() && !n.toLowerCase().includes(cariRekap.trim().toLowerCase())) {
-      return false
-    }
-
-    if (filterRekap === 'alfa' && (u.Alfa || 0) === 0) return false
-    if (filterRekap === 'absen' && ((u.Sakit || 0) === 0 && (u.Izin || 0) === 0)) return false
-    if (filterRekap === 'rajin' && (rRate < 100 || tot === 0)) return false
-
-    return true
-  })
-
-  const displayLimitHariIni = useIncrementalLimit(hariIni.length, 15, 10)
-  const visibleHariIni = useMemo(() => hariIni.slice(0, displayLimitHariIni), [hariIni, displayLimitHariIni])
-
-  const displayLimitRekap = useIncrementalLimit(filteredUstadz.length, 15, 10)
-  const visibleUstadz = useMemo(() => filteredUstadz.slice(0, displayLimitRekap), [filteredUstadz, displayLimitRekap])
+  // State Rekapitulasi (Live Filter per sholat, per hari-tanggal, per bulan)
+  const [modeRekap, setModeRekap] = useState('bulan') // 'bulan' | 'tanggal'
+  const [bulanRekap, setBulanRekap] = useState(bulanIniAsli)
+  const [rekapTanggal, setRekapTanggal] = useState(d.tgl)
+  const [rekapSholat, setRekapSholat] = useState('Semua')
+  const [cariRekap, setCariRekap] = useState('')
+  const [filterRekap, setFilterRekap] = useState('semua')
 
   const daftarSholatAdmin = ['Semua', 'Shubuh', 'Dhuhur', 'Ashar', 'Magrib', 'Isya']
   const [tabLoading, setTabLoading] = useState(false)
@@ -2096,14 +2441,222 @@ const AdminDashboard = memo(function AdminDashboard({
     setTimeout(() => setTabLoading(false), 140)
   }
 
+  // --- STATS HARI INI (Untuk Dashboard Hero & KPI) ---
+  const hariIniStats = { Hadir: 0, Sakit: 0, Izin: 0, Alfa: 0 }
+  hariIniSemua.forEach(r => {
+    if (hariIniStats[r.ket] !== undefined) {
+      hariIniStats[r.ket]++
+    }
+  })
+  const totalHariIni = hariIniStats.Hadir + hariIniStats.Sakit + hariIniStats.Izin + hariIniStats.Alfa
+  const rateHariIni = totalHariIni > 0 ? Math.round((hariIniStats.Hadir / totalHariIni) * 100) : 0
+
+  const hariIniFiltered = filterSholatHariIni === 'Semua'
+    ? hariIniSemua
+    : hariIniSemua.filter(r => (r.sholat || '').toLowerCase() === filterSholatHariIni.toLowerCase())
+
+  const displayLimitHariIni = useIncrementalLimit(hariIniFiltered.length, 15, 10)
+  const visibleHariIni = useMemo(() => hariIniFiltered.slice(0, displayLimitHariIni), [hariIniFiltered, displayLimitHariIni])
+
+  // --- PESAN WHATSAPP REKAP 5 SHOLAT ---
+  const pesanWARekap = useMemo(() => {
+    return buatPesanWARekapHarian(waDate || d.tgl, d.hari, rows)
+  }, [waDate, d.tgl, d.hari, rows])
+
+  // --- CHART DATA GENERATION ---
+  // 1. Per Tanggal (7 hari terakhir dari data rows)
+  const chartDataTanggal = useMemo(() => {
+    const tglMap = new Map()
+    rows.forEach(r => {
+      if (!tglMap.has(r.tanggal)) {
+        tglMap.set(r.tanggal, { total: 0, hadir: 0, hari: r.hari })
+      }
+      const item = tglMap.get(r.tanggal)
+      item.total++
+      if (r.ket === 'Hadir') item.hadir++
+    })
+    const sortedDates = Array.from(tglMap.keys()).sort().slice(-7)
+    return sortedDates.map(tgl => {
+      const item = tglMap.get(tgl)
+      const pct = item.total > 0 ? Math.round((item.hadir / item.total) * 100) : 0
+      const parts = tgl.split('-')
+      const lbl = parts.length === 3 ? `${parseInt(parts[2], 10)}/${parseInt(parts[1], 10)}` : tgl
+      return {
+        label: lbl,
+        sublabel: `${item.hadir}/${item.total}`,
+        value: item.hadir,
+        total: item.total,
+        percent: pct
+      }
+    })
+  }, [rows])
+
+  // 2. Per Waktu Sholat (5 Sholat)
+  const chartDataSholat = useMemo(() => {
+    const targetRows = hariIniSemua.length > 0 ? hariIniSemua : rows.filter(r => r.tanggal.startsWith(bulanIniAsli))
+    const sholatList = ['Shubuh', 'Dhuhur', 'Ashar', 'Magrib', 'Isya']
+    return sholatList.map(sh => {
+      const rSh = targetRows.filter(r => (r.sholat || '').toLowerCase() === sh.toLowerCase())
+      const total = rSh.length
+      const hadir = rSh.filter(r => r.ket === 'Hadir').length
+      const pct = total > 0 ? Math.round((hadir / total) * 100) : 0
+      return {
+        label: sh,
+        sublabel: total > 0 ? `${hadir}/${total}` : '0 tugas',
+        value: hadir,
+        total,
+        percent: pct
+      }
+    })
+  }, [hariIniSemua, rows, bulanIniAsli])
+
+  // 3. Per Bulan (6 bulan terakhir)
+  const chartDataBulan = useMemo(() => {
+    const monthMap = new Map()
+    const bulanShort = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des']
+    rows.forEach(r => {
+      const ym = (r.tanggal || '').slice(0, 7)
+      if (!ym || ym.length < 7) return
+      if (!monthMap.has(ym)) {
+        monthMap.set(ym, { total: 0, hadir: 0 })
+      }
+      const item = monthMap.get(ym)
+      item.total++
+      if (r.ket === 'Hadir') item.hadir++
+    })
+    const sortedMonths = Array.from(monthMap.keys()).sort().slice(-6)
+    return sortedMonths.map(ym => {
+      const item = monthMap.get(ym)
+      const pct = item.total > 0 ? Math.round((item.hadir / item.total) * 100) : 0
+      const parts = ym.split('-')
+      const mName = bulanShort[parseInt(parts[1], 10) - 1] || parts[1]
+      const lbl = `${mName} '${parts[0].slice(2)}`
+      return {
+        label: lbl,
+        sublabel: `${item.hadir}/${item.total}`,
+        value: item.hadir,
+        total: item.total,
+        percent: pct
+      }
+    })
+  }, [rows])
+
+  // --- LOG AKTIVITAS PENGIRIMAN PRESENSI TERKINI (Unique Batches) ---
+  const daftarSesi = useMemo(() => {
+    const sesiMap = new Map()
+    rows.forEach(r => {
+      const key = `${r.tanggal}_${r.sholat}`
+      if (!sesiMap.has(key)) {
+        sesiMap.set(key, {
+          tanggal: r.tanggal,
+          hari: r.hari,
+          sholat: r.sholat,
+          jam: r.jam || '',
+          pengisi: r.pengisi || 'Petugas Korlap',
+          waktu: r.waktu || 'Tepat Waktu',
+          total: 0,
+          hadir: 0,
+          sakit: 0,
+          izin: 0,
+          alfa: 0
+        })
+      }
+      const s = sesiMap.get(key)
+      s.total++
+      if (r.ket === 'Hadir') s.hadir++
+      else if (r.ket === 'Sakit') s.sakit++
+      else if (r.ket === 'Izin') s.izin++
+      else if (r.ket === 'Alfa') s.alfa++
+    })
+    return Array.from(sesiMap.values())
+      .sort((a, b) => (b.tanggal + (b.jam || '')).localeCompare(a.tanggal + (a.jam || '')))
+      .slice(0, 8)
+  }, [rows])
+
+  // --- DATA FILTER REKAPITULASI (Live Filter per sholat, per hari-tanggal, per bulan) ---
+  const rekapRows = useMemo(() => {
+    let filtered = modeRekap === 'bulan'
+      ? rows.filter(r => r.tanggal.startsWith(bulanRekap))
+      : rows.filter(r => r.tanggal === rekapTanggal)
+
+    if (rekapSholat !== 'Semua') {
+      filtered = filtered.filter(r => (r.sholat || '').toLowerCase() === rekapSholat.toLowerCase())
+    }
+    return filtered
+  }, [rows, modeRekap, bulanRekap, rekapTanggal, rekapSholat])
+
+  const rek = useMemo(() => {
+    const map = {}
+    rekapRows.forEach(r => {
+      map[r.nama] ??= { Hadir: 0, Terlambat: 0, Sakit: 0, Izin: 0, Alfa: 0 }
+      if (map[r.nama][r.ket] !== undefined) {
+        map[r.nama][r.ket]++
+      }
+      if (r.ket === 'Hadir' && r.waktu === 'Terlambat') {
+        map[r.nama].Terlambat++
+      }
+    })
+    return map
+  }, [rekapRows])
+
+  const totalStatsRekap = useMemo(() => {
+    return Object.values(rek).reduce(
+      (acc, cur) => {
+        acc.Hadir += cur.Hadir || 0
+        acc.Terlambat += cur.Terlambat || 0
+        acc.Sakit += cur.Sakit || 0
+        acc.Izin += cur.Izin || 0
+        acc.Alfa += cur.Alfa || 0
+        return acc
+      },
+      { Hadir: 0, Terlambat: 0, Sakit: 0, Izin: 0, Alfa: 0 }
+    )
+  }, [rek])
+
+  const totalTugasRekap = totalStatsRekap.Hadir + totalStatsRekap.Sakit + totalStatsRekap.Izin + totalStatsRekap.Alfa
+  const rateKehadiranRekap = totalTugasRekap > 0 ? Math.round((totalStatsRekap.Hadir / totalTugasRekap) * 100) : 0
+
+  const allRekapNames = useMemo(() => Object.keys(rek).sort(), [rek])
+  const filteredUstadz = useMemo(() => {
+    return allRekapNames.filter(n => {
+      const u = rek[n]
+      const tot = (u.Hadir || 0) + (u.Sakit || 0) + (u.Izin || 0) + (u.Alfa || 0)
+      const rRate = tot > 0 ? Math.round((u.Hadir / tot) * 100) : 0
+
+      if (cariRekap.trim() && !n.toLowerCase().includes(cariRekap.trim().toLowerCase())) {
+        return false
+      }
+
+      if (filterRekap === 'alfa' && (u.Alfa || 0) === 0) return false
+      if (filterRekap === 'absen' && ((u.Sakit || 0) === 0 && (u.Izin || 0) === 0)) return false
+      if (filterRekap === 'rajin' && (rRate < 100 || tot === 0)) return false
+
+      return true
+    })
+  }, [allRekapNames, rek, cariRekap, filterRekap])
+
+  const displayLimitRekap = useIncrementalLimit(filteredUstadz.length, 15, 10)
+  const visibleUstadz = useMemo(() => filteredUstadz.slice(0, displayLimitRekap), [filteredUstadz, displayLimitRekap])
+
+  const unduhRekap = () => {
+    const h = 'Tanggal,Hari,Sholat,Nama,Keterangan,Alasan,Status Waktu,Diisi Oleh,Pengganti\n'
+    const c = rekapRows.map(r => [r.tanggal, r.hari, r.sholat, r.nama, r.ket, r.alasan, r.waktu, r.pengisi, r.pengganti]
+      .map(x => '"' + String(x || '').replace(/"/g, '""') + '"').join(',')).join('\n')
+    const a = document.createElement('a')
+    a.href = URL.createObjectURL(new Blob(['\ufeff' + h + c], { type: 'text/csv' }))
+    const filenameSuffix = modeRekap === 'bulan' ? bulanRekap : rekapTanggal
+    a.download = `rekap-presensi-${filenameSuffix}-${rekapSholat.toLowerCase()}.csv`
+    a.click()
+  }
+
   return (
     <div className={`scroll-body ${tabLoading ? 'content-loading' : ''}`}>
-      {/* 1. Modern Segmented Tabs Navigation (Pinned at Top) */}
+      {/* 1. Modern Segmented Tabs Navigation */}
       <nav className="segmented-admin-tabs">
         {[
-          ['hari', 'Hari Ini', <IconCalendar size={13} key="t1" />],
-          ['rekap', 'Rekap Bulanan', <IconFileText size={13} key="t2" />],
-          ['atur', 'Setelan Waktu', <IconSettings size={13} key="t3" />]
+          ['dashboard', 'Dashboard', <IconLayoutDashboard size={13} key="t0" />],
+          ['rekap', 'Rekapitulasi', <IconFileText size={13} key="t1" />],
+          ['atur', 'Setelan Waktu', <IconSettings size={13} key="t2" />]
         ].map(([k, n, icon]) => {
           const isThisLoading = tabLoading && tab === k
           return (
@@ -2157,78 +2710,193 @@ const AdminDashboard = memo(function AdminDashboard({
         </div>
       )}
 
-      {/* Tab 1: Hari Ini */}
-      {tab === 'hari' && (
+      {/* ================= TAB 1: DASHBOARD UTAMA ================= */}
+      {tab === 'dashboard' && (
         <div className="admin-tab-content">
-          {/* Executive Admin Hero Card */}
-          <div className="unified-hero admin-hero-card">
-            <div className="hero-meta-bar">
-              <span className="session-chip">
-                <IconShield size={11} />
-                Panel Admin Korlap
-              </span>
+          {/* 1. Official Greeting Hero */}
+          <div className="admin-greeting-hero">
+            <div className="greeting-top-badge">
+              <IconShield size={12} />
+              <span>PUSAT KENDALI KORLAP SHOLAT JAMA'AH</span>
             </div>
-
-            <div className="admin-hero-main-row">
-              <div>
-                <span className="admin-hero-eyebrow">Pemantauan Presensi Sholat</span>
-                <h2 className="admin-hero-heading">{formatTanggalIndo(d.tgl, d.hari)}</h2>
+            <div className="greeting-main-row">
+              <div className="greeting-text-group">
+                <h2 className="greeting-title">Ahlan wa Sahlan, Sekretaris Pondok Putra</h2>
+                <p className="greeting-sub">Yayasan Pondok Pesantren Salafiyah Al-Falah Putak • {formatTanggalIndo(d.tgl, d.hari)}</p>
               </div>
-              {hariIni.length > 0 && (
-                <span className={`admin-hero-status-pill ${hariIni[0].waktu === 'Tepat Waktu' ? 'ontime' : 'late'}`}>
-                  {hariIni[0].waktu === 'Tepat Waktu' ? <IconCheckCircle size={13} /> : <IconAlertCircle size={13} />}
-                  <span>{hariIni[0].waktu}</span>
-                </span>
-              )}
+              <div className="admin-live-status">
+                <span className="live-dot" />
+                <span>Sistem Siap</span>
+              </div>
             </div>
-
-            {hariIniSemua.length > 0 ? (
-              <div className="admin-hero-meta-box">
-                <div className="meta-box-row">
-                  <span className="meta-box-label">
-                    <IconClock size={12} />
-                    <span>Terdata {hariIniSemua.length} laporan personil hari ini</span>
-                  </span>
-                </div>
-              </div>
-            ) : (
-              <div className="admin-hero-meta-box pending">
-                <span>Presensi sholat jama'ah hari ini belum dikirimkan oleh petugas.</span>
-              </div>
-            )}
-
-            {/* 4 Hero Counters */}
-            {hariIni.length > 0 && (
-              <div className="admin-hero-stats-row">
-                <div className="hero-stat-pill hadir">
-                  <span className="val">{hariIniStats.Hadir}</span>
-                  <span className="lbl">Hadir</span>
-                </div>
-                <div className="hero-stat-pill sakit">
-                  <span className="val">{hariIniStats.Sakit}</span>
-                  <span className="lbl">Sakit</span>
-                </div>
-                <div className="hero-stat-pill izin">
-                  <span className="val">{hariIniStats.Izin}</span>
-                  <span className="lbl">Izin</span>
-                </div>
-                <div className="hero-stat-pill alfa">
-                  <span className="val">{hariIniStats.Alfa}</span>
-                  <span className="lbl">Alfa</span>
-                </div>
-              </div>
-            )}
           </div>
 
-          {/* Filter Waktu Sholat di Admin */}
-          <div className="admin-filter-bar">
+          {/* 2. WhatsApp Share Feature Card */}
+          <div className="wa-share-action-card">
+            <div className="wa-share-left">
+              <div className="wa-share-icon-wrap">
+                <IconWhatsApp size={24} />
+              </div>
+              <div className="wa-share-text">
+                <h3 className="wa-share-title">Bagikan Rekap 5 Sholat ke WhatsApp</h3>
+                <p className="wa-share-desc">Rangkum otomatis 5 waktu sholat harian (NIHIL / rincian izin) lengkap dengan watermark sistem.</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              className="btn-wa-share"
+              onClick={() => setWaModalOpen(true)}
+            >
+              <IconShare2 size={15} />
+              <span>Bagikan WA</span>
+            </button>
+          </div>
+
+          {/* 3. KPI Grid 4 (Hadir, Sakit, Izin, Alfa) */}
+          <div className="kpi-grid-4">
+            <div className="kpi-card hadir">
+              <div className="kpi-top">
+                <span className="kpi-label">Hadir</span>
+                <IconCheckCircle size={15} />
+              </div>
+              <div className="kpi-val">{hariIniStats.Hadir}</div>
+              <div className="kpi-sub">{rateHariIni}% Kehadiran</div>
+            </div>
+            <div className="kpi-card sakit">
+              <div className="kpi-top">
+                <span className="kpi-label">Sakit</span>
+                <IconClock size={15} />
+              </div>
+              <div className="kpi-val">{hariIniStats.Sakit}</div>
+              <div className="kpi-sub">{hariIniStats.Sakit === 0 ? 'NIHIL' : `${hariIniStats.Sakit} Orang`}</div>
+            </div>
+            <div className="kpi-card izin">
+              <div className="kpi-top">
+                <span className="kpi-label">Izin</span>
+                <IconClock size={15} />
+              </div>
+              <div className="kpi-val">{hariIniStats.Izin}</div>
+              <div className="kpi-sub">{hariIniStats.Izin === 0 ? 'NIHIL' : `${hariIniStats.Izin} Orang`}</div>
+            </div>
+            <div className="kpi-card alfa">
+              <div className="kpi-top">
+                <span className="kpi-label">Alfa</span>
+                <IconAlertCircle size={15} />
+              </div>
+              <div className="kpi-val">{hariIniStats.Alfa === 0 ? 'NIHIL' : hariIniStats.Alfa}</div>
+              <div className="kpi-sub">{hariIniStats.Alfa === 0 ? 'Tertib 100%' : `${hariIniStats.Alfa} Tanpa Ket.`}</div>
+            </div>
+          </div>
+
+          {/* 4. Progress Strip Rate Kehadiran */}
+          <div className="kpi-rate-strip">
+            <div className="rate-strip-header">
+              <span className="rate-strip-label">Akumulasi Kehadiran Hari Ini ({hariIniSemua.length} Petugas Terdata)</span>
+              <span className="rate-strip-val">{rateHariIni}%</span>
+            </div>
+            <div className="rate-progress-track">
+              <div className="rate-progress-bar" style={{ width: `${rateHariIni}%` }} />
+            </div>
+          </div>
+
+          {/* 5. Pure SVG Interactive Charts */}
+          <div className="chart-card-wrapper">
+            <div className="chart-card-header">
+              <div className="chart-title-wrap">
+                <IconBarChart3 size={17} style={{ color: 'var(--emerald-800)' }} />
+                <h3 className="chart-title">Statistik & Grafik Kehadiran</h3>
+              </div>
+            </div>
+
+            <div className="chart-toggle-bar">
+              {[
+                ['tanggal', 'Per Tanggal (7 Hari)'],
+                ['sholat', 'Per Waktu Sholat'],
+                ['bulan', 'Per Bulan (Tren)']
+              ].map(([mode, label]) => (
+                <button
+                  key={mode}
+                  type="button"
+                  className={`chart-toggle-btn ${chartMode === mode ? 'active' : ''}`}
+                  onClick={() => setChartMode(mode)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+
+            <div className="svg-chart-container">
+              <SvgBarChart
+                data={
+                  chartMode === 'tanggal'
+                    ? chartDataTanggal
+                    : chartMode === 'sholat'
+                    ? chartDataSholat
+                    : chartDataBulan
+                }
+                mode={chartMode}
+              />
+            </div>
+          </div>
+
+          {/* 6. Activity Log Card */}
+          <div className="activity-log-card">
+            <div className="activity-log-header">
+              <h3 className="activity-log-title">
+                <IconClock size={16} />
+                <span>Log Aktivitas Pengiriman Presensi Terkini</span>
+              </h3>
+              <span className="officers-chip">{daftarSesi.length} Sesi Terakhir</span>
+            </div>
+            <div className="activity-log-list">
+              {daftarSesi.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '16px', color: 'var(--slate-500)', fontSize: '12px' }}>
+                  Belum ada log presensi tercatat di sistem.
+                </div>
+              ) : (
+                daftarSesi.map((sesi, idx) => (
+                  <div className="log-entry-item" key={sesi.tanggal + sesi.sholat + idx}>
+                    <div className="log-entry-top">
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <span className={`sholat-badge-tag ${(sesi.sholat || 'shubuh').toLowerCase()}`}>
+                          {sesi.sholat}
+                        </span>
+                        <span className="log-sholat-name">{formatTanggalIndo(sesi.tanggal, sesi.hari)}</span>
+                      </div>
+                      <span className={`officer-status-capsule ${sesi.waktu === 'Tepat Waktu' ? 'hadir' : 'sakit'}`}>
+                        {sesi.waktu === 'Tepat Waktu' ? <IconCheck size={11} /> : <IconAlertCircle size={11} />}
+                        <span>{sesi.waktu}</span>
+                      </span>
+                    </div>
+                    <div className="log-entry-details">
+                      <span className="log-submitter">
+                        Pengisi: <strong>{sesi.pengisi}</strong> {sesi.jam ? `(${sesi.jam} WIB)` : ''}
+                      </span>
+                      <div className="log-counts-pill">
+                        <span style={{ color: '#047857' }}>{sesi.hadir} Hadir</span>
+                        {sesi.sakit > 0 && <span style={{ color: '#B45309' }}>• {sesi.sakit} Sakit</span>}
+                        {sesi.izin > 0 && <span style={{ color: '#0369A1' }}>• {sesi.izin} Izin</span>}
+                        {sesi.alfa > 0 && <span style={{ color: '#BE123C' }}>• {sesi.alfa} Alfa</span>}
+                        {sesi.sakit === 0 && sesi.izin === 0 && sesi.alfa === 0 && (
+                          <span style={{ color: '#047857' }}>• NIHIL Absen</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+
+          {/* 7. Detailed Officers Feed Today with Filter */}
+          <div className="admin-filter-bar" style={{ marginTop: '6px' }}>
             {daftarSholatAdmin.map(sh => {
-              const isActive = filterSholat === sh
+              const isActive = filterSholatHariIni === sh
               return (
                 <button
                   key={sh}
                   type="button"
-                  onClick={() => setFilterSholat(sh)}
+                  onClick={() => setFilterSholatHariIni(sh)}
                   className={`admin-filter-pill ${isActive ? 'active' : ''}`}
                 >
                   {sh}
@@ -2237,26 +2905,26 @@ const AdminDashboard = memo(function AdminDashboard({
             })}
           </div>
 
-          {!hariIni.length ? (
+          {!hariIniFiltered.length ? (
             <div className="mobile-empty-card">
               <div className="empty-icon-ring">
                 <IconCalendar size={28} />
               </div>
               <h4 className="empty-title">Belum Ada Presensi Masuk</h4>
               <p className="empty-subtitle">
-                {filterSholat === 'Semua' 
+                {filterSholatHariIni === 'Semua' 
                   ? "Belum ada laporan presensi sholat jama'ah untuk hari ini."
-                  : `Belum ada laporan presensi untuk Sholat ${filterSholat} hari ini.`}
+                  : `Belum ada laporan presensi untuk Sholat ${filterSholatHariIni} hari ini.`}
               </p>
             </div>
           ) : (
             <div className="mobile-officers-card">
               <div className="officers-card-header">
                 <div>
-                  <h3 className="officers-header-title">Petugas Korlap Terdata</h3>
-                  <span className="officers-header-sub">{hariIni.length} laporan ({filterSholat})</span>
+                  <h3 className="officers-header-title">Petugas Korlap Terdata Hari Ini</h3>
+                  <span className="officers-header-sub">{hariIniFiltered.length} personil ({filterSholatHariIni})</span>
                 </div>
-                <span className="officers-chip">{hariIni.length} Personil</span>
+                <span className="officers-chip">{hariIniFiltered.length} Personil</span>
               </div>
 
               <div className="mobile-officers-feed">
@@ -2313,9 +2981,9 @@ const AdminDashboard = memo(function AdminDashboard({
                   )
                 })}
 
-                {displayLimitHariIni < hariIni.length && (
+                {displayLimitHariIni < hariIniFiltered.length && (
                   <div style={{ padding: '12px 14px', textAlign: 'center', fontSize: '12px', color: 'var(--slate-500)', fontWeight: '600' }}>
-                    Memuat data personil lainnya ({displayLimitHariIni} dari {hariIni.length})...
+                    Memuat data personil lainnya ({displayLimitHariIni} dari {hariIniFiltered.length})...
                   </div>
                 )}
               </div>
@@ -2324,49 +2992,96 @@ const AdminDashboard = memo(function AdminDashboard({
         </div>
       )}
 
-      {/* Tab 2: Rekap Bulanan */}
+      {/* ================= TAB 2: REKAPITULASI (LIVE FILTER) ================= */}
       {tab === 'rekap' && (
         <div className="admin-tab-content">
-          {/* 1. Integrated Monthly Analytics Hero Card */}
+          {/* Mode Switcher: Per Bulan vs Per Tanggal */}
+          <div className="chart-toggle-bar" style={{ marginBottom: '10px' }}>
+            <button
+              type="button"
+              className={`chart-toggle-btn ${modeRekap === 'bulan' ? 'active' : ''}`}
+              onClick={() => setModeRekap('bulan')}
+            >
+              Mode Rekap Bulanan
+            </button>
+            <button
+              type="button"
+              className={`chart-toggle-btn ${modeRekap === 'tanggal' ? 'active' : ''}`}
+              onClick={() => setModeRekap('tanggal')}
+            >
+              Mode Rekap Per Hari / Tanggal
+            </button>
+          </div>
+
+          {/* Integrated Analytics Hero Banner */}
           <div className="rekap-hero-banner">
             <div className="rekap-hero-top-row">
-              <div className="rekap-month-pill">
-                <button
-                  type="button"
-                  className="rekap-month-arrow"
-                  onClick={() => setBulan(geserBulan(b, -1))}
-                  aria-label="Bulan Sebelumnya"
-                >
-                  <IconChevronLeft size={14} />
-                </button>
+              {modeRekap === 'bulan' ? (
+                <div className="rekap-month-pill">
+                  <button
+                    type="button"
+                    className="rekap-month-arrow"
+                    onClick={() => setBulanRekap(geserBulan(bulanRekap, -1))}
+                    aria-label="Bulan Sebelumnya"
+                  >
+                    <IconChevronLeft size={14} />
+                  </button>
 
-                <div className="rekap-month-label-wrap">
-                  <span className="rekap-month-label">{formatBulanIndo(b)}</span>
-                  <input
-                    type="month"
-                    className="rekap-month-hidden-picker"
-                    value={b}
-                    onChange={e => setBulan(e.target.value)}
-                    title="Pilih Bulan Spesifik"
-                  />
+                  <div className="rekap-month-label-wrap">
+                    <span className="rekap-month-label">{formatBulanIndo(bulanRekap)}</span>
+                    <input
+                      type="month"
+                      className="rekap-month-hidden-picker"
+                      value={bulanRekap}
+                      onChange={e => setBulanRekap(e.target.value)}
+                      title="Pilih Bulan Spesifik"
+                    />
+                  </div>
+
+                  <button
+                    type="button"
+                    className="rekap-month-arrow"
+                    onClick={() => setBulanRekap(geserBulan(bulanRekap, 1))}
+                    aria-label="Bulan Berikutnya"
+                  >
+                    <IconChevronRight size={14} />
+                  </button>
                 </div>
-
-                <button
-                  type="button"
-                  className="rekap-month-arrow"
-                  onClick={() => setBulan(geserBulan(b, 1))}
-                  aria-label="Bulan Berikutnya"
-                >
-                  <IconChevronRight size={14} />
-                </button>
-              </div>
+              ) : (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1, maxWidth: '280px' }}>
+                  <input
+                    type="date"
+                    className="inline-reason-input"
+                    value={rekapTanggal}
+                    onChange={e => setRekapTanggal(e.target.value)}
+                    style={{ background: '#ffffff', color: 'var(--slate-800)', padding: '6px 10px', fontSize: '12px' }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setRekapTanggal(d.tgl)}
+                    style={{
+                      background: 'rgba(255,255,255,0.2)',
+                      border: '1px solid rgba(255,255,255,0.4)',
+                      color: '#ffffff',
+                      borderRadius: '8px',
+                      padding: '6px 10px',
+                      fontSize: '11px',
+                      fontWeight: '700',
+                      cursor: 'pointer',
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    Hari Ini
+                  </button>
+                </div>
+              )}
 
               <button
                 type="button"
                 className="rekap-export-glass-btn"
-                onClick={unduh}
-                disabled={!bl.length}
-                title={bl.length ? "Unduh laporan CSV bulan ini" : "Belum ada data untuk diekspor"}
+                onClick={unduhRekap}
+                disabled={!rekapRows.length}
+                title={rekapRows.length ? "Unduh laporan CSV" : "Belum ada data untuk diekspor"}
               >
                 <IconDownload size={13} />
                 <span>Ekspor CSV</span>
@@ -2375,40 +3090,40 @@ const AdminDashboard = memo(function AdminDashboard({
 
             <div className="rekap-score-row">
               <div className="rekap-score-left">
-                <span className="rekap-score-rate">{rateKehadiranBulanIni}%</span>
+                <span className="rekap-score-rate">{rateKehadiranRekap}%</span>
                 <span className="rekap-score-label">Tingkat Kehadiran Korlap</span>
               </div>
               <div className="rekap-score-right">
-                <span className="rekap-duties-chip">{totalTugasBulanIni} Total Tugas</span>
+                <span className="rekap-duties-chip">{totalTugasRekap} Total Tugas</span>
                 <span className="rekap-personil-chip">{allRekapNames.length} Personil Terdaftar</span>
               </div>
             </div>
 
-            {totalTugasBulanIni > 0 && (
+            {totalTugasRekap > 0 && (
               <div className="rekap-progress-track">
                 <div
                   className="u-seg ontime"
-                  style={{ width: `${Math.max(0, (totalStats.Hadir - totalStats.Terlambat) / totalTugasBulanIni * 100)}%` }}
+                  style={{ width: `${Math.max(0, (totalStatsRekap.Hadir - totalStatsRekap.Terlambat) / totalTugasRekap * 100)}%` }}
                   title="Tepat Waktu"
                 />
                 <div
                   className="u-seg late"
-                  style={{ width: `${(totalStats.Terlambat / totalTugasBulanIni) * 100}%` }}
+                  style={{ width: `${(totalStatsRekap.Terlambat / totalTugasRekap) * 100}%` }}
                   title="Terlambat"
                 />
                 <div
                   className="u-seg sick"
-                  style={{ width: `${(totalStats.Sakit / totalTugasBulanIni) * 100}%` }}
+                  style={{ width: `${(totalStatsRekap.Sakit / totalTugasRekap) * 100}%` }}
                   title="Sakit"
                 />
                 <div
                   className="u-seg excuse"
-                  style={{ width: `${(totalStats.Izin / totalTugasBulanIni) * 100}%` }}
+                  style={{ width: `${(totalStatsRekap.Izin / totalTugasRekap) * 100}%` }}
                   title="Izin"
                 />
                 <div
                   className="u-seg alfa"
-                  style={{ width: `${(totalStats.Alfa / totalTugasBulanIni) * 100}%` }}
+                  style={{ width: `${(totalStatsRekap.Alfa / totalTugasRekap) * 100}%` }}
                   title="Alfa"
                 />
               </div>
@@ -2416,28 +3131,42 @@ const AdminDashboard = memo(function AdminDashboard({
 
             <div className="rekap-stat-tiles-grid">
               <div className="rekap-tile hadir">
-                <span className="rekap-tile-num">{totalStats.Hadir}</span>
+                <span className="rekap-tile-num">{totalStatsRekap.Hadir}</span>
                 <span className="rekap-tile-lbl">Hadir</span>
-                {totalStats.Terlambat > 0 && (
-                  <span className="rekap-tile-sub">{totalStats.Terlambat} telat</span>
+                {totalStatsRekap.Terlambat > 0 && (
+                  <span className="rekap-tile-sub">{totalStatsRekap.Terlambat} telat</span>
                 )}
               </div>
               <div className="rekap-tile sakit">
-                <span className="rekap-tile-num">{totalStats.Sakit}</span>
+                <span className="rekap-tile-num">{totalStatsRekap.Sakit}</span>
                 <span className="rekap-tile-lbl">Sakit</span>
               </div>
               <div className="rekap-tile izin">
-                <span className="rekap-tile-num">{totalStats.Izin}</span>
+                <span className="rekap-tile-num">{totalStatsRekap.Izin}</span>
                 <span className="rekap-tile-lbl">Izin</span>
               </div>
               <div className="rekap-tile alfa">
-                <span className="rekap-tile-num">{totalStats.Alfa}</span>
+                <span className="rekap-tile-num">{totalStatsRekap.Alfa}</span>
                 <span className="rekap-tile-lbl">Alfa</span>
               </div>
             </div>
           </div>
 
-          {/* 2. Floating Search & Filter Chips */}
+          {/* Filter Live Per Sholat */}
+          <div className="admin-filter-bar" style={{ marginBottom: '12px' }}>
+            {daftarSholatAdmin.map(sh => (
+              <button
+                key={sh}
+                type="button"
+                className={`admin-filter-pill ${rekapSholat === sh ? 'active' : ''}`}
+                onClick={() => setRekapSholat(sh)}
+              >
+                {sh}
+              </button>
+            ))}
+          </div>
+
+          {/* Floating Search & Filter Chips */}
           <div className="rekap-filter-section">
             <div className="rekap-search-box">
               <IconSearch size={15} className="rekap-search-icon" />
@@ -2483,7 +3212,7 @@ const AdminDashboard = memo(function AdminDashboard({
             </div>
           </div>
 
-          {/* 3. Feed List Personil Rekap (Rendering bertahap / nyicil) */}
+          {/* Feed List Personil Rekap */}
           <div className="rekap-ustadz-feed">
             {visibleUstadz.map(n => (
               <RekapCardItem key={n} n={n} u={rek[n]} />
@@ -2504,22 +3233,22 @@ const AdminDashboard = memo(function AdminDashboard({
                 <p className="empty-state-p">
                   {cariRekap
                     ? `Tidak ada personil dengan nama "${cariRekap}" pada filter ini.`
-                    : !bl.length
-                    ? `Belum ada presensi yang masuk untuk bulan ${formatBulanIndo(b)}.`
+                    : !rekapRows.length
+                    ? 'Belum ada data presensi yang masuk untuk filter terpilih.'
                     : 'Tidak ada personil yang sesuai dengan kriteria filter terpilih.'}
                 </p>
-                {(cariRekap || filterRekap !== 'semua' || b !== bulanIniAsli) && (
+                {(cariRekap || filterRekap !== 'semua' || rekapSholat !== 'Semua') && (
                   <button
                     type="button"
                     className="rekap-reset-filter-btn"
                     onClick={() => {
                       setCariRekap('')
                       setFilterRekap('semua')
-                      setBulan(bulanIniAsli)
+                      setRekapSholat('Semua')
                     }}
                   >
                     <IconCalendar size={13} />
-                    <span>{b !== bulanIniAsli ? 'Kembali ke Bulan Ini' : 'Reset Filter'}</span>
+                    <span>Reset Filter</span>
                   </button>
                 )}
               </div>
@@ -2528,7 +3257,7 @@ const AdminDashboard = memo(function AdminDashboard({
         </div>
       )}
 
-      {/* Tab 3: Setelan Waktu Sholat */}
+      {/* ================= TAB 3: SETELAN WAKTU SHOLAT ================= */}
       {tab === 'atur' && (
         <div className="admin-tab-content">
           {[
@@ -2601,8 +3330,80 @@ const AdminDashboard = memo(function AdminDashboard({
         </div>
       )}
 
+      {/* ================= MODAL: BAGIKAN REKAP KE WHATSAPP ================= */}
+      {waModalOpen && (
+        <div className="modal-backdrop" onClick={() => setWaModalOpen(false)}>
+          <div className="modal-card" onClick={e => e.stopPropagation()} style={{ maxWidth: '520px' }}>
+            <div className="modal-header">
+              <div className="modal-title-wrap">
+                <div className="modal-icon-badge whatsapp">
+                  <IconWhatsApp size={22} />
+                </div>
+                <div>
+                  <h3 className="modal-title">Bagikan Rekap 5 Sholat ke WA</h3>
+                  <p className="modal-subtitle">Format otomatis 5 jadwal sholat jama'ah Pondok Putra</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="modal-close-btn"
+                onClick={() => setWaModalOpen(false)}
+                aria-label="Tutup"
+              >
+                <IconClose size={18} />
+              </button>
+            </div>
+
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ fontSize: '11.5px', fontWeight: '700', color: 'var(--slate-600)', marginBottom: '5px', display: 'block' }}>
+                Pilih Tanggal Laporan Rekap:
+              </label>
+              <input
+                type="date"
+                className="inline-reason-input"
+                value={waDate}
+                onChange={e => setWaDate(e.target.value)}
+              />
+            </div>
+
+            <div className="wa-preview-box">
+              {pesanWARekap}
+            </div>
+
+            <div style={{ display: 'flex', gap: '8px', marginTop: '14px', flexWrap: 'wrap' }}>
+              <button
+                type="button"
+                className="modal-btn primary"
+                style={{ flex: 1, minWidth: '160px', background: '#059669', borderColor: '#059669' }}
+                onClick={() => {
+                  const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(pesanWARekap)}`
+                  window.open(url, '_blank')
+                }}
+              >
+                <IconWhatsApp size={16} />
+                <span>Buka WhatsApp Langsung</span>
+              </button>
+              <button
+                type="button"
+                className="modal-btn secondary"
+                style={{ flex: 1, minWidth: '130px' }}
+                onClick={() => {
+                  navigator.clipboard.writeText(pesanWARekap)
+                  setWaCopied(true)
+                  setTimeout(() => setWaCopied(false), 2200)
+                }}
+              >
+                <IconCopy size={15} />
+                <span>{waCopied ? 'Tersalin ke Clipboard!' : 'Salin Teks'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <StatusModal modal={statusModal} onClose={() => setStatusModal({ ...statusModal, open: false })} />
       <AppFooter subtitle="Dashboard Admin" />
     </div>
   )
 })
+
