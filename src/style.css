@@ -592,8 +592,6 @@ body {
   padding: 14px 14px;
   border-bottom: 1px solid #f1f5f9;
   transition: background-color 0.15s ease;
-  content-visibility: auto;
-  contain-intrinsic-size: 0 85px;
 }
 
 .officer-row-item:last-child {
