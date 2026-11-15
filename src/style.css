@@ -1094,6 +1094,10 @@ body {
   position: relative;
 }
 
+.prayer-tab-btn svg {
+  flex-shrink: 0;
+}
+
 .prayer-tab-btn:hover:not(:disabled) {
   color: var(--slate-800);
 }
@@ -1118,14 +1122,15 @@ body {
 .tab-loading-strip {
   position: relative;
   overflow: hidden;
-  background: rgba(16, 185, 129, 0.08);
-  border: 1px solid rgba(16, 185, 129, 0.2);
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
   border-radius: var(--radius-sm);
-  padding: 6px 12px;
-  margin-top: 6px;
+  padding: 8px 12px;
+  margin-top: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 1px 3px rgba(5, 150, 105, 0.08);
   animation: fadeIn 0.15s ease-out;
 }
 
@@ -1134,9 +1139,9 @@ body {
   top: 0;
   left: 0;
   width: 100%;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #10B981, transparent);
-  animation: indeterminateBar 1s infinite linear;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #059669, #10b981, transparent);
+  animation: indeterminateBar 1.2s infinite ease-in-out;
 }
 
 @keyframes indeterminateBar {
@@ -1151,10 +1156,23 @@ body {
 .tab-loading-content {
   display: flex;
   align-items: center;
-  gap: 7px;
-  font-size: 11.5px;
+  gap: 8px;
+  font-size: 12px;
   font-weight: 700;
-  color: var(--emerald-900);
+  color: #065f46;
+}
+
+.loading-badge-pulse {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #059669;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  padding: 2px 7px;
+  border-radius: 6px;
 }
 
 .content-loading {

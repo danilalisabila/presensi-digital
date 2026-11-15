@@ -4,9 +4,12 @@ import './style.css'
 const API = import.meta.env.VITE_API_URL || ''
 const isConfigured = Boolean(API && !API.includes('GANTI_DENGAN_ID_ANDA'))
 
-async function api(body, retries = 1, queryParams = null) {
+async function api(body, retries = 1, queryParams = null, signal = null) {
   if (!isConfigured) {
     throw new Error('Sistem presensi belum terhubung. Silakan hubungi admin.')
+  }
+  if (signal?.aborted) {
+    throw new DOMException('Aborted', 'AbortError')
   }
   try {
     let url = API
@@ -23,12 +26,14 @@ async function api(body, retries = 1, queryParams = null) {
           mode: 'cors',
           redirect: 'follow',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(body)
+          body: JSON.stringify(body),
+          signal
         }
       : {
           method: 'GET',
           mode: 'cors',
-          redirect: 'follow'
+          redirect: 'follow',
+          signal
         }
 
     const r = await fetch(url, fetchOptions)
@@ -39,9 +44,10 @@ async function api(body, retries = 1, queryParams = null) {
     if (j.error) throw new Error(j.error)
     return j
   } catch (err) {
-    if (retries > 0) {
+    if (err.name === 'AbortError') throw err
+    if (retries > 0 && !signal?.aborted) {
       await new Promise(res => setTimeout(res, 1200))
-      return api(body, retries - 1, queryParams)
+      return api(body, retries - 1, queryParams, signal)
     }
     throw err
   }
@@ -1079,7 +1085,12 @@ function buatDataSholatDefault(sholat) {
 
 /* ================= FORM KORLAP SHOLAT JAMA'AH ================= */
 function Form() {
-  const defaultSholatAwal = useMemo(() => tentukanSholatLokal(), [])
+  const defaultSholatAwal = useMemo(() => {
+    const cached = getLocalInfoCache()
+    if (cached?.sholat) return cached.sholat
+    return tentukanSholatLokal()
+  }, [])
+
   const [info, setInfo] = useState(() => {
     const cached = getLocalInfoCache()
     if (cached?.tim && cached.tim.length > 0) return cached
@@ -1102,6 +1113,10 @@ function Form() {
   const [confirmModal, setConfirmModal] = useState({ open: false, summary: null })
   const [loadingSholat, setLoadingSholat] = useState(null)
 
+  const activeRequestRef = useRef(0)
+  const abortCtrlRef = useRef(null)
+  const currentSholatRef = useRef(defaultSholatAwal)
+
   const prayerCacheRef = useRef(
     Object.fromEntries(
       DAFTAR_SHOLAT_DEFAULT.map(sh => [
@@ -1119,6 +1134,7 @@ function Form() {
   // Sinkronkan cache lokal untuk sholat yang sedang aktif dilihat
   useEffect(() => {
     if (info?.sholat) {
+      currentSholatRef.current = info.sholat
       prayerCacheRef.current[info.sholat] = {
         info,
         item,
@@ -1130,40 +1146,58 @@ function Form() {
 
   // Memuat data sholat tertentu atau sholat aktif otomatis dari server
   const muatDataSholat = useCallback((targetSholat = null) => {
-    // 1. Tampilkan langsung data dari cache (0ms instant response)
-    if (targetSholat && prayerCacheRef.current[targetSholat]) {
-      const cached = prayerCacheRef.current[targetSholat]
-      setInfo(cached.info)
-      setItem(cached.item)
-      setPengisi(cached.pengisi)
-      setErr('')
-      setDone(cached.done || null)
+    // 1. Batalkan request sebelumnya yang masih berjalan agar tidak ada adu respon / mental-mental
+    if (abortCtrlRef.current) {
+      try {
+        abortCtrlRef.current.abort()
+      } catch (e) {}
+    }
+    const controller = new AbortController()
+    abortCtrlRef.current = controller
+
+    const reqId = ++activeRequestRef.current
+
+    if (targetSholat) {
+      currentSholatRef.current = targetSholat
+      setLoadingSholat(targetSholat)
+
+      // Tampilkan data lokal dari cache terlebih dahulu agar tidak delay kosong
+      if (prayerCacheRef.current[targetSholat]) {
+        const cached = prayerCacheRef.current[targetSholat]
+        setInfo(cached.info)
+        setItem(cached.item)
+        setPengisi(cached.pengisi)
+        setErr('')
+        setDone(cached.done || null)
+      }
+    } else {
+      // Pemuatan awal (default saat aplikasi dibuka)
+      setLoadingSholat(currentSholatRef.current)
     }
 
     setBusy(true)
     setErr('')
     const queryParams = targetSholat ? { sholat: targetSholat } : null
 
-    api(null, 1, queryParams)
+    api(null, 1, queryParams, controller.signal)
       .then(i => {
-        setInfo(i)
-        setLocalInfoCache(i)
-        const list = (i.tim && i.tim.length > 0) ? i.tim : (JADWAL_RESMI_KORLAP[i.sholat]?.tim || [])
-        const newItem = Object.fromEntries(list.map(t => [t.nama, { ket: 'Hadir', alasan: '' }]))
-        const newPengisi = (list.find(t => t.petugas) || list[0] || {}).nama || ''
-        setItem(newItem)
-        setPengisi(newPengisi)
-
-        if (i.sholat) {
-          prayerCacheRef.current[i.sholat] = {
-            info: i,
-            item: newItem,
-            pengisi: newPengisi,
-            done: null
-          }
+        // PERLINDUNGAN ANTI RACE-CONDITION:
+        // Jika nomor request sudah usang (karena pengguna sudah mengklik tab lain), ABAIKAN!
+        if (reqId !== activeRequestRef.current) {
+          return
         }
 
-        // Jika server mengembalikan data semua sholat sekaligus, perbarui semua cache
+        // Jika targetSholat ditentukan, pastikan respon cocok dengan target sholat
+        if (targetSholat && i.sholat && i.sholat !== targetSholat) {
+          return
+        }
+
+        // Jika pemuatan awal tanpa target, tapi pengguna sudah memilih sholat lain, jangan timpa!
+        if (!targetSholat && i.sholat && i.sholat !== currentSholatRef.current) {
+          return
+        }
+
+        // Jika server mengembalikan data semua sholat sekaligus, perbarui semua cache di memori
         if (i.semua_tim && typeof i.semua_tim === 'object') {
           Object.keys(i.semua_tim).forEach(sh => {
             const shTim = i.semua_tim[sh]
@@ -1181,14 +1215,35 @@ function Form() {
             }
           })
         }
+
+        setInfo(i)
+        setLocalInfoCache(i)
+        const list = (i.tim && i.tim.length > 0) ? i.tim : (JADWAL_RESMI_KORLAP[i.sholat]?.tim || [])
+        const newItem = Object.fromEntries(list.map(t => [t.nama, { ket: 'Hadir', alasan: '' }]))
+        const newPengisi = (list.find(t => t.petugas) || list[0] || {}).nama || ''
+        setItem(newItem)
+        setPengisi(newPengisi)
+
+        if (i.sholat) {
+          prayerCacheRef.current[i.sholat] = {
+            info: i,
+            item: newItem,
+            pengisi: newPengisi,
+            done: null
+          }
+        }
       })
       .catch(e => {
-        // Jika offline atau server lambat, kita tetap aman dengan data built-in
-        console.warn('API error, using cached/offline data:', e.message)
+        if (e.name === 'AbortError') return
+        if (reqId === activeRequestRef.current) {
+          console.warn('API sync notice, using verified local roster:', e.message)
+        }
       })
       .finally(() => {
-        setBusy(false)
-        setLoadingSholat(null)
+        if (reqId === activeRequestRef.current) {
+          setBusy(false)
+          setLoadingSholat(null)
+        }
       })
   }, [])
 
@@ -1380,7 +1435,7 @@ const FormContent = memo(function FormContent({
                 type="button"
                 className={`prayer-tab-btn ${isActive ? 'active' : ''} ${isLoadingThis ? 'loading' : ''}`}
                 onClick={() => {
-                  if (info.sholat !== sh) {
+                  if (loadingSholat !== sh) {
                     onPilihSholat(sh)
                   }
                 }}
@@ -1464,9 +1519,16 @@ const FormContent = memo(function FormContent({
           <span>Petugas Korlap {info.sholat}</span>
           <span className="badge-count">{tim.length}</span>
         </div>
-        <span style={{ fontSize: '11px', color: 'var(--slate-500)', fontWeight: '600' }}>
-          Setiap Hari
-        </span>
+        {loadingSholat ? (
+          <span className="loading-badge-pulse">
+            <IconSpinner size={11} className="spinner-spin" />
+            Memuat data...
+          </span>
+        ) : (
+          <span style={{ fontSize: '11px', color: 'var(--slate-500)', fontWeight: '600' }}>
+            Setiap Hari
+          </span>
+        )}
       </div>
 
       {/* Grouped Officers List */}
